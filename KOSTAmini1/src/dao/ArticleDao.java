@@ -44,13 +44,8 @@ public class ArticleDao<T extends Article> extends CRUD<Article> {
 
   // 삭제: DELETE
   @Override
-  public void delete(Article a) throws SQLException {
+  public void delete(int num) throws SQLException {
   	
-  }
-
-  @Override
-  public ArrayList<Article> selectAll() throws SQLException{
-  	return null;
   }
 
   @Override
