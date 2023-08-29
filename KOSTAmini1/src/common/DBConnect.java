@@ -1,4 +1,5 @@
 package common;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -16,7 +17,7 @@ public class DBConnect {
         try { 
             Class.forName("oracle.jdbc.OracleDriver");
             // db에 로그인, 세션 수립하고 생성된 connection 객체 반환
-            return DriverManager.getConnection(url, "dogi", "1234");
+            return DriverManager.getConnection(url, "kosta", "1234");
         } catch(ClassNotFoundException e) {
             System.out.println(e.getMessage());
         } catch(SQLException e) {
