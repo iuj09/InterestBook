@@ -60,7 +60,7 @@ CREATE TABLE REPLIES (
     W_DATE              DATE                    DEFAULT SYSDATE,
     E_DATE              DATE                    DEFAULT SYSDATE,
     HEART               NUMBER                  DEFAULT 0,
-    ARTICLE_NO            NUMBER                  NOT NULL,
+    ARTICLE_NO          NUMBER                  NOT NULL,
     MEMBER_NO           NUMBER                  NOT NULL,
     
     CONSTRAINT FK_ARTICLES_NO FOREIGN KEY(ARTICLE_NO) REFERENCES ARTICLES(NO),
