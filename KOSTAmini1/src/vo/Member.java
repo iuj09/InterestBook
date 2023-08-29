@@ -3,32 +3,34 @@ package vo;
 import java.sql.Date;
 
 public class Member {
-	private int num;
+	private int no;
 	private String id;
 	private String pwd;
 	private String name;
+	private String email;
 	private Date joinDate;
-	private int locationNum;
-	private int favoriteNum;
+	private int locationNo;
+	private int favoriteNo;
 	
 	public Member() {}
 	
-	public Member(int num, String id, String pwd, String name, Date joinDate, int locationNum, int favoriteNum) {
-		this.num = num;
+	public Member(int no, String id, String pwd, String name, String email, Date joinDate, int locationNo, int favoriteNo) {
+		this.no = no;
 		this.id = id;
 		this.pwd = pwd;
 		this.name = name;
+		this.email = email;
 		this.joinDate = joinDate;
-		this.locationNum = locationNum;
-		this.favoriteNum = favoriteNum;
+		this.locationNo = locationNo;
+		this.favoriteNo = favoriteNo;
 	}
 
-	public int getNum() {
-		return num;
+	public int getNo() {
+		return no;
 	}
 
-	public void setNum(int num) {
-		this.num = num;
+	public void setNum(int no) {
+		this.no = no;
 	}
 
 	public String getId() {
@@ -54,6 +56,14 @@ public class Member {
 	public void setName(String name) {
 		this.name = name;
 	}
+	
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
 
 	public Date getJoinDate() {
 		return joinDate;
@@ -63,27 +73,26 @@ public class Member {
 		this.joinDate = joinDate;
 	}
 	
-	public int getLocationNum() {
-		return locationNum;
+	public int getLocationNo() {
+		return locationNo;
 	}
 
-	public void setLocationNum(int locationNum) {
-		this.locationNum = locationNum;
+	public void setLocationNo(int locationNo) {
+		this.locationNo = locationNo;
 	}
 
-	public int getFavoriteNum() {
-		return favoriteNum;
+	public int getFavoriteNo() {
+		return favoriteNo;
 	}
 
-	public void setFavoriteNum(int favoriteNum) {
-		this.favoriteNum = favoriteNum;
+	public void setFavoriteNo(int favoriteNo) {
+		this.favoriteNo = favoriteNo;
 	}
-
 
 	@Override
 	public String toString() {
-		return "Member [num=" + num + ", id=" + id + ", pwd=" + pwd + ", name=" + name + ", joinDate=" + joinDate + ", locationNum=" + locationNum
-				+ ", favoriteNum=" + favoriteNum + "]";
+		return "Member [no=" + no + ", id=" + id + ", pwd=" + pwd + ", name=" + name + ", email=" + email +  ", joinDate=" + joinDate + ", locationNo=" + locationNo
+				+ ", favoriteNo=" + favoriteNo + "]";
 	}
 	
 	
