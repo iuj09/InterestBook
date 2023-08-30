@@ -1,13 +1,18 @@
 import java.util.Scanner;
 
+import common.Info;
+import dao.MemberDao;
 import service.MemberService;
+import vo.Member;
 
 public class Main {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-//		MemberService mservice = new MemberService();
-		Scanner sc = new Scanner(System.in);
+//		Scanner sc = new Scanner(System.in);
+//		MemberService mservice = new MemberService(sc, new MemberDao<Member>());
+//		Info.login(sc, new MemberDao<Member>());
+//		Info.logout();
 //		mservice.join(sc);
 //		mservice.myInfo(sc);
 //		mservice.editInfo(sc);
@@ -16,6 +21,7 @@ public class Main {
 //		mservice.searchByNum(sc);
 //		mservice.searchAll();
 //		mservice.delMember(sc);
+		
 	}
 
 }
