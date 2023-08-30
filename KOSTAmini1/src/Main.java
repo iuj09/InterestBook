@@ -6,8 +6,8 @@ import service.MemberService;
 import vo.Member;
 
 public class Main {
-
 	public static void main(String[] args) {
+<<<<<<< HEAD
 		// TODO Auto-generated method stub
 //		Scanner sc = new Scanner(System.in);
 //		MemberService mservice = new MemberService(sc, new MemberDao<Member>());
@@ -22,6 +22,10 @@ public class Main {
 //		mservice.searchAll();
 //		mservice.delMember(sc);
 		
+=======
+		Menu menu = new Menu();
+		menu.menu();
+>>>>>>> refs/remotes/origin/iuj
 	}
 
 }
