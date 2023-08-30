@@ -24,6 +24,13 @@ public class Member {
 		this.locationNo = locationNo;
 		this.favoriteNo = favoriteNo;
 	}
+	
+	public Member(String id, String name, int locationNo, int favoriteNo) {
+		this.id = id;
+		this.name = name;
+		this.locationNo = locationNo;
+		this.favoriteNo = favoriteNo;
+	}
 
 	public int getNo() {
 		return no;
