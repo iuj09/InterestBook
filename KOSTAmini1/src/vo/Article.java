@@ -6,18 +6,20 @@ public class Article {
 	private int num;
 	private String title;
 	private String content;
+	private int heart;
 	private Date wDate;
 	private Date eDate;
-	private String writer;
+	private int writer;
 	private int category;
 
 	public Article() {
 	}
 
-	public Article(int num, String title, String content, Date wDate, Date eDate, String writer, int category) {
+	public Article(int num, String title, String content, int heart, Date wDate, Date eDate, int writer, int category) {
 		this.num = num;
 		this.title = title;
 		this.content = content;
+		this.heart = heart;
 		this.wDate = wDate;
 		this.eDate = eDate;
 		this.writer = writer;
@@ -26,8 +28,8 @@ public class Article {
 
 	@Override
 	public String toString() {
-		return "Article [num=" + num + ", title=" + title + ", content=" + content + ", wDate=" + wDate + ", eDate="
-				+ eDate + ", writer=" + writer + ", category=" + category + "]";
+		return "Article [num=" + num + ", title=" + title + ", content=" + content + ", wDate=" + wDate + ", eDate=" + eDate
+				+ ", writer=" + writer + ", category=" + category + "]";
 	}
 
 	public int getNum() {
@@ -54,6 +56,14 @@ public class Article {
 		this.content = content;
 	}
 
+	public int getHeart() {
+		return heart;
+	}
+
+	public void setHeart(int heart) {
+		this.heart = heart;
+	}
+
 	public Date getwDate() {
 		return wDate;
 	}
@@ -70,11 +80,11 @@ public class Article {
 		this.eDate = eDate;
 	}
 
-	public String getWriter() {
+	public int getWriter() {
 		return writer;
 	}
 
-	public void setWriter(String writer) {
+	public void setWriter(int writer) {
 		this.writer = writer;
 	}
 
