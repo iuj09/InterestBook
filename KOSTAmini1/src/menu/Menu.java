@@ -5,12 +5,15 @@ import java.util.List;
 import java.util.Scanner;
 
 import common.MENU;
+import dao.ArticleDao;
 import dao.MeetDao;
 import dao.MeetReplyDao;
 import dao.MemberDao;
+import service.ArticleService;
 import service.MeetReplyService;
 import service.MeetService;
 import service.MemberService;
+import vo.Article;
 import vo.Meet;
 import vo.Member;
 import vo.MeetReply;
@@ -28,7 +31,7 @@ public class Menu<T> {
         menuList();
         while(true) {
             System.out.println("-----------------------------------------------------");
-            System.out.println("1. 모집 / 2. 멤버 / 3. 게시판 / 3. 종료");
+            System.out.println("1. 모집 / 2. 멤버 / 3. 게시판 / 0. 종료");
             System.out.println("-----------------------------------------------------");
             System.out.print(": ");
             int num = sc.nextInt();
@@ -43,6 +46,9 @@ public class Menu<T> {
                     menuRun(num - 1);
                     break;
                 case 3:
+                	menuRun(num - 1);
+                	break;
+                case 0:
                     System.exit(0);
                     break;
             }
@@ -55,6 +61,8 @@ public class Menu<T> {
      */
     private void menuList() {
         list.add((MENU<Meet>)new MeetMenu(sc, new MeetService(sc, new MeetDao<Meet>()), this));
+        list.add(((MENU<Member>)new MemberMenu(sc, new MemberService(sc, new MemberDao<Member>()), this)));
+        list.add(((MENU<Article>)new BoardMenu(sc, new ArticleService(sc, new ArticleDao<Article>()), this)));
         list.add((MENU<Member>)new MemberMenu(sc, new MemberService(sc, new MemberDao<Member>()), this));
         list.add((MENU<MeetReply>)new MeetReplyMenu(sc, new MeetReplyService(sc, new MeetReplyDao<MeetReply>()), this));
     }

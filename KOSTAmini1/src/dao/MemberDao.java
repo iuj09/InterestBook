@@ -19,18 +19,17 @@ public class MemberDao<T extends Member> extends CRUD<Member> {
 	public void insert(Member m) throws SQLException {
 		conn = db.conn();
 		
-		sql = "insert into members values(members_no_sequence, ?, ?, ?, ?, sysdate, ?, ?, ?)";
-		
+		sql = "insert into members values(members_no_sequence.nextvall, ?, ?, ?, ?, sysdate, ?, ?, ?)";
+
 		ps = conn.prepareStatement(sql);
 		
-		ps.setInt(1, m.getNo());
-		ps.setString(2, m.getId());
-		ps.setString(3, m.getPwd());
-		ps.setString(4, m.getName());
-		ps.setString(5, m.getEmail());
-		ps.setInt(6, m.getLocationNo());
-		ps.setInt(7, m.getFavoriteNo());
-		ps.setString(8, m.getAdmin());
+		ps.setString(1, m.getId());
+		ps.setString(2, m.getPwd());
+		ps.setString(3, m.getName());
+		ps.setString(4, m.getEmail());
+		ps.setInt(5, m.getLocationNo());
+		ps.setInt(6, m.getFavoriteNo());
+		ps.setString(7, m.getAdmin());
 		
 		ps.executeUpdate();
 	}
@@ -87,8 +86,8 @@ public class MemberDao<T extends Member> extends CRUD<Member> {
 				sql += entry.getKey() + " = \'" + entry.getValue() + "\' and";
 			} else {
 				sql += entry.getKey() + " = \'" + entry.getValue() + "\' ";
-				cnt--;
 			}
+			cnt--;
 		}
 		
 		ps = conn.prepareStatement(sql);
@@ -130,11 +129,11 @@ public class MemberDao<T extends Member> extends CRUD<Member> {
 				Integer.parseInt(entry.getValue());
 			}
 			if (cnt > 0) {
-				sql += entry.getKey() + " = \'" + entry.getValue() + "\' and";
+				sql += entry.getKey() + " = \'" + entry.getValue() + "\' and ";
 			} else {
 				sql += entry.getKey() + " = \'" + entry.getValue() + "\' ";
-				cnt--;
 			}
+			cnt--;
 		}
 		
 		ps = conn.prepareStatement(sql);
