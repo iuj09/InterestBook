@@ -148,12 +148,12 @@ public class ArticleService extends SERVICE<Article> {
 					dao.update(a);
 					
 					System.out.println("글 수정 완료.");
-					return;
+					break;
 				case 5:
-					System.out.println("준비중");
+					dao.delete(a.getNum());
 					return;
 				case 0:
-					System.out.println("준비중");
+					flag = false;
 					return;
 				}
 
@@ -165,9 +165,9 @@ public class ArticleService extends SERVICE<Article> {
 
 	}
 
-	// 게시물 좋아요. 게시글 객체, 유저 no
+	// 게시물 좋아요. 게시글 객체, 유저 no // dao에서 처리
 	private void likeArticle(Article a, int i) {
-
+//		((ArticleDao<Article>) dao).likeArticle(1, 1);
 	}
 
 	// 원본list와 페이지num을 param으로 받아서 페이지네이션된 리스트 반환
