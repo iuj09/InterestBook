@@ -7,7 +7,13 @@ public class MenuBoard {
 	private ArticleService aService;
 	private static int page = 1;
 
-	public MenuBoard() {
+//	public MenuBoard(ArticleService aService, Scanner sc) {
+//		super(aService, sc);
+//		this.sc = sc;
+//		this.service = sService;
+//	}
+	
+	public MenuBoard(ArticleService service, Scanner sc) {
 		aService = new ArticleService(null, null);
 	}
 

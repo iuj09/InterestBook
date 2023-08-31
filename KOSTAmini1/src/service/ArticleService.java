@@ -49,13 +49,15 @@ public class ArticleService extends SERVICE<Article> {
 		}
 	}
 
-	// 전체 출력
+	// 리스트로 받아온것 그냥 출력
 	public void printAll(ArrayList<Article> list) {
 		for (Article a : list) {
 			System.out.println(a);
 		}
 	}
 
+	
+	
 	// 페이지네이션하여 게시글 목록 반환(최신순)
 	public void getPagedArticles(int page) {
 
@@ -68,7 +70,7 @@ public class ArticleService extends SERVICE<Article> {
 		System.out.println("----------------------------------------");
 
 		try {
-			List<Article> Articles = dao.select(null);
+			List<Article> Articles = dao.selectByFavorite(1);
 			List<Article> sortedArticles = reverseList(Articles);
 			List<Article> pageArticles = pagedList(sortedArticles, page);
 			int totalPageCount = (int) Math.ceil((double) sortedArticles.size() / 5);
@@ -84,6 +86,8 @@ public class ArticleService extends SERVICE<Article> {
 
 			System.out.println("----------------------------------------");
 			System.out.println(page + " / " + totalPageCount);
+			
+			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

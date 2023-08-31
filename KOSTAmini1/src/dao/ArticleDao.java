@@ -1,5 +1,7 @@
 package dao;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -36,6 +38,7 @@ public class ArticleDao<T extends Article> extends CRUD<Article> {
 
 	}
 
+	// 전체 검색. 번호 검색?
 	@Override
 	public ArrayList<Article> select(HashMap<String, String> args) throws SQLException {
 		System.out.println("select");
@@ -51,8 +54,8 @@ public class ArticleDao<T extends Article> extends CRUD<Article> {
 			ResultSet rs = ps.executeQuery();
 
 			while (rs.next()) {
-				list.add(new Article(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getDate(5), rs.getDate(6),
-						rs.getInt(7), rs.getInt(8)));
+				list.add(new Article(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getDate(5),
+						rs.getDate(6), rs.getInt(7), rs.getInt(8)));
 			}
 
 			return list;
@@ -74,13 +77,14 @@ public class ArticleDao<T extends Article> extends CRUD<Article> {
 		rs = ps.executeQuery();
 
 		while (rs.next()) {
-			list.add(new Article(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getDate(5), rs.getDate(6),
-					rs.getInt(7), rs.getInt(8)));
+			list.add(new Article(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getDate(5),
+					rs.getDate(6), rs.getInt(7), rs.getInt(8)));
 		}
 
 		return list;
 	}
 
+	// 수정
 	@Override
 	public void update(Article a) throws SQLException {
 		conn = db.conn();
@@ -109,6 +113,111 @@ public class ArticleDao<T extends Article> extends CRUD<Article> {
 		System.out.println(cnt + " 줄 삭제 됨.");
 	}
 
+	// 이름으로 검색. 서브쿼리 필요
+	public ArrayList<Article> selectByWriter(String writer) {
+		ArrayList<Article> list = new ArrayList<Article>();
+
+		conn = db.conn();
+
+		String sql = "SELECT * FROM articles WHERE MEMBER_NO IN (SELECT no FROM members WHERE name like ?)"; // 서브쿼리
+
+		try {
+			PreparedStatement pstmt = conn.prepareStatement(sql);
+
+			pstmt.setString(1, "%" + writer + "%");
+
+			ResultSet rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+				list.add(new Article(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getDate(5),
+						rs.getDate(6), rs.getInt(7), rs.getInt(8)));
+			}
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+		return list;
+	}
+
+	// 제목으로 검색
+	public ArrayList<Article> selectByTitle(String title) {
+		ArrayList<Article> list = new ArrayList<Article>();
+
+		conn = db.conn();
+
+		String sql = "SELECT * FROM articles WHERE title like ?";
+
+		try {
+			PreparedStatement pstmt = conn.prepareStatement(sql);
+
+			pstmt.setString(1, "%" + title + "%");
+			
+			ResultSet rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+				list.add(new Article(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getDate(5),
+						rs.getDate(6), rs.getInt(7), rs.getInt(8)));
+			}
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+		return list;
+	}
+	
+	// 관심사 게시물 반환
+	public ArrayList<Article> selectByFavorite(int faId) {
+		ArrayList<Article> list = new ArrayList<Article>();
+
+		conn = db.conn();
+
+		String sql = "SELECT * FROM articles WHERE FAVORITE_NO = ?"; // 서브쿼리
+
+		try {
+			PreparedStatement pstmt = conn.prepareStatement(sql);
+
+			pstmt.setInt(1, faId);
+
+			ResultSet rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+				list.add(new Article(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getDate(5),
+						rs.getDate(6), rs.getInt(7), rs.getInt(8)));
+			}
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+		return list;
+	}
+	
 	@Override
 	public void close() throws SQLException {
 		if (rs != null)
