@@ -318,7 +318,7 @@ public class ArticleService extends SERVICE<Article> {
 
 			// 댓글 추가
 
-			System.out.println("1.댓글보기 2.좋아요 3.좋아요취소 4.수정 5.삭제 0.목록");
+			System.out.println("1.댓글보기 2.좋아요" + (((ArticleDao<Article>) dao).isLike(1, a.getNum()) == false ? " 취소" : "") + " 4.수정 5.삭제 0.목록"); // 유저
 			System.out.print("> 메뉴: ");
 			int cmd = sc.nextInt();
 			switch (cmd) {
@@ -327,19 +327,12 @@ public class ArticleService extends SERVICE<Article> {
 				break;
 			case 2:
 				if (((ArticleDao<Article>) dao).isLike(1, a.getNum())) {
-					System.out.println("이미 좋아요 하였습니다.");
+					((ArticleDao<Article>) dao).dislikeArticle(1, a.getNum());
 				} else {
 					((ArticleDao<Article>) dao).likeArticle(1, a.getNum());
 				}
 				break;
 			case 3:
-				if (((ArticleDao<Article>) dao).isLike(1, a.getNum())) {
-					((ArticleDao<Article>) dao).dislikeArticle(1, a.getNum());
-				} else {
-					System.out.println("아직 좋아요를 하지 않았습니다.");
-				}
-				break;
-			case 4:
 				// 자신글만 수정
 
 				System.out.println("=== 게시글 수정 ===");
