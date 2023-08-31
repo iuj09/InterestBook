@@ -2,7 +2,9 @@ package vo;
 
 import java.sql.Date;
 
-public class Meet {
+import common.VO;
+
+public class Meet extends VO {
     private int no;
     private int recurit;
     private String title;
