@@ -1,5 +1,6 @@
 package dao;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,7 +20,7 @@ public class RepliesDao<T extends Replies> extends CRUD<Replies> {
 		conn = db.conn();
 
 		sql = "insert into Replies values (replies_no_sequence.nextval,?,sysdate,sysdate,?,?,?)";
-		// 마지막 물음표 2개는 Article_no, Member_no 참조해야함
+
 		ps = conn.prepareStatement(sql);
 		ps.setString(1, r.getContent());
 		ps.setInt(2, r.getHeart());
@@ -67,12 +68,11 @@ public class RepliesDao<T extends Replies> extends CRUD<Replies> {
 	public void update(Replies r) throws SQLException {
 		conn = db.conn();
 
-		sql = "update Replies set content = ?, e_date=sysdate where no=? and member_no=?";
+		sql = "update Replies set content = ?, e_date = sysdate where no=?";
 
 		ps = conn.prepareStatement(sql);
 		ps.setString(1, r.getContent());
 		ps.setInt(2, r.getNo());
-		ps.setInt(3, r.getMember_no());
 		int cnt = ps.executeUpdate();
 
 		System.out.println(cnt + "개의 댓글이 수정됨");
@@ -103,9 +103,75 @@ public class RepliesDao<T extends Replies> extends CRUD<Replies> {
 		ps.setInt(1, r.getHeart());
 		ps.setInt(2, r.getNo());
 		int cnt = ps.executeUpdate();
+		
+	}
 
-		System.out.println(cnt + "개의 좋아요 추가됨");
-		System.out.println();
+//-------------------------------------------------------------------------------//
+	// 좋아요 중복 체크
+	public boolean isLike(int mId, int aId, int rId) {
+		conn = db.conn();
+
+		sql = "SELECT * FROM reply_like WHERE MEMBER_NO = ? AND ARTICLE_NO = ? AND REPLY_NO = ?";
+
+		try {
+			ps = conn.prepareStatement(sql);
+			//멤버 번호, 게시글 번호, 댓글 번호
+			ps.setInt(1, mId);
+			ps.setInt(2, aId);
+			ps.setInt(3, rId);
+
+			ResultSet rs = ps.executeQuery();
+			if (rs.next()) {
+				return true;
+			} else {
+				return false;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	// 좋아요
+	public void likeReply(int mId, int aId, int rId) {
+		conn = db.conn();
+
+		sql = "INSERT INTO REPLY_like VALUES (?, ?, ?)";
+
+		try {
+			ps = conn.prepareStatement(sql);
+
+			ps.setInt(1, mId);
+			ps.setInt(2, aId);
+			ps.setInt(3, rId);
+
+			int cnt = ps.executeUpdate();
+			System.out.println("member" + mId + " 님이 " + aId + " 글을 좋아요함");
+			System.out.println();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	// 좋아요 취소
+	public void dislikeReply(int mId, int aId, int rId) {
+		conn = db.conn();
+
+		sql = "DELETE REPLY_like WHERE MEMBER_NO = ? AND ARTICLE_NO = ? AND REPLY_NO = ?";
+
+		try {
+			ps = conn.prepareStatement(sql);
+
+			ps.setInt(1, mId);
+			ps.setInt(2, aId);
+			ps.setInt(3, rId);
+			
+			int cnt = ps.executeUpdate();
+			System.out.println("member" + mId + " 님이 " + aId + " 글을 좋아요 취소함");
+			System.out.println();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
