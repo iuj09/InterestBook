@@ -38,13 +38,15 @@ public class MenuBoard {
 			case 2:
 				System.out.println("> 이동할 페이지: ");
 				page = sc.nextInt();
+				sc.nextLine();
 //				aService.getArticle(sc);
 				break;
 			case 3:
-				aService.addArticle(sc);
+				aService.addArticle(sc, 1); // user
 //				aService.getByWriterArticle(sc);
 				break;
 			case 4:
+				System.out.println("1.제목으로 검색 2.내용으로 검색 3.제목+내용");
 //				aService.getByTitleArticle(sc);
 				break;
 			case 5:

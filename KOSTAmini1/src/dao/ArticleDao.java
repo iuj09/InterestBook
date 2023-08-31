@@ -192,11 +192,11 @@ public class ArticleDao<T extends Article> extends CRUD<Article> {
 		String sql = "SELECT * FROM articles WHERE FAVORITE_NO = ?"; // 서브쿼리
 
 		try {
-			PreparedStatement pstmt = conn.prepareStatement(sql);
+			ps = conn.prepareStatement(sql);
 
-			pstmt.setInt(1, faId);
+			ps.setInt(1, faId);
 
-			ResultSet rs = pstmt.executeQuery();
+			ResultSet rs = ps.executeQuery();
 
 			while (rs.next()) {
 				list.add(new Article(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getDate(5),
@@ -216,6 +216,76 @@ public class ArticleDao<T extends Article> extends CRUD<Article> {
 		}
 
 		return list;
+	}
+	
+	// 이미 좋아요 함?
+	public Boolean isLike(int mId, int aId) {
+//		ArrayList<Article> list = new ArrayList<Article>();
+		
+		conn = db.conn();
+		
+		sql = "SELECT * FROM board_like WHERE MEMBER_NO = ? AND ARTICLE_NO = ?";
+		
+		try {
+			ps = conn.prepareStatement(sql);
+			
+			ps.setInt(1, mId);
+			ps.setInt(2, aId);
+			
+			ResultSet rs = ps.executeQuery();
+
+			if (rs.next()) {
+				return true;
+			} else {
+				return false;
+			}
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return false;
+		
+	}
+	
+	// 좋아요.
+	public void likeArticle(int mId, int aId) {
+		conn = db.conn();
+		
+		sql = "INSERT INTO board_like VALUES (?, ?)";
+		
+		try {
+			ps = conn.prepareStatement(sql);
+
+			ps.setInt(1, mId);
+			ps.setInt(2, aId);
+
+			int cnt = ps.executeUpdate();
+			System.out.println("member" + mId + " 님이 " + aId + " 글을 좋아요함.");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	// 좋아요 취소.
+	public void dislikeArticle(int mId, int aId) {
+		conn = db.conn();
+		
+		sql = "DELETE board_like WHERE MEMBER_NO = ? AND ARTICLE_NO = ?";
+		
+		try {
+			ps = conn.prepareStatement(sql);
+			
+			ps.setInt(1, mId);
+			ps.setInt(2, aId);
+			
+			int cnt = ps.executeUpdate();
+			System.out.println("member" + mId + " 님이 " + aId + " 글을 좋아요 취소함.");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	@Override
