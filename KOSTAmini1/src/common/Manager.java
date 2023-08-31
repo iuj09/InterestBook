@@ -3,9 +3,9 @@ package common;
 import java.util.ArrayList;
 
 public class Manager<T> {
-    private final ArrayList<CRUD<T>> daoList;
-    private final ArrayList<SERVICE<T>> serviceList;
-    private final ArrayList<MENU<T>> menuList;
+    private ArrayList<CRUD<T>> daoList;
+    private ArrayList<SERVICE<T>> serviceList;
+    private ArrayList<MENU<T>> menuList;
 
     public Manager(ArrayList<CRUD<T>> daoList, ArrayList<SERVICE<T>> serviceList, ArrayList<MENU<T>> menuList) {
         this.daoList = daoList;
