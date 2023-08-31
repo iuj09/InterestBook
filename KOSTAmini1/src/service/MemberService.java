@@ -169,7 +169,7 @@ public class MemberService extends SERVICE<Member> {
 	}
 	
 	//login check
-	public Member checkLogin() {
+	public Member nowMember() {
 		try(MemberDao<Member> dao = (MemberDao<Member>) this.dao){
 			if(MemberLog.member != null) {
 				HashMap<String, String> map = new HashMap<String, String>();
