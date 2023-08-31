@@ -23,6 +23,7 @@ public abstract class MENU<T> {
         this.sc = sc;
         this.service = service;
         this.menu = menu;
+        System.out.println(service.toString());
     }
 
     public abstract void menu();
