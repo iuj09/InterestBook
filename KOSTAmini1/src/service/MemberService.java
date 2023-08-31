@@ -190,7 +190,7 @@ public class MemberService extends SERVICE<Member> {
 	
 	//admin 권한 부여
 	public void editAdm(Scanner sc) throws SQLException{
-		Member m = checkLogin();
+		Member m = nowMember();
 		
 		if(m != null) {
             if(m.getAdmin().equals("1")) {
@@ -251,7 +251,7 @@ public class MemberService extends SERVICE<Member> {
 	 */
 	//내 정보 조회
 	public void myInfo(Scanner sc) throws SQLException{
-		Member m = checkLogin();
+		Member m = nowMember();
 		if(m != null) {
             HashMap<String, String> map = new HashMap<String, String>();
             map.put("id", MemberLog.member.getId());
@@ -263,7 +263,7 @@ public class MemberService extends SERVICE<Member> {
 	
 	//내 정보 수정
 	public void editInfo(Scanner sc) throws SQLException{
-		Member m = checkLogin();
+		Member m = nowMember();
 		if(m != null) {
             System.out.println("내 정보 수정");
                
@@ -329,7 +329,7 @@ public class MemberService extends SERVICE<Member> {
 	 */
 	//회원 검색(by no)
 	public void searchByNum(Scanner sc) throws SQLException{
-		Member m = checkLogin();
+		Member m = nowMember();
 		if(m.getId() != null) {
 			HashMap<String, String> map = new HashMap<String, String>();
             map.put("id", m.getId());
@@ -361,7 +361,7 @@ public class MemberService extends SERVICE<Member> {
 	//전체 검색
 	public void searchAll() {
 		try (MemberDao<Member> dao = (MemberDao<Member>) this.dao) {
-			Member m = checkLogin();
+			Member m = nowMember();
 			if(m.getId() != null) {
 				HashMap<String, String> map = new HashMap<String, String>();
 	            map.put("id", MemberLog.member.getId());
@@ -416,7 +416,7 @@ public class MemberService extends SERVICE<Member> {
 	//회원 탈퇴
 	public void delMember(Scanner sc) {
 		try(MemberDao<Member> dao = (MemberDao<Member>) this.dao){
-			Member m = checkLogin();
+			Member m = nowMember();
 			if(m.getId() != null) {
 				HashMap<String, String> map = new HashMap<String, String>();
 		        map.put("id", m.getId());
