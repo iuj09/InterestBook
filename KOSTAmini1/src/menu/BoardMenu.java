@@ -33,7 +33,7 @@ public class BoardMenu extends MENU<Article> {
 				System.out.print("> 글 번호: ");
 				int sel = sc.nextInt();
 				sc.nextLine();
-				((ArticleService) service).selectArticle(sc, sel, m, null, null);
+				((ArticleService) service).selectArticle(sc, page, sel);
 				break;
 			case 2:
 				System.out.print("> 이동할 페이지: ");
@@ -46,7 +46,8 @@ public class BoardMenu extends MENU<Article> {
 //				aService.getByWriterArticle(sc);
 				break;
 			case 4:
-				System.out.println("1.제목으로 검색 2.내용으로 검색 3.제목+내용");
+				((ArticleService) service).searchArticle(sc);
+				
 //				aService.getByTitleArticle(sc);
 				break;
 			case 5:
