@@ -63,8 +63,9 @@ public class MemberService extends SERVICE<Member> {
 			System.out.println("1.aaa 2.bbb 3.ccc");
 			System.out.print("favorite:");
 			int fav = sc.nextInt();
+			int admin = 0;
 			
-			m = new Member(10, id, pwd, name, email, null, loc, fav);
+			m = new Member(10, id, pwd, name, email, null, loc, fav, admin);
 			
 			dao.insert(m);
 		} catch(SQLException e) {
@@ -72,6 +73,61 @@ public class MemberService extends SERVICE<Member> {
 		}
 		
 	}
+	
+	//admin 권한 부여
+	public void editAdm(Scanner sc) {
+		try(MemberDao<Member> dao = (MemberDao<Member>) this.dao){
+			if(Info.log()) {
+				Properties prop;
+				prop = new Properties();
+                prop.load(new FileReader("C:\\Users\\KOSTA\\dogi\\prop.properties"));
+                for (Object key : prop.keySet()) {
+                    String k = (String) key;
+                    HashMap<String, String> map = new HashMap<String, String>();
+                    map.put("id", prop.getProperty(k));
+                    
+                    ArrayList<Member> list = dao.select(map);
+                    Member m = list.get(0);
+                    if(m.getAdmin() == 1) {
+                    	System.out.println("admin 권한 부여");
+                    	
+                    	System.out.println("관리자 권한을 부여할 회원의 회원 번호를 입력해주세요");
+                    	System.out.print("No:");
+                    	String no = sc.next();
+                    	HashMap<String, String> editmap = new HashMap<String, String>();
+                    	editmap.put("no", no);
+                    	
+                    	ArrayList<Member> editlist = dao.select(editmap);
+                    	printList(editlist);
+                    	System.out.println("위 회원에게 관리자 권한을 부여하시겠습니까? (Y / N)");
+                    	String answer = sc.next();
+                    	if(answer.equals("Y") || answer.equals("y")) {
+                    		Member editm = editlist.get(0);
+                    		
+                    		editm.setAdmin(1);
+                    		dao.updateAdm(editm);
+                    	}else {
+                    		System.out.println("관리자 권한 부여 작업을 취소합니다.");
+                    		return;
+                    	}
+                    	
+                    }else {
+                		System.out.println("관리자 계정이 아닙니다.");
+                		return;
+                    }
+                 }
+			}
+		} catch(SQLException e) {
+			System.out.println(e.getMessage());
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	
 	//ArrayList<Member> print
 	public void printList(ArrayList<Member> list) {
@@ -263,6 +319,7 @@ public class MemberService extends SERVICE<Member> {
                     String k = (String) key;
                     HashMap<String, String> map = new HashMap<String, String>();
                     map.put("id", prop.getProperty(k));
+                    
                     Member m = dao.select(map).get(0);
 			
                     System.out.println("회원 탈퇴");
@@ -273,6 +330,7 @@ public class MemberService extends SERVICE<Member> {
                     if(pwd.equals(m.getPwd())) {
                     	dao.delete(m.getNo());
                     	System.out.println("삭제 완료");
+                    	return;
                     }else {
                     	System.out.println("비밀번호를 다시 확인해주세요");
                     	return;

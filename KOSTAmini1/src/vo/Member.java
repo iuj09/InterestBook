@@ -11,10 +11,12 @@ public class Member {
 	private Date joinDate;
 	private int locationNo;
 	private int favoriteNo;
+	private int admin;
 	
 	public Member() {}
 	
-	public Member(int no, String id, String pwd, String name, String email, Date joinDate, int locationNo, int favoriteNo) {
+	public Member(int no, String id, String pwd, String name, String email,
+			Date joinDate, int locationNo, int favoriteNo, int admin) {
 		this.no = no;
 		this.id = id;
 		this.pwd = pwd;
@@ -23,6 +25,7 @@ public class Member {
 		this.joinDate = joinDate;
 		this.locationNo = locationNo;
 		this.favoriteNo = favoriteNo;
+		this.admin = admin;
 	}
 	
 	public Member(String id, String name, int locationNo, int favoriteNo) {
@@ -36,7 +39,7 @@ public class Member {
 		return no;
 	}
 
-	public void setNum(int no) {
+	public void setNo(int no) {
 		this.no = no;
 	}
 
@@ -95,10 +98,18 @@ public class Member {
 	public void setFavoriteNo(int favoriteNo) {
 		this.favoriteNo = favoriteNo;
 	}
+	
+	public int getAdmin() {
+		return admin;
+	}
+
+	public void setAdmin(int admin) {
+		this.admin = admin;
+	}
 
 	@Override
 	public String toString() {
 		return "Member [no=" + no + ", id=" + id + ", pwd=" + pwd + ", name=" + name + ", email=" + email +  ", joinDate=" + joinDate + ", locationNo=" + locationNo
-				+ ", favoriteNo=" + favoriteNo + "]";
+				+ ", favoriteNo=" + favoriteNo + ", admin=" + admin + "]";
 	}
 }
