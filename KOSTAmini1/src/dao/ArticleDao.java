@@ -64,7 +64,11 @@ public class ArticleDao<T extends Article> extends CRUD<Article> {
 		int cnt = args.size() - 1;
 		for (Entry<String, String> entry : args.entrySet()) {
 			if (cnt > 0)
-				sql += entry.getKey() + " = \'" + entry.getValue() + "\' AND ";
+				if (entry.getKey().equals("title") || entry.getKey().equals("content")) {
+					sql += entry.getKey() + " = \'" + entry.getValue() + "\' AND ";
+				} else {
+					sql += entry.getKey() + " = \'" + entry.getValue() + "\' AND ";
+				}
 			else
 				sql += entry.getKey() + " = \'" + entry.getValue() + "\'";
 			cnt--;
@@ -103,7 +107,7 @@ public class ArticleDao<T extends Article> extends CRUD<Article> {
 	@Override
 	public void delete(int num) throws SQLException {
 		conn = db.conn();
-		sql = "DELETE articles WHERE num = ?";
+		sql = "DELETE articles WHERE no = ?";
 		ps = conn.prepareStatement(sql);
 		ps.setInt(1, num);
 
@@ -158,6 +162,41 @@ public class ArticleDao<T extends Article> extends CRUD<Article> {
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 
 			pstmt.setString(1, "%" + title + "%");
+
+			ResultSet rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+				list.add(new Article(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getDate(5),
+						rs.getDate(6), rs.getInt(7), rs.getInt(8)));
+			}
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+		return list;
+	}
+
+	// 제목으로 검색
+	public ArrayList<Article> selectByContent(String content) {
+		ArrayList<Article> list = new ArrayList<Article>();
+
+		conn = db.conn();
+
+		String sql = "SELECT * FROM articles WHERE content LIKE ?";
+
+		try {
+			PreparedStatement pstmt = conn.prepareStatement(sql);
+
+			pstmt.setString(1, "%" + content + "%");
 
 			ResultSet rs = pstmt.executeQuery();
 
@@ -282,15 +321,15 @@ public class ArticleDao<T extends Article> extends CRUD<Article> {
 	// 좋아요 개수
 	public int likeCount(int aId) {
 		conn = db.conn();
-		
+
 		sql = "SELECT COUNT(*) FROM articles_like WHERE ARTICLES_NO = ?";
-		
+
 		int cnt = 0;
 		try {
 			ps = conn.prepareStatement(sql);
-			
+
 			ps.setInt(1, aId);
-			
+
 			ResultSet rs = ps.executeQuery();
 			rs.next();
 			cnt = rs.getInt(1);

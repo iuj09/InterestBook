@@ -87,7 +87,7 @@ public class ArticleService extends SERVICE<Article> {
 	// 페이지에서 게시물 선택해서 디테일 출력
 	public void selectArticle(Scanner sc, int page, int sel) {
 		try {
-			List<Article> Articles = dao.select(null);
+			List<Article> Articles = ((ArticleDao<Article>) dao).selectByFavorite(1);
 			List<Article> sortedArticles = reverseList(Articles);
 			List<Article> pageArticles = pagedList(sortedArticles, page);
 
@@ -138,11 +138,11 @@ public class ArticleService extends SERVICE<Article> {
 					System.out.println("=== 게시글 수정 ===");
 
 					System.out.print("> new Title: ");
-					String title = sc.nextLine();
+					String title = sc.next();
 					a.setTitle(title);
 					// 줄 처리
 					System.out.print("> new content: ");
-					String content = sc.nextLine();
+					String content = sc.next();
 					a.setContent(content);
 
 					dao.update(a);
@@ -220,30 +220,28 @@ public class ArticleService extends SERVICE<Article> {
 	public void searchArticle(Scanner sc) {
 		List<Article> articles = null;
 
-		int pageNum = 1;
+//		int pageNum = 1;
 
 		Boolean flag = true;
 
 		while (flag) {
 			System.out.println("1.제목으로 검색 2.내용으로 검색 3.제목+내용 0.뒤로");
-			System.out.println("> 선택: ");
+			System.out.print("> 선택: ");
 			int sel = sc.nextInt();
 			switch (sel) {
 			case 1:
 				System.out.print("> 검색할 제목: ");
 				String title = sc.next();
 				articles = ((ArticleDao<Article>) dao).selectByTitle(title);
-				int totalPageCount = (int) Math.ceil((double) articles.size() / 5);
-				articles = pagedList(reverseList(articles), pageNum);
-				subRun(sc, articles, pageNum, totalPageCount);
+				articles = reverseList(articles);
+				subRun(sc, articles);
 				break;
 			case 2:
 				System.out.print("> 검색할 내용: ");
 				String content = sc.next();
-				articles = ((ArticleDao<Article>) dao).selectByTitle(content);
-				int totalPageCount2 = (int) Math.ceil((double) articles.size() / 5);
-				articles = pagedList(reverseList(articles), pageNum);
-				subRun(sc, articles, pageNum, totalPageCount2);
+				articles = ((ArticleDao<Article>) dao).selectByContent(content);
+				articles = reverseList(articles);
+				subRun(sc, articles);
 				break;
 			case 3:
 				System.out.println("준비중");
@@ -255,27 +253,32 @@ public class ArticleService extends SERVICE<Article> {
 		}
 	}
 
-	// 검색후 게시물 리스트.
-	public void subRun(Scanner sc, List<Article> list, int pageNum, int totalPageCount) {
+	// 검색후 게시물 리스트. 안쪽에서 페이지 네이션 해야함.
+	public void subRun(Scanner sc, List<Article> list) {
 		boolean flag = true;
 		int m = 0;
-		int pageNum2 = pageNum;
+		int pageNum = 1;
+
+		int totalPageCount = (int) Math.ceil((double) list.size() / 5);
 		while (flag) {
+
 			System.out.println("================= 검색결과 =================");
 			System.out.println("번호   제목               작성자   작성일  ");
 			System.out.println("----------------------------------------");
 
-			if (list == null) {
+			List<Article> pageArticles = pagedList(list, pageNum);
+
+			if (pageArticles == null) {
 				System.out.println("잘못된 페이지 번호입니다. 전체 페이지 수: " + totalPageCount);
 				return;
 			}
-			for (Article a : list) {
-				System.out.printf(" %-3d | %-15s | %3s | %-1s\n", list.indexOf(a) + 1, a.getTitle(), a.getWriter(),
-						a.getwDate());
+			for (Article a : pageArticles) {
+				System.out.printf(" %-3d | %-15s | %3s | %-1s\n", pageArticles.indexOf(a) + 1, a.getTitle(),
+						a.getWriter(), a.getwDate());
 			} // 날짜 출력 형식
 
 			System.out.println("----------------------------------------");
-			System.out.println(pageNum2 + " / " + totalPageCount);
+			System.out.println(pageNum + " / " + totalPageCount);
 
 			// 선택
 			System.out.println("1.글선택 2.페이지이동 0.뒤로");
@@ -286,14 +289,12 @@ public class ArticleService extends SERVICE<Article> {
 				System.out.print("> 글 번호: ");
 				int sel = sc.nextInt();
 				sc.nextLine();
-				showDetailArticle(sc, list.get(sel-1));
-//				selectArticle(sc, page, sel);
+				showDetailArticle(sc, list.get((pageNum - 1) * 5 + sel - 1));
 				break;
 			case 2:
 				System.out.print("> 이동할 페이지: ");
-				pageNum2 = sc.nextInt();
+				pageNum = sc.nextInt();
 				sc.nextLine();
-//				aService.getArticle(sc);
 				break;
 			case 0:
 				return;
@@ -301,6 +302,7 @@ public class ArticleService extends SERVICE<Article> {
 		}
 	}
 
+	// 게시글의 상세페이지
 	public void showDetailArticle(Scanner sc, Article a) {
 		Boolean flag = true;
 
