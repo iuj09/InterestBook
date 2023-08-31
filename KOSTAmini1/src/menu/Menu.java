@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Scanner;
 
 import common.MENU;
+import common.Manager;
 import dao.ArticleDao;
 import dao.MeetDao;
 import dao.MeetReplyDao;
@@ -65,13 +66,11 @@ public class Menu<T> {
         list.add(((MENU<Article>)new BoardMenu(sc, new ArticleService(sc, new ArticleDao<Article>()), this)));
         list.add((MENU<Member>)new MemberMenu(sc, new MemberService(sc, new MemberDao<Member>()), this));
         list.add((MENU<MeetReply>)new MeetReplyMenu(sc, new MeetReplyService(sc, new MeetReplyDao<MeetReply>()), this));
+
+        Manager manager = new Manager<>(null, null, null);
     }
 
     public void menuRun(int num) {
         list.get(num).menu();
-    }
-
-    public void jump(int func, int undecied) {
-        
     }
 }
