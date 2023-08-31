@@ -11,12 +11,12 @@ public class Member {
 	private Date joinDate;
 	private int locationNo;
 	private int favoriteNo;
-	private int admin;
+	private String admin;
 	
 	public Member() {}
 	
 	public Member(int no, String id, String pwd, String name, String email,
-			Date joinDate, int locationNo, int favoriteNo, int admin) {
+			Date joinDate, int locationNo, int favoriteNo, String admin) {
 		this.no = no;
 		this.id = id;
 		this.pwd = pwd;
@@ -99,11 +99,11 @@ public class Member {
 		this.favoriteNo = favoriteNo;
 	}
 	
-	public int getAdmin() {
+	public String getAdmin() {
 		return admin;
 	}
 
-	public void setAdmin(int admin) {
+	public void setAdmin(String admin) {
 		this.admin = admin;
 	}
 

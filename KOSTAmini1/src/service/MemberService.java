@@ -63,11 +63,13 @@ public class MemberService extends SERVICE<Member> {
 			System.out.println("1.aaa 2.bbb 3.ccc");
 			System.out.print("favorite:");
 			int fav = sc.nextInt();
-			int admin = 0;
+			String admin = "0";
 			
-			m = new Member(10, id, pwd, name, email, null, loc, fav, admin);
+			m = new Member(0, id, pwd, name, email, null, loc, fav, admin);
 			
 			dao.insert(m);
+			System.out.println("회원 가입 완료");
+			System.out.println(m);
 		} catch(SQLException e) {
 			System.out.println(e.getMessage());
 		}
@@ -88,7 +90,7 @@ public class MemberService extends SERVICE<Member> {
                     
                     ArrayList<Member> list = dao.select(map);
                     Member m = list.get(0);
-                    if(m.getAdmin() == 1) {
+                    if(m.getAdmin().equals("1")) {
                     	System.out.println("admin 권한 부여");
                     	
                     	System.out.println("관리자 권한을 부여할 회원의 회원 번호를 입력해주세요");
@@ -104,7 +106,7 @@ public class MemberService extends SERVICE<Member> {
                     	if(answer.equals("Y") || answer.equals("y")) {
                     		Member editm = editlist.get(0);
                     		
-                    		editm.setAdmin(1);
+                    		editm.setAdmin("1");
                     		dao.updateAdm(editm);
                     	}else {
                     		System.out.println("관리자 권한 부여 작업을 취소합니다.");
