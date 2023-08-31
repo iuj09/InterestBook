@@ -10,6 +10,7 @@ import common.SERVICE;
 import dao.ArticleDao;
 import dao.MemberDao;
 import vo.Article;
+import vo.Member;
 
 public class ArticleService extends SERVICE<Article> {
 	private MemberService mService;
@@ -65,45 +66,23 @@ public class ArticleService extends SERVICE<Article> {
 
 	}
 
-	// 최신 run
-	public void boardRun() {
-		HashMap<String, String> args = new HashMap<String, String>() {
+	// 페이지네이션하여 게시글 목록 출력(최신순) // param으로 list?
+	public HashMap<String, Object> printArticle(int page) {
+		HashMap<String, Object> context = new HashMap<>();
+		Member user = ((MemberService) mService).nowMember();
+		HashMap<String, Object> args = new HashMap<>() {
 			{
-				put("FAVORITES_NO", String.valueOf(((MemberService) mService).nowMember().getFavoriteNo()));
+				put("FAVORITES_NO", user.getFavoriteNo());
 			}
 		};
-//		((MemberService) mService).nowMember().getFavoriteNo();
-		try {
-			List<Article> Articles = ((ArticleDao<Article>) dao).select(args);
-			List<Article> sortedArticles = reverseList(Articles);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	// 페이지네이션하여 게시글 목록 출력(최신순) // param으로 list?
-	public void printArticle(int page) {
-		System.out.println("================= 게시판 =================");
-		System.out.println("번호   제목               작성자   작성일  ");
-		System.out.println("----------------------------------------");
-
-		List<Article> Articles = ((ArticleDao<Article>) dao).selectByFavorite(1); // user 객체
-		List<Article> sortedArticles = reverseList(Articles);
+		ArrayList<Article> articles = ((ArticleDao<Article>) dao).select1(args);
+		List<Article> sortedArticles = reverseList(articles);
 		List<Article> pageArticles = pagedList(sortedArticles, page);
 		int totalPageCount = (int) Math.ceil((double) sortedArticles.size() / 5);
 
-		if (pageArticles == null) {
-			System.out.println("잘못된 페이지 번호입니다. 전체 페이지 수: " + totalPageCount);
-			return;
-		}
-		for (Article a : pageArticles) {
-			System.out.printf(" %-3d | %-15s | %3s | %-1s\n", pageArticles.indexOf(a) + 1, a.getTitle(), a.getWriter(),
-					a.getwDate());
-		} // 날짜 출력 형식
-
-		System.out.println("----------------------------------------");
-		System.out.println(page + " / " + totalPageCount);
+		context.put("articles", pageArticles);
+		context.put("totalPage", totalPageCount);
+		return context;
 	}
 
 	// 페이지에서 게시물 선택해서 디테일 출력

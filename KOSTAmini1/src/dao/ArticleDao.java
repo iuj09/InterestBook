@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map.Entry;
 
 import common.CRUD;
@@ -332,6 +333,45 @@ public class ArticleDao<T extends Article> extends CRUD<Article> {
 		ps.close();
 		conn.close();
 		System.out.println("close() 작동!");
+	}
+
+	// object를 arg로 받는 새로운 select1
+	public ArrayList<Article> select1(HashMap<String, Object> args) {
+		ArrayList<Article> list = new ArrayList<>();
+		conn = db.conn();
+		sql = "SELECT * FROM articles";
+		if (args != null) {
+			sql += " WHERE ";
+
+			int cnt = args.size() - 1;
+			for (Entry<String, Object> entry : args.entrySet()) {
+				if (entry.getKey().equals("title") || entry.getKey().equals("content")) {
+					sql += entry.getKey() + " like '%" + entry.getValue() + "%'";
+				} else {
+					sql += entry.getKey() + " = '" + String.valueOf(entry.getValue()) + "'";
+				}
+				if (cnt > 0) {
+					sql += " AND ";
+				}
+				cnt--;
+			}
+		}
+
+		try {
+			ps = conn.prepareStatement(sql);
+
+			rs = ps.executeQuery();
+
+			while (rs.next()) {
+				list.add(new Article(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getDate(5),
+						rs.getDate(6), rs.getInt(7), rs.getInt(8)));
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return list;
 	}
 
 }
