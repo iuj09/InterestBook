@@ -3,17 +3,21 @@ package menu;
 import java.util.Scanner;
 
 import common.MENU;
+import dao.MemberDao;
 import service.ArticleService;
+import service.MemberService;
 import vo.Article;
 
 public class BoardMenu extends MENU<Article> {
 	private static int page = 1;
-
+	private MemberService mService;
+	
 	public BoardMenu(Scanner sc, ArticleService aService, Menu<?> menu) {
 		super(sc, aService, menu);
 		this.sc = sc;
 		this.service = aService;
 		this.menu = menu;
+		mService = new MemberService(sc, new MemberDao());
 	}
 
 	@Override
@@ -25,6 +29,7 @@ public class BoardMenu extends MENU<Article> {
 			((ArticleService) service).printArticle(page);
 //			aService.listByPage(page);
 //			aService.getAll();
+//			((MemberService) mService).nowMember();
 			System.out.println("1.글선택 2.페이지이동 3.글쓰기 4.검색 0.뒤로");
 			m = sc.nextInt();
 			switch (m) {

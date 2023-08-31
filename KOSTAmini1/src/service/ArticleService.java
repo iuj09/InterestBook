@@ -8,12 +8,17 @@ import java.util.Scanner;
 
 import common.SERVICE;
 import dao.ArticleDao;
+import dao.MemberDao;
 import vo.Article;
 
 public class ArticleService extends SERVICE<Article> {
+	private MemberService mService;
+	private int perPage;
+
 	public ArticleService(Scanner sc, ArticleDao<Article> dao) {
 		super(sc, dao);
-		System.out.println("Aricle Service 클래스 생성!");
+		mService = new MemberService(sc, new MemberDao());
+		perPage = 5;
 	}
 
 	// 글 작성.
@@ -58,6 +63,23 @@ public class ArticleService extends SERVICE<Article> {
 	// 페이지네이션하여 게시글 목록 반환(최신순)
 	public void getPagedArticles(int page) {
 
+	}
+
+	// 최신 run
+	public void boardRun() {
+		HashMap<String, String> args = new HashMap<String, String>() {
+			{
+				put("FAVORITES_NO", String.valueOf(((MemberService) mService).nowMember().getFavoriteNo()));
+			}
+		};
+//		((MemberService) mService).nowMember().getFavoriteNo();
+		try {
+			List<Article> Articles = ((ArticleDao<Article>) dao).select(args);
+			List<Article> sortedArticles = reverseList(Articles);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	// 페이지네이션하여 게시글 목록 출력(최신순) // param으로 list?
@@ -318,7 +340,8 @@ public class ArticleService extends SERVICE<Article> {
 
 			// 댓글 추가
 
-			System.out.println("1.댓글보기 2.좋아요" + (((ArticleDao<Article>) dao).isLike(1, a.getNum()) == false ? " 취소" : "") + " 4.수정 5.삭제 0.목록"); // 유저
+			System.out.println("1.댓글보기 2.좋아요"
+					+ (((ArticleDao<Article>) dao).isLike(1, a.getNum()) == false ? " 취소" : "") + " 4.수정 5.삭제 0.목록"); // 유저
 			System.out.print("> 메뉴: ");
 			int cmd = sc.nextInt();
 			switch (cmd) {
