@@ -28,22 +28,59 @@ public class MeetMenu extends MENU<Meet> {
         boolean flag = true;
         while(flag) {
             System.out.println("-----------------------------------------------------");
-            System.out.println("1. 모집글 출력 / 2. 모집글 작성 / 3. 게시판 / 4. 이전");
+            System.out.println("1. 모집글 출력 / 2. 모집글 조회 / 3. 모집글 작성 / 3. 이전");
             System.out.println("-----------------------------------------------------");
             System.out.print(": ");
             int num = sc.nextInt();
 
+            System.out.println();
             switch(num) {
                 case 1:
-                    ((MeetService)service).menu(-1);
+                    ((MeetService)service).menu(1, 0);
                     break;
                 case 2:
-                    ((MeetService)service).menu(2);
+                    // 모집글 선택
+                    System.out.print("모집글 번호: ");
+                    int no = sc.nextInt();
+                    meetInfo(no);
                     break;
                 case 3:
-                    menu.list.get(2).menu();
+                    ((MeetService)service).menu(2, 0);
                     break;
                 case 4:
+                    flag = false;
+                    break;
+            }
+        }
+    }
+
+    /**
+     * no : 게시글 번호
+     */
+    public void meetInfo(int no) {
+        boolean flag = true;
+        while(flag) {
+            System.out.println("-----------------------------------------------------");
+            ((MeetService)service).menu(-1, no);
+            System.out.println("-----------------------------------------------------");
+            System.out.println("1. 모집글 수정 / 2. 참가 / 3. 참가 취소 / 4. 해당 모집글 댓글 조회 / 5. 이전");
+            System.out.println("-----------------------------------------------------");
+            System.out.print(": ");
+            int num = sc.nextInt();
+
+            System.out.println();
+            switch(num) {
+                case 1:
+                    ((MeetService)service).menu(3, no);
+                    break;
+                case 2:
+                    break;
+                case 3:
+                    break;
+                case 4:
+                    menu.menuRun(2);
+                    break;
+                case 5:
                     flag = false;
                     break;
             }

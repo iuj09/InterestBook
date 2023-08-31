@@ -3,6 +3,7 @@ package dao;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 import common.CRUD;
 import common.DBConnect;
@@ -18,8 +19,10 @@ public class MeetDao<T extends Meet> extends CRUD<Meet> {
     public void insert(Meet meet) throws SQLException {
         conn = db.conn();
 
-        sql = "INSERT INTO MEETS(NO, RECURIT, TITLE, CONTENT, DEADLINE, LOCATION_NO, MEMBER_NO) " + 
+        sql = "INSERT INTO MEETS(NO, RECURIT, TITLE, CONTENT, DEADLINE, LOCATIONS_NO, MEMBERS_NO) " + 
                 "VALUES (MEETS_NO_SEQUENCE.NEXTVAL, ?, ?, ?, TO_DATE(SYSDATE, \'yyyy/mm/dd hh24:mi:ss\'), ?, 3)";
+        
+        System.out.println(sql);
 
         ps = conn.prepareStatement(sql);
 
@@ -53,17 +56,57 @@ public class MeetDao<T extends Meet> extends CRUD<Meet> {
                         rs.getString(4), rs.getDate(5), rs.getDate(6),
                         rs.getDate(7), rs.getInt(8), rs.getInt(9)));
             }
+        } else {
+            sql = "SELECT * FROM MEETS WHERE ";
+            int cnt = args.size() -1;
+            for(Entry<String, String> entry : args.entrySet()) {
+                if (cnt > 0) {
+                    sql += entry.getKey() + " = \'" + entry.getValue() + "\' and";
+                } else {
+                    sql += entry.getKey() + " = \'" + entry.getValue() + "\' ";
+                    cnt--;
+                }
+		    }
+            System.out.println(sql);
 
-            return list;
+            ps = conn.prepareStatement(sql);
+
+            rs = ps.executeQuery();
+
+            if(rs.next()) {
+                list.add(new Meet(rs.getInt(1), rs.getInt(2), rs.getString(3),
+                        rs.getString(4), rs.getDate(5), rs.getDate(6),
+                        rs.getDate(7), rs.getInt(8), rs.getInt(9)));
+            }
         }
 
-        return null;
+        return list;
     }
 
     @Override
-    public void update(Meet t) throws SQLException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'update'");
+    public void update(Meet meet) throws SQLException {
+        conn = db.conn();
+
+        sql = "UPDATE MEETS SET ";
+
+        if(meet.getTitle() != null && !meet.getTitle().equals("")) {
+            sql += "TITLE = \'" + meet.getTitle() + "\' " + "WHERE NO = \'" + meet.getNo() + "\'";
+            System.out.println("TITLE 통과");
+        } else if(meet.getContent() != null && !meet.getContent().equals("")) {
+            sql += "CONTENT = \'" + meet.getContent() + "\' " + "WHERE NO = \'" + meet.getNo() + "\'";
+            System.out.println("CONTENT 통과");
+        } else if(meet.getRecurit() != 0) {
+            sql += "RECURIT = \'" + meet.getRecurit() + "\' " + "WHERE NO = \'" + meet.getNo() + "\'";
+        } else {
+            sql += "E_DATE = SYSDATE" + "WHERE NO = \'" + meet.getNo() + "\'";
+            System.out.println("date 통과");
+        }
+
+        System.out.println(sql);
+
+        ps = conn.prepareStatement(sql);
+
+        ps.executeUpdate();
     }
     
     @Override

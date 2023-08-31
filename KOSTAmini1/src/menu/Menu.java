@@ -6,11 +6,14 @@ import java.util.Scanner;
 
 import common.MENU;
 import dao.MeetDao;
+import dao.MeetReplyDao;
 import dao.MemberDao;
+import service.MeetReplyService;
 import service.MeetService;
 import service.MemberService;
 import vo.Meet;
 import vo.Member;
+import vo.MeetReply;
 
 public class Menu<T> {
     private Scanner sc;
@@ -30,6 +33,7 @@ public class Menu<T> {
             System.out.print(": ");
             int num = sc.nextInt();
 
+            System.out.println();
             // num - 1 : ArrayList는 0부터 시작하기 때문에 입력값 - 1
             switch(num) {
                 case 1:
@@ -49,12 +53,17 @@ public class Menu<T> {
      * 자신의 메뉴 클래스를 생성하는 메서드
      * 메뉴 객체 만드는 방법 : list.add(((MENU<VO>)new 이름Menu(sc, new 이름Service(sc, new 이름Dao<VO>()), this));
      */
-    public void menuList() {
+    private void menuList() {
         list.add((MENU<Meet>)new MeetMenu(sc, new MeetService(sc, new MeetDao<Meet>()), this));
-        list.add(((MENU<Member>)new MemberMenu(sc, new MemberService(sc, new MemberDao<Member>()), this)));
+        list.add((MENU<Member>)new MemberMenu(sc, new MemberService(sc, new MemberDao<Member>()), this));
+        list.add((MENU<MeetReply>)new MeetReplyMenu(sc, new MeetReplyService(sc, new MeetReplyDao<MeetReply>()), this));
     }
 
     public void menuRun(int num) {
         list.get(num).menu();
+    }
+
+    public void jump(int func, int undecied) {
+        
     }
 }
