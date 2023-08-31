@@ -22,7 +22,7 @@ public class ArticleDao<T extends Article> extends CRUD<Article> {
 	public void insert(Article a) throws SQLException {
 		conn = db.conn();
 
-		sql = "INSERT INTO articles VALUES (seq_articles.nextval, ?, ?, 0, sysdate, sysdate, ?, ?)";
+		sql = "INSERT INTO articles VALUES (articles_NO_sequence.nextval, ?, ?, 0, sysdate, sysdate, ?, ?)";
 
 		ps = conn.prepareStatement(sql);
 
@@ -158,7 +158,7 @@ public class ArticleDao<T extends Article> extends CRUD<Article> {
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 
 			pstmt.setString(1, "%" + title + "%");
-			
+
 			ResultSet rs = pstmt.executeQuery();
 
 			while (rs.next()) {
@@ -180,14 +180,14 @@ public class ArticleDao<T extends Article> extends CRUD<Article> {
 
 		return list;
 	}
-	
+
 	// 관심사 게시물 반환
 	public ArrayList<Article> selectByFavorite(int faId) {
 		ArrayList<Article> list = new ArrayList<Article>();
 
 		conn = db.conn();
 
-		String sql = "SELECT * FROM articles WHERE FAVORITE_NO = ?"; // 서브쿼리
+		String sql = "SELECT * FROM articles WHERE FAVORITEs_NO = ?";
 
 		try {
 			ps = conn.prepareStatement(sql);
@@ -204,25 +204,25 @@ public class ArticleDao<T extends Article> extends CRUD<Article> {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} 
+		}
 
 		return list;
 	}
-	
+
 	// 이미 좋아요 함?
 	public Boolean isLike(int mId, int aId) {
 //		ArrayList<Article> list = new ArrayList<Article>();
-		
+
 		conn = db.conn();
-		
-		sql = "SELECT * FROM board_like WHERE MEMBER_NO = ? AND ARTICLE_NO = ?";
-		
+
+		sql = "SELECT * FROM articles_like WHERE MEMBERS_NO = ? AND ARTICLES_NO = ?";
+
 		try {
 			ps = conn.prepareStatement(sql);
-			
+
 			ps.setInt(1, mId);
 			ps.setInt(2, aId);
-			
+
 			ResultSet rs = ps.executeQuery();
 
 			if (rs.next()) {
@@ -230,21 +230,21 @@ public class ArticleDao<T extends Article> extends CRUD<Article> {
 			} else {
 				return false;
 			}
-			
+
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return false;
-		
+
 	}
-	
+
 	// 좋아요.
 	public void likeArticle(int mId, int aId) {
 		conn = db.conn();
-		
-		sql = "INSERT INTO board_like VALUES (?, ?)";
-		
+
+		sql = "INSERT INTO articles_like VALUES (?, ?)";
+
 		try {
 			ps = conn.prepareStatement(sql);
 
@@ -262,15 +262,15 @@ public class ArticleDao<T extends Article> extends CRUD<Article> {
 	// 좋아요 취소.
 	public void dislikeArticle(int mId, int aId) {
 		conn = db.conn();
-		
-		sql = "DELETE board_like WHERE MEMBER_NO = ? AND ARTICLE_NO = ?";
-		
+
+		sql = "DELETE articles_like WHERE MEMBERS_NO = ? AND ARTICLES_NO = ?";
+
 		try {
 			ps = conn.prepareStatement(sql);
-			
+
 			ps.setInt(1, mId);
 			ps.setInt(2, aId);
-			
+
 			int cnt = ps.executeUpdate();
 			System.out.println("member" + mId + " 님이 " + aId + " 글을 좋아요 취소함.");
 		} catch (SQLException e) {
@@ -278,7 +278,29 @@ public class ArticleDao<T extends Article> extends CRUD<Article> {
 			e.printStackTrace();
 		}
 	}
-	
+
+	// 좋아요 개수
+	public int likeCount(int aId) {
+		conn = db.conn();
+		
+		sql = "SELECT COUNT(*) FROM articles_like WHERE ARTICLES_NO = ?";
+		
+		int cnt = 0;
+		try {
+			ps = conn.prepareStatement(sql);
+			
+			ps.setInt(1, aId);
+			
+			ResultSet rs = ps.executeQuery();
+			rs.next();
+			cnt = rs.getInt(1);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return cnt;
+	}
+
 	@Override
 	public void close() throws SQLException {
 		if (rs != null)

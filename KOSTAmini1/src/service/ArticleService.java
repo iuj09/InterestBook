@@ -20,9 +20,9 @@ public class ArticleService extends SERVICE<Article> {
 	public void addArticle(Scanner sc) {
 		System.out.println("=== 글 작성 ===");
 
-		System.out.print("title:");
+		System.out.print("title: ");
 		String title = sc.next();
-		System.out.print("content:");
+		System.out.print("content: ");
 		String content = sc.next();
 
 		try {
@@ -60,7 +60,7 @@ public class ArticleService extends SERVICE<Article> {
 
 	}
 
-	// 페이지네이션하여 게시글 목록 출력(최신순)
+	// 페이지네이션하여 게시글 목록 출력(최신순) // param으로 list?
 	public void printArticle(int page) {
 		System.out.println("================= 게시판 =================");
 		System.out.println("번호   제목               작성자   작성일  ");
@@ -84,10 +84,10 @@ public class ArticleService extends SERVICE<Article> {
 		System.out.println(page + " / " + totalPageCount);
 	}
 
-	// 페이지에서 게시물 선택
-	public void selectArticle(Scanner sc, int page, int num, List<Article> List, HashMap<String, String> args) {
+	// 페이지에서 게시물 선택해서 디테일 출력
+	public void selectArticle(Scanner sc, int page, int sel) {
 		try {
-			List<Article> Articles = dao.select(args);
+			List<Article> Articles = dao.select(null);
 			List<Article> sortedArticles = reverseList(Articles);
 			List<Article> pageArticles = pagedList(sortedArticles, page);
 
@@ -96,7 +96,7 @@ public class ArticleService extends SERVICE<Article> {
 				return;
 			}
 
-			Article a = pageArticles.get(num - 1);
+			Article a = pageArticles.get(sel - 1);
 			Boolean flag = true;
 
 			while (flag) {
@@ -104,7 +104,7 @@ public class ArticleService extends SERVICE<Article> {
 				System.out.println("제목  : " + a.getTitle());
 				System.out.println("작성일 : " + a.getwDate());
 				System.out.println("작성자 : " + a.getWriter());
-				System.out.println("좋아요 수: "); //
+				System.out.println("좋아요 수: " + ((ArticleDao<Article>) dao).likeCount(a.getNum())); //
 				System.out.println("-------------------------------------------");
 				System.out.println(a.getContent());
 				System.out.println("-------------------------------------------");
@@ -134,9 +134,9 @@ public class ArticleService extends SERVICE<Article> {
 					break;
 				case 4:
 					// 자신글만 수정
-					
+
 					System.out.println("=== 게시글 수정 ===");
-					
+
 					System.out.print("> new Title: ");
 					String title = sc.nextLine();
 					a.setTitle(title);
@@ -146,7 +146,7 @@ public class ArticleService extends SERVICE<Article> {
 					a.setContent(content);
 
 					dao.update(a);
-					
+
 					System.out.println("글 수정 완료.");
 					break;
 				case 5:
@@ -201,19 +201,178 @@ public class ArticleService extends SERVICE<Article> {
 	public void addArticle(Scanner sc, int faId) {
 		System.out.println("=== 글 작성 ===");
 
-		System.out.print("title:");
+		System.out.print("title: ");
 		String title = sc.next();
-		System.out.print("content:");
+		System.out.print("content: ");
 		String content = sc.next();
 
 		try {
-			dao.insert(new Article(0, title, content, 0, null, null, faId, 0));
+			dao.insert(new Article(0, title, content, 0, null, null, faId, 1));
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
 		System.out.println("글 작성 완료.");
+	}
+
+	// 검색 시작
+	public void searchArticle(Scanner sc) {
+		List<Article> articles = null;
+
+		int pageNum = 1;
+
+		Boolean flag = true;
+
+		while (flag) {
+			System.out.println("1.제목으로 검색 2.내용으로 검색 3.제목+내용 0.뒤로");
+			System.out.println("> 선택: ");
+			int sel = sc.nextInt();
+			switch (sel) {
+			case 1:
+				System.out.print("> 검색할 제목: ");
+				String title = sc.next();
+				articles = ((ArticleDao<Article>) dao).selectByTitle(title);
+				int totalPageCount = (int) Math.ceil((double) articles.size() / 5);
+				articles = pagedList(reverseList(articles), pageNum);
+				subRun(sc, articles, pageNum, totalPageCount);
+				break;
+			case 2:
+				System.out.print("> 검색할 내용: ");
+				String content = sc.next();
+				articles = ((ArticleDao<Article>) dao).selectByTitle(content);
+				int totalPageCount2 = (int) Math.ceil((double) articles.size() / 5);
+				articles = pagedList(reverseList(articles), pageNum);
+				subRun(sc, articles, pageNum, totalPageCount2);
+				break;
+			case 3:
+				System.out.println("준비중");
+				break;
+			case 0:
+				flag = false;
+				break;
+			}
+		}
+	}
+
+	// 검색후 게시물 리스트.
+	public void subRun(Scanner sc, List<Article> list, int pageNum, int totalPageCount) {
+		boolean flag = true;
+		int m = 0;
+		int pageNum2 = pageNum;
+		while (flag) {
+			System.out.println("================= 검색결과 =================");
+			System.out.println("번호   제목               작성자   작성일  ");
+			System.out.println("----------------------------------------");
+
+			if (list == null) {
+				System.out.println("잘못된 페이지 번호입니다. 전체 페이지 수: " + totalPageCount);
+				return;
+			}
+			for (Article a : list) {
+				System.out.printf(" %-3d | %-15s | %3s | %-1s\n", list.indexOf(a) + 1, a.getTitle(), a.getWriter(),
+						a.getwDate());
+			} // 날짜 출력 형식
+
+			System.out.println("----------------------------------------");
+			System.out.println(pageNum2 + " / " + totalPageCount);
+
+			// 선택
+			System.out.println("1.글선택 2.페이지이동 0.뒤로");
+			m = sc.nextInt();
+			switch (m) {
+			case 1:
+				System.out.println("=== 상세보기 ===");
+				System.out.print("> 글 번호: ");
+				int sel = sc.nextInt();
+				sc.nextLine();
+				showDetailArticle(sc, list.get(sel-1));
+//				selectArticle(sc, page, sel);
+				break;
+			case 2:
+				System.out.print("> 이동할 페이지: ");
+				pageNum2 = sc.nextInt();
+				sc.nextLine();
+//				aService.getArticle(sc);
+				break;
+			case 0:
+				return;
+			}
+		}
+	}
+
+	public void showDetailArticle(Scanner sc, Article a) {
+		Boolean flag = true;
+
+		while (flag) {
+			System.out.println(a.getNum());
+			System.out.println("제목  : " + a.getTitle());
+			System.out.println("작성일 : " + a.getwDate());
+			System.out.println("작성자 : " + a.getWriter());
+			System.out.println("좋아요 수: " + ((ArticleDao<Article>) dao).likeCount(a.getNum())); //
+			System.out.println("-------------------------------------------");
+			System.out.println(a.getContent());
+			System.out.println("-------------------------------------------");
+
+			// 댓글 추가
+
+			System.out.println("1.댓글보기 2.좋아요 3.좋아요취소 4.수정 5.삭제 0.목록");
+			System.out.print("> 메뉴: ");
+			int cmd = sc.nextInt();
+			switch (cmd) {
+			case 1:
+				System.out.println("준비중");
+				break;
+			case 2:
+				if (((ArticleDao<Article>) dao).isLike(1, a.getNum())) {
+					System.out.println("이미 좋아요 하였습니다.");
+				} else {
+					((ArticleDao<Article>) dao).likeArticle(1, a.getNum());
+				}
+				break;
+			case 3:
+				if (((ArticleDao<Article>) dao).isLike(1, a.getNum())) {
+					((ArticleDao<Article>) dao).dislikeArticle(1, a.getNum());
+				} else {
+					System.out.println("아직 좋아요를 하지 않았습니다.");
+				}
+				break;
+			case 4:
+				// 자신글만 수정
+
+				System.out.println("=== 게시글 수정 ===");
+
+				System.out.print("> new Title: ");
+				String title = sc.next();
+				a.setTitle(title);
+				// 줄 처리
+				System.out.print("> new content: ");
+				String content = sc.next();
+				a.setContent(content);
+
+				try {
+					dao.update(a);
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+				System.out.println("글 수정 완료.");
+				break;
+			case 5:
+				try {
+					dao.delete(a.getNum());
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				return;
+			case 0:
+				flag = false;
+				return;
+			}
+
+		}
 	}
 
 }
