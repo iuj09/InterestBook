@@ -7,13 +7,14 @@ import vo.Member;
 
 public class Main {
 	public static void main(String[] args) {
-<<<<<<< HEAD
+//<<<<<<< HEAD
 		// TODO Auto-generated method stub
-//		Scanner sc = new Scanner(System.in);
-//		MemberService mservice = new MemberService(sc, new MemberDao<Member>());
+		Scanner sc = new Scanner(System.in);
+		MemberService mservice = new MemberService(sc, new MemberDao<Member>());
 //		Info.login(sc, new MemberDao<Member>());
 //		Info.logout();
 //		mservice.join(sc);
+//		mservice.editAdm(sc)
 //		mservice.myInfo(sc);
 //		mservice.editInfo(sc);
 //		mservice.searchByName(sc); //select id, name, locNo, favNo
@@ -22,10 +23,10 @@ public class Main {
 //		mservice.searchAll();
 //		mservice.delMember(sc);
 		
-=======
-		Menu menu = new Menu();
-		menu.menu();
->>>>>>> refs/remotes/origin/iuj
+//=======
+//		Menu menu = new Menu();
+//		menu.menu();
+//>>>>>>> refs/remotes/origin/iuj
 	}
 
 }
