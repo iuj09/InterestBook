@@ -1,3 +1,4 @@
+package menu;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,7 +7,6 @@ import java.util.Scanner;
 import common.MENU;
 import common.VO;
 import dao.MeetDao;
-import menu.MeetMenu;
 import service.MeetService;
 import vo.Meet;
 
