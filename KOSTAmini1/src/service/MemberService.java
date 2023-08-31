@@ -11,6 +11,7 @@ import java.util.Scanner;
 
 import common.CRUD;
 import common.Info;
+import common.MemberLog;
 import common.SERVICE;
 import dao.MemberDao;
 import vo.Member;
@@ -76,57 +77,74 @@ public class MemberService extends SERVICE<Member> {
 		
 	}
 	
+	//login
+	public void login(Scanner sc) {
+		String id = null;
+		String pwd = null;
+		
+		id = sc.next();
+		pwd = sc.next();
+		HashMap<String, String> map = new HashMap<String, String>();
+		
+		map.put("id", id);
+		map.put("pwd", pwd);
+		
+		try {
+			MemberLog.member = dao.select(map).get(0);
+			System.out.println("로그인");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
+	//logout
+	public void logout(Scanner sc) {
+		MemberLog.member = null;
+		System.out.println("로그아웃");
+	}
+	
+	
 	//admin 권한 부여
 	public void editAdm(Scanner sc) {
 		try(MemberDao<Member> dao = (MemberDao<Member>) this.dao){
-			if(Info.log()) {
-				Properties prop;
-				prop = new Properties();
-                prop.load(new FileReader("C:\\Users\\KOSTA\\dogi\\prop.properties"));
-                for (Object key : prop.keySet()) {
-                    String k = (String) key;
-                    HashMap<String, String> map = new HashMap<String, String>();
-                    map.put("id", prop.getProperty(k));
+			if(MemberLog.member != null) {
+				HashMap<String, String> map = new HashMap<String, String>();
+                map.put("id", MemberLog.member.getId());
                     
-                    ArrayList<Member> list = dao.select(map);
-                    Member m = list.get(0);
-                    if(m.getAdmin().equals("1")) {
-                    	System.out.println("admin 권한 부여");
+                ArrayList<Member> list = dao.select(map);
+                Member m = list.get(0);
+                if(m.getAdmin().equals("1")) {
+                	System.out.println("admin 권한 부여");
                     	
-                    	System.out.println("관리자 권한을 부여할 회원의 회원 번호를 입력해주세요");
-                    	System.out.print("No:");
-                    	String no = sc.next();
-                    	HashMap<String, String> editmap = new HashMap<String, String>();
-                    	editmap.put("no", no);
-                    	
-                    	ArrayList<Member> editlist = dao.select(editmap);
-                    	printList(editlist);
-                    	System.out.println("위 회원에게 관리자 권한을 부여하시겠습니까? (Y / N)");
-                    	String answer = sc.next();
-                    	if(answer.equals("Y") || answer.equals("y")) {
-                    		Member editm = editlist.get(0);
-                    		
-                    		editm.setAdmin("1");
-                    		dao.updateAdm(editm);
-                    	}else {
-                    		System.out.println("관리자 권한 부여 작업을 취소합니다.");
-                    		return;
-                    	}
-                    	
-                    }else {
-                		System.out.println("관리자 계정이 아닙니다.");
-                		return;
-                    }
-                 }
-			}
+                   	System.out.println("관리자 권한을 부여할 회원의 회원 번호를 입력해주세요");
+                   	System.out.print("No:");
+                   	String no = sc.next();
+                   	HashMap<String, String> editmap = new HashMap<String, String>();
+                   	editmap.put("no", no);
+                   	
+                   	ArrayList<Member> editlist = dao.select(editmap);
+                   	printList(editlist);
+                   	System.out.println("위 회원에게 관리자 권한을 부여하시겠습니까? (Y / N)");
+                   	String answer = sc.next();
+                   	if(answer.equals("Y") || answer.equals("y")) {
+                   		Member editm = editlist.get(0);
+                   		
+                   		editm.setAdmin("1");
+                   		dao.updateAdm(editm);
+                   	}else {
+                   		System.out.println("관리자 권한 부여 작업을 취소합니다.");
+                   		return;
+                   	}
+                   	
+                }else {
+                   System.out.println("관리자 계정이 아닙니다.");
+                return;
+                }
+            }
 		} catch(SQLException e) {
 			System.out.println(e.getMessage());
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 	}
 	
@@ -149,27 +167,15 @@ public class MemberService extends SERVICE<Member> {
 	//내 정보 조회
 	public void myInfo(Scanner sc) {
 		try(MemberDao<Member> dao = (MemberDao<Member>) this.dao){
-			if(Info.log()) {
-				Properties prop;
-				prop = new Properties();
-                prop.load(new FileReader("C:\\Users\\KOSTA\\dogi\\prop.properties"));
-                for (Object key : prop.keySet()) {
-                    String k = (String) key;
-                    HashMap<String, String> map = new HashMap<String, String>();
-                    map.put("id", prop.getProperty(k));
+			if(MemberLog.member != null) {
+                HashMap<String, String> map = new HashMap<String, String>();
+                map.put("id", MemberLog.member.getId());
                     
-                    ArrayList<Member> list = dao.select(map);
-                    printList(list);
-                }
-			}
+                ArrayList<Member> list = dao.select(map);
+                printList(list);
+            }
 		}catch(SQLException e) {
 			System.out.println(e.getMessage());
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 	}
 	
@@ -177,47 +183,35 @@ public class MemberService extends SERVICE<Member> {
 	//내 정보 수정
 	public void editInfo(Scanner sc) {
 		try(MemberDao<Member> dao = (MemberDao<Member>) this.dao) {
-			if(Info.log()) {
-				Properties prop;
-				prop = new Properties();
-                prop.load(new FileReader("C:\\Users\\KOSTA\\dogi\\prop.properties"));
-                for (Object key : prop.keySet()) {
-                    String k = (String) key;
-                    HashMap<String, String> map = new HashMap<String, String>();
-                    map.put("id", k);
-                    Member m = dao.select(map).get(0);
+			if(MemberLog.member != null) {
+                HashMap<String, String> map = new HashMap<String, String>();
+                map.put("id", MemberLog.member.getId());
+                Member m = dao.select(map).get(0);
                 
-                    System.out.println("내 정보 수정");
+                System.out.println("내 정보 수정");
                 
-                    System.out.println("본인 확인을 위해 비밀번호를 입력해주세요");
-                    System.out.print("pwd:");
-                    String pwd = sc.next();
-    				if(pwd.equals(m.getPwd())) {
-    					System.out.print("new pwd:");
-    					m.setPwd(sc.next());
-    					System.out.print("new name:");
-    					m.setName(sc.next());
-    					
-    					dao.update(m);
-    					System.out.println("수정 완료");
-    					System.out.println(m);
-    				}else {
-        				System.out.println("비밀번호를 다시 확인해주세요");
-        				return;
-    				}
-                }
-			}else {
-				System.out.println("로그인 후에 이용할 수 있는 기능입니다.");
+                System.out.println("본인 확인을 위해 비밀번호를 입력해주세요");
+                System.out.print("pwd:");
+                String pwd = sc.next();
+ 				if(pwd.equals(m.getPwd())) {
+   					System.out.print("new pwd:");
+   					m.setPwd(sc.next());
+   					System.out.print("new name:");
+   					m.setName(sc.next());
+   					
+   					dao.update(m);
+   					System.out.println("수정 완료");
+   					System.out.println(m);
+   				}else {
+       				System.out.println("비밀번호를 다시 확인해주세요");
+       				return;
+   				}
+		}else {
+			System.out.println("로그인 후에 이용할 수 있는 기능입니다.");
 				return;
 			}
 		}catch(SQLException e) {
 			System.out.println(e.getMessage());
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 	}
 	
@@ -313,30 +307,24 @@ public class MemberService extends SERVICE<Member> {
 	//회원 탈퇴
 	public void delMember(Scanner sc) {
 		try(MemberDao<Member> dao = (MemberDao<Member>) this.dao){
-			if(Info.log()) {
-				Properties prop;
-				prop = new Properties();
-                prop.load(new FileReader("C:\\Users\\KOSTA\\dogi\\prop.properties"));
-                for (Object key : prop.keySet()) {
-                    String k = (String) key;
-                    HashMap<String, String> map = new HashMap<String, String>();
-                    map.put("id", prop.getProperty(k));
+			if(MemberLog.member.getId() != null) {
+				HashMap<String, String> map = new HashMap<String, String>();
+                map.put("id", MemberLog.member.getId());
                     
-                    Member m = dao.select(map).get(0);
+                Member m = dao.select(map).get(0);
 			
-                    System.out.println("회원 탈퇴");
+                System.out.println("회원 탈퇴");
 			
-                    System.out.println("본인 확인을 위해 비밀번호를 입력해주세요");
-                    System.out.print("pwd:");
-                    String pwd = sc.next();
-                    if(pwd.equals(m.getPwd())) {
-                    	dao.delete(m.getNo());
-                    	System.out.println("삭제 완료");
-                    	return;
-                    }else {
-                    	System.out.println("비밀번호를 다시 확인해주세요");
-                    	return;
-                    }
+                System.out.println("본인 확인을 위해 비밀번호를 입력해주세요");
+                System.out.print("pwd:");
+                String pwd = sc.next();
+                if(pwd.equals(m.getPwd())) {
+                  	dao.delete(m.getNo());
+                   	System.out.println("삭제 완료");
+                   	return;
+                }else {
+                   	System.out.println("비밀번호를 다시 확인해주세요");
+                   	return;
                 }
 			}else {
 				System.out.println("로그인 후에 이용할 수 있는 기능입니다.");
@@ -344,12 +332,6 @@ public class MemberService extends SERVICE<Member> {
 			}
 		} catch(SQLException e) {
 			System.out.println(e.getMessage());
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 	}
 }
