@@ -9,10 +9,11 @@ import vo.Article;
 public class BoardMenu extends MENU<Article> {
 	private static int page = 1;
 
-	public BoardMenu(ArticleService aService, Scanner sc) {
-		super(aService, sc);
+	public BoardMenu(Scanner sc, ArticleService aService, Menu<?> menu) {
+		super(sc, aService, menu);
 		this.sc = sc;
 		this.service = aService;
+		this.menu = menu;
 	}
 
 	@Override

@@ -1,6 +1,5 @@
 package dao;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -11,7 +10,6 @@ import java.util.Map.Entry;
 import common.CRUD;
 import common.DBConnect;
 import vo.Article;
-import vo.Member;
 
 public class ArticleDao<T extends Article> extends CRUD<Article> {
 	public ArticleDao() {
@@ -206,14 +204,7 @@ public class ArticleDao<T extends Article> extends CRUD<Article> {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} finally {
-			try {
-				conn.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+		} 
 
 		return list;
 	}
