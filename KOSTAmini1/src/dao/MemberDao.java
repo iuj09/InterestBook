@@ -11,7 +11,6 @@ import vo.Member;
 
 public class MemberDao<T extends Member> extends CRUD<Member> {
 
-	
 	public  MemberDao() {
 		db = DBConnect.getInstance();
 	}
@@ -20,7 +19,7 @@ public class MemberDao<T extends Member> extends CRUD<Member> {
 	public void insert(Member m) throws SQLException {
 		conn = db.conn();
 		
-		sql = "insert into members values(?, ?, ?, ?, ?, sysdate, ?, ?, ?)";
+		sql = "insert into members values(members_no_sequence, ?, ?, ?, ?, sysdate, ?, ?, ?)";
 		
 		ps = conn.prepareStatement(sql);
 		
@@ -31,7 +30,7 @@ public class MemberDao<T extends Member> extends CRUD<Member> {
 		ps.setString(5, m.getEmail());
 		ps.setInt(6, m.getLocationNo());
 		ps.setInt(7, m.getFavoriteNo());
-		ps.setInt(8, m.getAdmin());
+		ps.setString(8, m.getAdmin());
 		
 		ps.executeUpdate();
 	}
@@ -44,7 +43,7 @@ public class MemberDao<T extends Member> extends CRUD<Member> {
 		
 		ps = conn.prepareStatement(sql);
 		
-		ps.setInt(1, m.getAdmin());
+		ps.setString(1, m.getAdmin());
 		ps.setInt(2, m.getNo());
 		
 		ps.executeUpdate();
@@ -118,7 +117,7 @@ public class MemberDao<T extends Member> extends CRUD<Member> {
 			
 			while(rs.next()) {
 				list.add(new Member(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4),
-						rs.getString(5),  rs.getDate(6), rs.getInt(7), rs.getInt(8), rs.getInt(9)));
+						rs.getString(5),  rs.getDate(6), rs.getInt(7), rs.getInt(8), rs.getString(9)));
 			}
 		return list;
 		}
@@ -144,7 +143,7 @@ public class MemberDao<T extends Member> extends CRUD<Member> {
 		
 		while(rs.next()) {
 			list.add(new Member(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4),
-					rs.getString(5),  rs.getDate(6), rs.getInt(7), rs.getInt(8), rs.getInt(9)));
+					rs.getString(5),  rs.getDate(6), rs.getInt(7), rs.getInt(8), rs.getString(9)));
 		}
 		return list;
 	}
