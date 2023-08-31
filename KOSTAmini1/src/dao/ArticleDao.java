@@ -36,42 +36,27 @@ public class ArticleDao<T extends Article> extends CRUD<Article> {
 
 	}
 
-	// 전체 검색. 번호 검색?
+	// 전체 검색. param으로 HashMap을 받음.
 	@Override
 	public ArrayList<Article> select(HashMap<String, String> args) throws SQLException {
-		System.out.println("select");
 		ArrayList<Article> list = new ArrayList<>();
-
 		conn = db.conn();
+		sql = "SELECT * FROM articles";
+		if (args != null) {
+			sql += " WHERE ";
 
-		if (args == null) {
-			sql = "SELECT * FROM articles";
-
-			ps = conn.prepareStatement(sql);
-
-			ResultSet rs = ps.executeQuery();
-
-			while (rs.next()) {
-				list.add(new Article(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getDate(5),
-						rs.getDate(6), rs.getInt(7), rs.getInt(8)));
-			}
-
-			return list;
-		}
-
-		sql = "SELECT * FROM articles WHERE ";
-
-		int cnt = args.size() - 1;
-		for (Entry<String, String> entry : args.entrySet()) {
-			if (cnt > 0)
+			int cnt = args.size() - 1;
+			for (Entry<String, String> entry : args.entrySet()) {
 				if (entry.getKey().equals("title") || entry.getKey().equals("content")) {
-					sql += entry.getKey() + " = \'" + entry.getValue() + "\' AND ";
+					sql += entry.getKey() + " like '%" + entry.getValue() + "%'";
 				} else {
-					sql += entry.getKey() + " = \'" + entry.getValue() + "\' AND ";
+					sql += entry.getKey() + " = '" + entry.getValue() + "'";
 				}
-			else
-				sql += entry.getKey() + " = \'" + entry.getValue() + "\'";
-			cnt--;
+				if (cnt > 0) {
+					sql += " AND ";
+				}
+				cnt--;
+			}
 		}
 
 		ps = conn.prepareStatement(sql);
