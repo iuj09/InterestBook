@@ -21,17 +21,24 @@ public class MemberMenu extends MENU<Member> {
         boolean flag = true;
         while(flag) {
             System.out.println("-----------------------------------------------------");
-            System.out.println("1. 회원 출력 / 2. 이전");
+            System.out.println("1.회원 가입 / 2.로그인 3.회원 검색 4.게시물 검색 5.이전");
             System.out.println("-----------------------------------------------------");
             System.out.print(": ");
             int num = sc.nextInt();
 
             switch(num) {
                 case 1:
-                    ((MemberService)service).searchAll();
+                    ((MemberService)service).join(sc);
                     break;
                 case 2:
-                    flag =false;
+                	((MemberService)service).login(sc);
+                	break;
+                case 3:
+                	break;
+                case 4:
+                	break;
+                case 5:
+                    flag = false;
                     break;
             }
         }
