@@ -1,6 +1,7 @@
 package service;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -9,13 +10,13 @@ import common.Manager;
 import common.SERVICE;
 import dao.MeetDao;
 import vo.Meet;
+import vo.MeetJoin;
 
 public class MeetService extends SERVICE<Meet> {
 
     public MeetService(Scanner sc, CRUD<Meet> dao, Manager manager) {
         super(sc, dao, manager);
-        System.out.println("MeetService 클래스 생성!");
-        this.dao = dao;
+        // this.dao = dao;
     }
 
     // 메뉴에 관한 상세한 동작을 하는 메서드
@@ -23,13 +24,16 @@ public class MeetService extends SERVICE<Meet> {
         try (MeetDao<Meet> meetDao = (MeetDao<Meet>)this.dao;){
             switch(num) {
                 case 1:
-                    list(meetDao);
+                    list(meetDao, no);
                     break;
                 case 2:
                     write(meetDao);
                     break;
                 case 3:
                     edit(meetDao, infoMeet(meetDao, no));
+                    break;
+                case 4:
+                    check(meetDao, no);
                     break;
                 case 7:
                     // writeReply(meetDao, infoMeet(meetDao, no));
@@ -45,13 +49,36 @@ public class MeetService extends SERVICE<Meet> {
         }
     }
 
-    private void list(MeetDao<Meet> dao) throws SQLException {
-        System.out.println("모집글 출력");
+    private void check(MeetDao<Meet> meetDao, int memberNo) throws SQLException {
+        HashMap<String, String> args = new HashMap<>();
+        if(memberNo != 0) {
+            args.put("MEMBERS_NO", String.valueOf(memberNo));
+        }        
+        
         System.out.println("-----------------------------------------------------");
-        for(Meet meet : dao.select(null)) {
+        for(Meet meet : dao.select(args)) {
             System.out.println(meet.toString());
         }
         System.out.println("-----------------------------------------------------");
+
+        args.clear();
+    }
+
+    private void list(MeetDao<Meet> dao, int memberNo) throws SQLException {
+        System.out.println("모집글 출력");
+        
+        HashMap<String, String> args = new HashMap<>();
+        if(memberNo != 0) {
+            args.put("MEMBERS_NO", String.valueOf(memberNo));
+        }        
+        
+        System.out.println("-----------------------------------------------------");
+        for(Meet meet : dao.select(args)) {
+            System.out.println(meet.toString());
+        }
+        System.out.println("-----------------------------------------------------");
+
+        args.clear();
     }
 
     private void write(MeetDao<Meet> dao) throws SQLException {
@@ -137,5 +164,15 @@ public class MeetService extends SERVICE<Meet> {
         HashMap<String, String> map = new HashMap<>();
         map.put("NO", String.valueOf(no));
         return (Meet)dao.select(map).get(0);
+    }
+
+    public void meetJoin(MeetDao<Meet> meetDao, int memberNo) throws SQLException {
+        ArrayList<MeetJoin> list = meetDao.join(memberNo);
+        if(list.isEmpty()) return;
+        
+        System.out.println("통과");
+        for(MeetJoin obj : list) {
+            System.out.println(obj);
+        }
     }
 }

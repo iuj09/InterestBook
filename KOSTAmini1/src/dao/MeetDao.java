@@ -9,12 +9,11 @@ import common.CRUD;
 import common.DBConnect;
 import common.Manager;
 import vo.Meet;
+import vo.MeetJoin;
 
 public class MeetDao<T extends Meet> extends CRUD<Meet> {
     public MeetDao(Manager manager) {
         super(manager);
-        // System.out.println("MeetDao 클래스 생성!");
-        // System.out.println(manager.hashCode());
         db = DBConnect.getInstance();
     }
 
@@ -42,13 +41,29 @@ public class MeetDao<T extends Meet> extends CRUD<Meet> {
         ArrayList<Meet> list = new ArrayList<>();
 
         conn = db.conn();
-
+        
+        sql = "SELECT * FROM MEETS";
         if(args == null) {
-            sql = "SELECT * FROM MEETS";
+            ps = conn.prepareStatement(sql);
 
-            if(conn == null) {
-                System.out.println("conn이 널이다");
+            rs = ps.executeQuery();
+
+            while(rs.next()) {
+                list.add(new Meet(rs.getInt(1), rs.getInt(2), rs.getString(3),
+                        rs.getString(4), rs.getDate(5), rs.getDate(6),
+                        rs.getDate(7), rs.getInt(8), rs.getInt(9), rs.getInt(10)));
             }
+        } else {
+            sql += " WHERE ";
+            int cnt = args.size() -1;
+            for(Entry<String, String> entry : args.entrySet()) {
+                if (cnt > 0) {
+                    sql += entry.getKey() + " = \'" + entry.getValue() + "\' AND";
+                } else {
+                    sql += entry.getKey() + " = \'" + entry.getValue() + "\' ";
+                    cnt--;
+                }
+		    }
 
             ps = conn.prepareStatement(sql);
 
@@ -57,29 +72,7 @@ public class MeetDao<T extends Meet> extends CRUD<Meet> {
             while(rs.next()) {
                 list.add(new Meet(rs.getInt(1), rs.getInt(2), rs.getString(3),
                         rs.getString(4), rs.getDate(5), rs.getDate(6),
-                        rs.getDate(7), rs.getInt(8), rs.getInt(9)));
-            }
-        } else {
-            sql = "SELECT * FROM MEETS WHERE ";
-            int cnt = args.size() -1;
-            for(Entry<String, String> entry : args.entrySet()) {
-                if (cnt > 0) {
-                    sql += entry.getKey() + " = \'" + entry.getValue() + "\' and";
-                } else {
-                    sql += entry.getKey() + " = \'" + entry.getValue() + "\' ";
-                    cnt--;
-                }
-		    }
-            System.out.println(sql);
-
-            ps = conn.prepareStatement(sql);
-
-            rs = ps.executeQuery();
-
-            if(rs.next()) {
-                list.add(new Meet(rs.getInt(1), rs.getInt(2), rs.getString(3),
-                        rs.getString(4), rs.getDate(5), rs.getDate(6),
-                        rs.getDate(7), rs.getInt(8), rs.getInt(9)));
+                        rs.getDate(7), rs.getInt(8), rs.getInt(9), rs.getInt(10)));
             }
         }
 
@@ -110,6 +103,26 @@ public class MeetDao<T extends Meet> extends CRUD<Meet> {
         ps = conn.prepareStatement(sql);
 
         ps.executeUpdate();
+    }
+
+    public ArrayList<MeetJoin> join(int memberNo) throws SQLException {
+        ArrayList<MeetJoin> list = new ArrayList<>();
+
+        conn = db.conn();
+
+        sql = "SELECT * FROM MEMBER_MEETS_JOIN WHERE MEMBERS_NO = ?";
+
+        ps = conn.prepareStatement(sql);
+
+        ps.setInt(1, memberNo);
+
+        rs = ps.executeQuery();
+
+        while(rs.next()) {
+            list.add(new MeetJoin(rs.getInt(1), rs.getInt(2)));
+        }
+
+        return list;
     }
     
     @Override
