@@ -1,6 +1,5 @@
 package common;
 
-import java.util.Properties;
 import java.util.Scanner;
 
 /**
@@ -9,12 +8,12 @@ import java.util.Scanner;
 public abstract class SERVICE<T> {
     protected CRUD<T> dao;
     protected Scanner sc;
-    protected Properties prop;
+    protected Manager manager;
 
-    public SERVICE(Scanner sc, CRUD<T> dao) {
-        System.out.println("SERVICE 클래스 생성!");
+    public SERVICE(Scanner sc, CRUD<T> dao, Manager manager) {
         this.sc = sc;
-        this.prop = new Properties();
         this.dao = dao;
+
+        manager.setService(this);
     }
 }

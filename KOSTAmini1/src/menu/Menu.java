@@ -23,15 +23,13 @@ import vo.MeetReply;
 
 public class Menu<T> {
     private Scanner sc;
-    private ArrayList<CRUD<T>> daoList;
-    private ArrayList<SERVICE<T>> serviceList;
-    public ArrayList<MENU<?>> menuList;
-
+    public Manager manager;
+    private ArrayList<MENU<?>> list;
 
     public Menu() {
         sc = new Scanner(System.in);
-        menuList = new ArrayList<>();
-        daoList = new ArrayList<>();
+        list = new ArrayList<>();
+        manager = new Manager();
     }
 
     public void menu() {
@@ -63,26 +61,26 @@ public class Menu<T> {
     }
     
     /**
-     * 자신의 메뉴 클래스를 생성하는 메서드
-     * 메뉴 객체 만드는 방법 : list.add(((MENU<VO>)new 이름Menu(sc, new 이름Service(sc, new 이름Dao<VO>()), this));
+     * db테이블 및 기능과 관련된 객체 초기화 및 관련 객체를 담는 ArrayList 및 그 객체를 한 곳에서 묶는 Manager 클래스
+     * 예시 : list.add(new 클래스Menu(sc, new 클래스Service(sc, new 클래스Dao<클래스>(manager), manager), manager));
      */
-    @SuppressWarnings("rawtypes")
     private void menuList() {
-        // list.add((MENU<Meet>)new MeetMenu(sc, new MeetService(sc, new MeetDao<Meet>()), this));
-        menuList.add(((MENU<Member>)new MemberMenu(sc, new MemberService(sc, new MemberDao<Member>()), this)));
-        menuList.add(((MENU<Article>)new BoardMenu(sc, new ArticleService(sc, new ArticleDao<Article>()), this)));
-        menuList.add((MENU<Member>)new MemberMenu(sc, new MemberService(sc, new MemberDao<Member>()), this));
-        menuList.add((MENU<MeetReply>)new MeetReplyMenu(sc, new MeetReplyService(sc, new MeetReplyDao<MeetReply>()), this));
-        
-        
-        daoList.add((CRUD<T>)new MeetDao<Meet>());
-        serviceList.add((SERVICE<T>)new MeetService(sc, (CRUD<Meet>)daoList.get(0)));
-        menuList.add((MENU<T>)new MeetMenu(sc, (SERVICE<Meet>)serviceList.get(0), this));
+        list.add(new MeetMenu(sc, new MeetService(sc, new MeetDao<Meet>(manager), manager), manager));
+        list.add(new MeetReplyMenu(sc, new MeetReplyService(sc, new MeetReplyDao<MeetReply>(manager), manager), manager));
+        // menuList.add(((MENU<Member>)new MemberMenu(sc, new MemberService(sc, new MemberDao<Member>()), this)));
+        // menuList.add(((MENU<Article>)new BoardMenu(sc, new ArticleService(sc, new ArticleDao<Article>()), this)));
+        // menuList.add((MENU<Member>)new MemberMenu(sc, new MemberService(sc, new MemberDao<Member>()), this));
+        // menuList.add((MENU<MeetReply>)new MeetReplyMenu(sc, new MeetReplyService(sc, new MeetReplyDao<MeetReply>()), this));
+        // manager = new Manager<>();
+        // manager.setMenu((MENU<T>)new MeetMenu(sc, new MeetService(sc, new MeetDao<Meet>()), this));
 
-        Manager<?> manager = new Manager<>(daoList, serviceList, menuList);
+        // for() {
+
+        // }
+
     }
 
-    public void menuRun(int num) {
+    private void menuRun(int num) {
         list.get(num).menu();
     }
 }

@@ -3,17 +3,18 @@ package menu;
 import java.util.Scanner;
 
 import common.MENU;
+import common.Manager;
 import common.SERVICE;
 import service.MeetService;
 import vo.Meet;
 
 public class MeetMenu extends MENU<Meet> {
 
-    public MeetMenu(Scanner sc, SERVICE<Meet> service, Menu<?> menu) {
-        super(sc, service, menu);
+    public MeetMenu(Scanner sc, SERVICE<Meet> service,  Manager manager) {
+        super(sc, service, manager);
         this.sc = sc;
         this.service = service;
-        this.menu = menu;
+        System.out.println("MeetMenu 클래스 생성!");
     }
 
     /**
@@ -78,7 +79,7 @@ public class MeetMenu extends MENU<Meet> {
                 case 3:
                     break;
                 case 4:
-                    menu.menuRun(2);
+                    this.manager.getMenu("MeetReplyMenu").menu();
                     break;
                 case 5:
                     flag = false;
