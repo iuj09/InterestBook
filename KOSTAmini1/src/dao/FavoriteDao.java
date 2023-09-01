@@ -7,12 +7,13 @@ import java.util.Map.Entry;
 
 import common.CRUD;
 import common.DBConnect;
+import common.Manager;
 import vo.Favorite;
-import vo.Location;
 
 public class FavoriteDao<T extends Favorite> extends CRUD<Favorite> {
 	
-	public FavoriteDao() {
+	public FavoriteDao(Manager manager) {
+		super(manager);
 		db = DBConnect.getInstance();
 	}
 	

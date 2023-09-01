@@ -1,29 +1,21 @@
 package service;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Properties;
 import java.util.Scanner;
 
 import common.CRUD;
-import common.Info;
-import common.MemberLog;
+import common.Manager;
 import common.SERVICE;
 import dao.FavoriteDao;
-import dao.LocationDao;
-import dao.MemberDao;
 import vo.Favorite;
-import vo.Location;
 import vo.Member;
 
 public class FavoriteService extends SERVICE<Favorite>{
 
-	public FavoriteService(Scanner sc, CRUD<Favorite> dao) {
-		super(sc, dao);
+	public FavoriteService(Scanner sc, CRUD<Favorite> dao, Manager manager) {
+		super(sc, dao, manager);
 	}
 	
 	public void printList(ArrayList<Favorite> list) {
@@ -34,7 +26,7 @@ public class FavoriteService extends SERVICE<Favorite>{
 	
 	public void addFav(Scanner sc) {
 		try(FavoriteDao<Favorite> dao = (FavoriteDao<Favorite>) this.dao){
-			Member m = ((MemberService<Member>)service).nowMember();
+			Member m = ((MemberService)this.manager.getService("MemberService")).nowMember();
 			if(m != null) {
                 if(m.getAdmin().equals("1")) {
                 	System.out.println("관심사 추가");
@@ -57,7 +49,7 @@ public class FavoriteService extends SERVICE<Favorite>{
 	
 	public void searchFavByNo(Scanner sc) {
 		try(FavoriteDao<Favorite> dao = (FavoriteDao<Favorite>) this.dao){
-			Member m = ((MemberService<Member>)service).nowMember();
+			Member m = ((MemberService)this.manager.getService("MemberService")).nowMember();
 			if(m != null) {
                 if(m.getAdmin().equals("1")) {
                    	System.out.println("조회할 관심사 번호 입력");
@@ -77,19 +69,20 @@ public class FavoriteService extends SERVICE<Favorite>{
 		}
 	}
 	
-	public void searchAllFav() {
+	public ArrayList<Favorite> searchAllFav() {
 		try(FavoriteDao<Favorite> dao = (FavoriteDao<Favorite>) this.dao){
           	ArrayList<Favorite> favlist = dao.select(null);
                    	
-           	printList(favlist);
+          	return favlist;
 		} catch(SQLException e) {
 			System.out.println(e.getMessage());
 		}
+		return null;
 	}
 	
 	public void editFav(Scanner sc) {
 		try(FavoriteDao<Favorite> dao = (FavoriteDao<Favorite>) this.dao){
-			Member m = ((MemberService<Member>)service).nowMember();
+			Member m = ((MemberService)this.manager.getService("MemberService")).nowMember();
 			if(m != null) {
                 if(m.getAdmin().equals("1")) {
                   	System.out.println("관심사 수정");
@@ -116,7 +109,7 @@ public class FavoriteService extends SERVICE<Favorite>{
 	
 	public void delFav(Scanner sc) {
 		try(FavoriteDao<Favorite> dao = (FavoriteDao<Favorite>) this.dao){
-			Member m = ((MemberService<Member>)service).nowMember();
+			Member m = ((MemberService)this.manager.getService("MemberService")).nowMember();
 			if(m != null) {
                 if(m.getAdmin().equals("1")) {
                    	System.out.println("관심사 삭제");

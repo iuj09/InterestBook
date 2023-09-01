@@ -13,6 +13,7 @@ public abstract class SERVICE<T> {
     public SERVICE(Scanner sc, CRUD<T> dao, Manager manager) {
         this.sc = sc;
         this.dao = dao;
+        this.manager = manager;
 
         manager.setService(this);
     }
