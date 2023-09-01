@@ -22,7 +22,7 @@ public class MemberMenu extends MENU<Member> {
         boolean flag = true;
         while(flag) {
             System.out.println("-----------------------------------------------------");
-            System.out.println("1. " + (MemberLog.member == null ? "회원 가입" : "마이페이지")  + " / 2." + (MemberLog.member == null ? "로그인" : "로그아웃") + " / 3.회원 검색 / 4.게시물 검색 / 5.Meet 검색 / 6." + (MemberLog.member == null ? "뒤로" : "회원 탈퇴") + (MemberLog.member != null ? " / 7.뒤로" : ""));
+            System.out.println("1. " + (MemberLog.member == null ? "회원 가입" : "마이페이지")  + " / 2." + (MemberLog.member == null ? "로그인" : "로그아웃") + " / 3.회원 검색 / 4.게시물 검색 / 5.Meet 검색 / 6." + (MemberLog.member == null ? "" : "회원 탈퇴") + " / 0.뒤로");
             System.out.println("-----------------------------------------------------");
             System.out.print(": ");
             int num = sc.nextInt();
@@ -34,7 +34,7 @@ public class MemberMenu extends MENU<Member> {
                 	}else {
                 		System.out.println("마이페이지");
                 		System.out.println("-----------------------------------------------------");
-                		System.out.println("1.내 정보 조회 / 2.내 정보 수정 / 3.내 게시물 조회 / 4.모집글 참가 내역 조회 / 5.좋아요 표시한 게시물 조회");
+                		System.out.println("1.내 정보 조회 / 2.내 정보 수정 / 3.내 게시물 조회 / 4.모집글 참가 내역 조회 / 5.좋아요 표시한 게시물 조회" + (MemberLog.member.getAdmin().equals("1") ? " / 6.관리자 권한부여 / 7.지역 관리 / 8.관심사 관리": ""));
                 		System.out.println("-----------------------------------------------------");
                         System.out.print(": ");
                 		((MemberService)service).myPage(sc.nextInt());
@@ -56,24 +56,24 @@ public class MemberMenu extends MENU<Member> {
             		((MemberService)service).searchMember(sc.nextInt());
                 	break;
                 case 4:
-                	menu.list.get(2).menu();
+                	menu.menuRun(2);
                 	break;
                 case 5:
-                	menu.list.get(0).menu();
+                	menu.menuRun(0);
                 	break;
                 case 6:
-                	if(MemberLog.member == null) {
-                		flag = false;
-                        break;
-                	}else {
+                	if(MemberLog.member != null) {
                 		((MemberService)service).delMember(sc);
                 	}
-                case 7:
+                	break;
+                case 0:
                 	if(MemberLog.member != null) {
                 		flag = false;
                     	break;
                 	}
             }
+            
+            
         }
     }
     

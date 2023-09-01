@@ -1,31 +1,41 @@
 package service;
 
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.Scanner;
 
 import common.CRUD;
+import common.Manager;
 import common.SERVICE;
 import dao.MeetDao;
 import vo.Meet;
 
 public class MeetService extends SERVICE<Meet> {
 
-    public MeetService(Scanner sc, CRUD<Meet> dao) {
-        super(sc, dao);
+    public MeetService(Scanner sc, CRUD<Meet> dao, Manager manager) {
+        super(sc, dao, manager);
+        System.out.println("MeetService 클래스 생성!");
         this.dao = dao;
     }
 
-    public void menu(int num) {
+    // 메뉴에 관한 상세한 동작을 하는 메서드
+    public void menu(int num, int no) {
         try (MeetDao<Meet> meetDao = (MeetDao<Meet>)this.dao;){
             switch(num) {
-                case -1:
-                    list(meetDao);
-                    break;
                 case 1:
-                    
+                    list(meetDao);
                     break;
                 case 2:
                     write(meetDao);
+                    break;
+                case 3:
+                    edit(meetDao, infoMeet(meetDao, no));
+                    break;
+                case 7:
+                    // writeReply(meetDao, infoMeet(meetDao, no));
+                    break;
+                case -1:
+                    infoMeet(meetDao, no);
                     break;
             }
         } catch(SQLException e) {
@@ -35,7 +45,7 @@ public class MeetService extends SERVICE<Meet> {
         }
     }
 
-    public void list(MeetDao<Meet> dao) throws SQLException {
+    private void list(MeetDao<Meet> dao) throws SQLException {
         System.out.println("모집글 출력");
         System.out.println("-----------------------------------------------------");
         for(Meet meet : dao.select(null)) {
@@ -44,7 +54,7 @@ public class MeetService extends SERVICE<Meet> {
         System.out.println("-----------------------------------------------------");
     }
 
-    public void write(MeetDao<Meet> dao) throws SQLException {
+    private void write(MeetDao<Meet> dao) throws SQLException {
         System.out.println("모집글 작성");
 
         Meet meet = new Meet();
@@ -66,5 +76,66 @@ public class MeetService extends SERVICE<Meet> {
         meet.setLocationNo(locationNo);
 
         dao.insert(meet);
+    }
+
+    private void edit(MeetDao<Meet> dao, Meet original) throws SQLException {
+        boolean flag = true;
+        Meet fresh = new Meet();
+        fresh.setNo(original.getNo());
+        boolean[] finish = new boolean[]{false, false, false};
+        while(flag) {
+            System.out.println("-----------------------------------------------------");
+            System.out.println("1. 제목 수정 " + (finish[0] ? "[완료]" : "") + " / 2. 내용 수정 " + (finish[1] ? "[완료]" : "") + " / 3. 모집 인원 수정 " + (finish[0] ? "[완료]" : "") + " / 4. 끝");
+            System.out.println("-----------------------------------------------------");
+            System.out.print(": ");
+            int num = sc.nextInt();
+
+            System.out.println();
+            switch(num) {
+                case 1:
+                    if(!finish[0]) {
+                        System.out.println("원 제목: " + original.getTitle());
+                        System.out.print("새롭게 바꿀 제목: ");
+                        String title = sc.next();
+                        fresh.setTitle(title);
+                        dao.update(fresh);
+                        fresh.setTitle("");
+                        finish[0] = true;
+                    } else { System.out.println("제목 수정 완료");}
+                    break;
+                case 2:
+                    if(!finish[1]) {
+                        System.out.println("원 내용: " + original.getContent());
+                        System.out.print("새롭게 바꿀 내용: ");
+                        String content = sc.next();
+                        fresh.setContent(content);
+                        dao.update(fresh);
+                        fresh.setContent(null);
+                        finish[1] = true;
+                    } else { System.out.println("내용 수정 완료");}
+                    break;
+                case 3:
+                    if(!finish[2]) {
+                        System.out.println("원 인원: " + original.getRecurit());
+                        System.out.print("새롭게 모집 인원 수: ");
+                        int recurit = sc.nextInt();
+                        fresh.setRecurit(recurit);
+                        dao.update(fresh);
+                        fresh.setRecurit(0);
+                        finish[2] = true;
+                    } else { System.out.println("모집 인원 수정 완료");}
+                    break;
+                case 4:
+                    dao.update(fresh);
+                    flag = false;
+                    break;
+            }
+        }
+    }
+
+    private Meet infoMeet(MeetDao<Meet> dao, int no) throws SQLException {
+        HashMap<String, String> map = new HashMap<>();
+        map.put("NO", String.valueOf(no));
+        return (Meet)dao.select(map).get(0);
     }
 }

@@ -2,15 +2,13 @@ package common;
 
 import java.util.Scanner;
 
-import menu.Menu;
-
 /**
  * 각 테이블에 맞는 기능(= 메뉴)를 관리하는 클래스
  */
 public abstract class MENU<T> {
     protected Scanner sc;
     protected SERVICE<T> service;
-    protected Menu<?> menu;
+    protected Manager manager;
     
     /**
      * SERVICE<T> : T는 CRUD<T>의 VO를 담당
@@ -19,10 +17,12 @@ public abstract class MENU<T> {
      * @param service
      * @param menu
      */
-    public MENU(Scanner sc, SERVICE<T> service, Menu<?> menu) {
+    public MENU(Scanner sc, SERVICE<T> service, Manager manager) {
         this.sc = sc;
         this.service = service;
-        this.menu = menu;
+        this.manager = manager;
+
+        manager.setMenu(this);
     }
 
     public abstract void menu();
