@@ -7,6 +7,7 @@ import common.Manager;
 import common.SERVICE;
 import service.FavoriteService;
 import service.LocationService;
+import vo.Article;
 import vo.Favorite;
 
 public class FavoriteMenu extends MENU<Favorite>{
@@ -48,6 +49,12 @@ public class FavoriteMenu extends MENU<Favorite>{
     			break;
     		}
 		}
+		
+	}
+
+	@Override
+	public void menu1(Article a) {
+		// TODO Auto-generated method stub
 		
 	}
 }

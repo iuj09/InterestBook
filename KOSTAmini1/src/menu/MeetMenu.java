@@ -7,6 +7,7 @@ import common.Manager;
 import common.MemberLog;
 import common.SERVICE;
 import service.MeetService;
+import vo.Article;
 import vo.Meet;
 
 public class MeetMenu extends MENU<Meet> {
@@ -87,4 +88,10 @@ public class MeetMenu extends MENU<Meet> {
             }
         }
     }
+
+	@Override
+	public void menu1(Article a) {
+		// TODO Auto-generated method stub
+		
+	}
 }

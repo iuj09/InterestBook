@@ -7,6 +7,7 @@ import common.Manager;
 import common.MemberLog;
 import common.SERVICE;
 import service.LocationService;
+import vo.Article;
 import vo.Location;
 
 public class LocationMenu extends MENU<Location>{
@@ -48,5 +49,11 @@ public class LocationMenu extends MENU<Location>{
     			break;
     		}
 		}
+	}
+
+	@Override
+	public void menu1(Article a) {
+		// TODO Auto-generated method stub
+		
 	}
 }
