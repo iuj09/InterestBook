@@ -125,13 +125,6 @@ public class ArticleDao<T extends Article> extends CRUD<Article> {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} finally {
-			try {
-				conn.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 		}
 
 		return list;
@@ -160,13 +153,6 @@ public class ArticleDao<T extends Article> extends CRUD<Article> {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} finally {
-			try {
-				conn.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 		}
 
 		return list;
@@ -195,13 +181,6 @@ public class ArticleDao<T extends Article> extends CRUD<Article> {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} finally {
-			try {
-				conn.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 		}
 
 		return list;
@@ -213,7 +192,7 @@ public class ArticleDao<T extends Article> extends CRUD<Article> {
 
 		conn = db.conn();
 
-		String sql = "SELECT * FROM articles WHERE FAVORITEs_NO = ?";
+		String sql = "SELECT * FROM articles WHERE FAVORITES_NO = ?";
 
 		try {
 			ps = conn.prepareStatement(sql);
@@ -413,7 +392,7 @@ public class ArticleDao<T extends Article> extends CRUD<Article> {
 
 		return list;
 	}
-	
+
 	// 댓글 개수
 	public int repliesCount(int aId) {
 		conn = db.conn();
@@ -434,6 +413,34 @@ public class ArticleDao<T extends Article> extends CRUD<Article> {
 			e.printStackTrace();
 		}
 		return cnt;
+	}
+
+	// 좋아요한 게시물
+	public ArrayList<Article> getLikedArticles(int num) {
+		ArrayList<Article> list = new ArrayList<Article>();
+
+		conn = db.conn();
+
+		String sql = "SELECT * FROM articles WHERE MEMBER_NO = ?";
+
+		try {
+			PreparedStatement pstmt = conn.prepareStatement(sql);
+
+			pstmt.setInt(1, num);
+
+			ResultSet rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+				list.add(new Article(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getDate(5),
+						rs.getDate(6), rs.getInt(7), rs.getInt(8)));
+			}
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return list;
 	}
 
 }
