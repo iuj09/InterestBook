@@ -22,7 +22,7 @@ public class MeetDao<T extends Meet> extends CRUD<Meet> {
         conn = db.conn();
 
         sql = "INSERT INTO MEETS(NO, RECURIT, TITLE, CONTENT, DEADLINE, LOCATIONS_NO, MEMBERS_NO) " + 
-                "VALUES (MEETS_NO_SEQUENCE.NEXTVAL, ?, ?, ?, TO_DATE(SYSDATE, \'yyyy/mm/dd hh24:mi:ss\'), ?, 3)";
+                "VALUES (MEETS_NO_SEQUENCE.NEXTVAL, ?, ?, ?, TO_DATE(SYSDATE, \'yyyy/mm/dd hh24:mi:ss\'), ?, ?)";
         
         System.out.println(sql);
 
@@ -32,6 +32,7 @@ public class MeetDao<T extends Meet> extends CRUD<Meet> {
         ps.setString(2, meet.getTitle());
         ps.setString(3, meet.getContent());
         ps.setInt(4, meet.getLocationNo());
+        ps.setInt(5, meet.getMemberNo());
 
         ps.executeUpdate();
     }
@@ -87,15 +88,12 @@ public class MeetDao<T extends Meet> extends CRUD<Meet> {
 
         if(meet.getTitle() != null && !meet.getTitle().equals("")) {
             sql += "TITLE = \'" + meet.getTitle() + "\' " + "WHERE NO = \'" + meet.getNo() + "\'";
-            System.out.println("TITLE 통과");
         } else if(meet.getContent() != null && !meet.getContent().equals("")) {
             sql += "CONTENT = \'" + meet.getContent() + "\' " + "WHERE NO = \'" + meet.getNo() + "\'";
-            System.out.println("CONTENT 통과");
         } else if(meet.getRecurit() != 0) {
             sql += "RECURIT = \'" + meet.getRecurit() + "\' " + "WHERE NO = \'" + meet.getNo() + "\'";
         } else {
             sql += "E_DATE = SYSDATE" + "WHERE NO = \'" + meet.getNo() + "\'";
-            System.out.println("date 통과");
         }
 
         System.out.println(sql);
