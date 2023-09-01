@@ -6,16 +6,19 @@ import java.util.Scanner;
 import common.MENU;
 import common.Manager;
 import common.MemberLog;
+import dao.ArticleDao;
 import dao.FavoriteDao;
 import dao.LocationDao;
 import dao.MeetDao;
 import dao.MeetReplyDao;
 import dao.MemberDao;
+import service.ArticleService;
 import service.FavoriteService;
 import service.LocationService;
 import service.MeetReplyService;
 import service.MeetService;
 import service.MemberService;
+import vo.Article;
 import vo.Favorite;
 import vo.Location;
 import vo.Meet;
@@ -65,7 +68,7 @@ public class Menu<T> {
         		((MemberMenu)this.manager.getMenu("MemberMenu")).searchMember();
             	break;
             case 4:
-//            	menu.menuRun(2);
+            	((BoardMenu)this.manager.getMenu("BoardMenu")).menu();
             	break;
             case 5:
 //            	menu.menuRun(0);
@@ -95,6 +98,7 @@ public class Menu<T> {
     	list.add(new MeetMenu(sc, new MeetService(sc, new MeetDao<Meet>(manager), manager), manager));
         list.add(new MeetReplyMenu(sc, new MeetReplyService(sc, new MeetReplyDao<MeetReply>(manager), manager), manager));
         list.add(new MemberMenu(sc, new MemberService(sc, new MemberDao<Member>(manager), manager), manager));
+        list.add(new BoardMenu(sc, new ArticleService(sc, new ArticleDao<Article>(manager), manager), manager));
         list.add(new LocationMenu(sc, new LocationService(sc, new LocationDao<Location>(manager), manager), manager));
         list.add(new FavoriteMenu(sc, new FavoriteService(sc, new FavoriteDao<Favorite>(manager), manager), manager));
         

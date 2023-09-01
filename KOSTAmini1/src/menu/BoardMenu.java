@@ -93,7 +93,7 @@ public class BoardMenu extends MENU<Article> {
 					int cmd = sc.nextInt();
 					switch (cmd) {
 					case 1:
-						System.out.println("준비중");
+						((RepliesMenu)this.manager.getMenu("RepliesMenu")).menu1(article);
 						break;
 					case 2:
 						// 좋아요
