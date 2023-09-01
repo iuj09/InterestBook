@@ -44,7 +44,7 @@ public class Menu<T> {
         boolean flag = true;
         while(flag) {
             System.out.println("-----------------------------------------------------");
-            System.out.println("1. " + (MemberLog.member == null ? "회원 가입" : "마이페이지")  + " / 2." + (MemberLog.member == null ? "로그인" : "로그아웃") + " / 3.회원 검색 / 4.게시물 검색 / 5.Meet 검색 / 6." + (MemberLog.member == null ? "종료" : "회원 탈퇴") + (MemberLog.member != null ? " / 0.뒤로" : ""));
+            System.out.println("1. " + (MemberLog.member == null ? "회원 가입" : "마이페이지")  + " / 2." + (MemberLog.member == null ? "로그인" : "로그아웃") + " / 3.회원 검색 / 4.게시물 조회 / 5.Meet 조회 / 6." + (MemberLog.member == null ? "종료" : "회원 탈퇴") + (MemberLog.member != null ? " / 0.종료" : ""));
             System.out.println("-----------------------------------------------------");
             System.out.print(": ");
             int num = sc.nextInt();
@@ -68,10 +68,18 @@ public class Menu<T> {
         		((MemberMenu)this.manager.getMenu("MemberMenu")).searchMember();
             	break;
             case 4:
+<<<<<<< HEAD
+            	((BoardMenu)this.manager.getMenu("BoardMenu")).menu();
+=======
             ((BoardMenu)this.manager.getMenu("BoardMenu")).menu();
+>>>>>>> refs/heads/master
             	break;
             case 5:
+<<<<<<< HEAD
+            	((MeetMenu)this.manager.getMenu("MeetMenu")).menu();
+=======
            	    menuRun(0);
+>>>>>>> refs/heads/master
             	break;
             case 6:
             	if(MemberLog.member != null) {
@@ -104,10 +112,27 @@ public class Menu<T> {
         list.add(new LocationMenu(sc, new LocationService(sc, new LocationDao<Location>(manager), manager), manager));
         // 4. 관심사
         list.add(new FavoriteMenu(sc, new FavoriteService(sc, new FavoriteDao<Favorite>(manager), manager), manager));
+<<<<<<< HEAD
+        list.add(new BoardMenu(sc, new ArticleService(sc, new ArticleDao<Article>(manager), manager), manager));
+        list.add(new RepliesMenu(sc, new RepliesService(sc, new RepliesDao<Replies>(manager), manager), manager));
+        
+        // menuList.add(((MENU<Member>)new MemberMenu(sc, new MemberService(sc, new MemberDao<Member>()), this)));
+        // menuList.add(((MENU<Article>)new BoardMenu(sc, new ArticleService(sc, new ArticleDao<Article>()), this)));
+        // menuList.add((MENU<Member>)new MemberMenu(sc, new MemberService(sc, new MemberDao<Member>()), this));
+        // menuList.add((MENU<MeetReply>)new MeetReplyMenu(sc, new MeetReplyService(sc, new MeetReplyDao<MeetReply>()), this));
+        // manager = new Manager<>();
+        // manager.setMenu((MENU<T>)new MeetMenu(sc, new MeetService(sc, new MeetDao<Meet>()), this));
+
+        // for() {
+
+        // }
+
+=======
         // 5. 게시판
         list.add(new BoardMenu(sc, new ArticleService(sc, new ArticleDao<Article>(manager), manager), manager));
         // 6. 게시판 댓글
         list.add(new RepliesMenu(sc, new RepliesService(sc, new RepliesDao<Replies>(manager), manager), manager));
+>>>>>>> refs/heads/master
     }
 
     private void menuRun(int num) {

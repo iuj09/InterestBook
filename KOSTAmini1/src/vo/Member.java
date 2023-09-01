@@ -106,11 +106,12 @@ public class Member {
 	public void setFavoriteNo(int favoriteNo) {
 		this.favoriteNo = favoriteNo;
 	}
-
+	
 
 	@Override
 	public String toString() {
-		return "Member [no=" + no + ", id=" + id + ", pwd=" + pwd + ", name=" + name + ", email=" + email +  ", joinDate=" + joinDate + 
-				", admin=" + admin + ", locationNo=" + locationNo + ", favoriteNo=" + favoriteNo + "]";
+		return "Member [no=" + no + ", id=" + id + ", pwd=" + pwd + ", name=" + name + ", email=" + email
+				+ ", joinDate=" + joinDate + ", admin=" + admin + ", locationNo=" + locationNo + ", favoriteNo="
+				+ favoriteNo + "]";
 	}
 }
