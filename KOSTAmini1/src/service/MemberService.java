@@ -148,24 +148,27 @@ public class MemberService extends SERVICE<Member> {
 	
 	//login
 	public void login(Scanner sc) {
-		String id = null;
-		String pwd = null;
-		System.out.print("id:");
-		id = sc.next();
-		System.out.print("pwd:");
-		pwd = sc.next();
-		HashMap<String, String> map = new HashMap<String, String>();
-		
-		map.put("id", id);
-		map.put("pwd", pwd);
-		
-		try {
-			MemberLog.member = ((MemberDao<Member>)dao).select(map).get(0);
-			System.out.println("로그인");
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}	
+		try(MemberDao<Member> dao = (MemberDao<Member>) this.dao){
+			String id = null;
+			String pwd = null;
+			System.out.print("id:");
+			id = sc.next();
+			System.out.print("pwd:");
+			pwd = sc.next();
+			HashMap<String, String> map = new HashMap<String, String>();
+			
+			map.put("id", id);
+			map.put("pwd", pwd);
+			if(pwd.equals(((MemberDao<Member>)dao).select(map).get(0).getPwd())) {
+				MemberLog.member = ((MemberDao<Member>)dao).select(map).get(0);
+				System.out.println("로그인");
+			}else {
+				System.out.println("아이디와 비밀번호를 다시 확인해주세요");
+				return;
+			}
+		}catch(SQLException e) {
+			System.out.println(e.getMessage());
+		}
 	}
 	
 	//logout
