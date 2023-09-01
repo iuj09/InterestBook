@@ -4,6 +4,7 @@ import java.util.Scanner;
 
 import common.MENU;
 import common.Manager;
+import common.MemberLog;
 import common.SERVICE;
 import service.MeetService;
 import vo.Meet;
@@ -14,7 +15,6 @@ public class MeetMenu extends MENU<Meet> {
         super(sc, service, manager);
         this.sc = sc;
         this.service = service;
-        System.out.println("MeetMenu 클래스 생성!");
     }
 
     /**
@@ -26,24 +26,22 @@ public class MeetMenu extends MENU<Meet> {
      */
     @Override
     public void menu() {
+        // int memberNo = MemberLog.member.getNo();
         boolean flag = true;
         while(flag) {
-            System.out.println("-----------------------------------------------------");
-            System.out.println("1. 모집글 출력 / 2. 모집글 조회 / 3. 모집글 작성 / 3. 이전");
+            System.out.println("\n-----------------------------------------------------");
+            // ((MeetService)service).menu(1, memberNo);
+            System.out.println("1. 모집글 리스트 / 2. 모집글 상세 조회 / 3. 모집글 작성 / 4. 이전");
             System.out.println("-----------------------------------------------------");
             System.out.print(": ");
             int num = sc.nextInt();
 
-            System.out.println();
             switch(num) {
                 case 1:
                     ((MeetService)service).menu(1, 0);
                     break;
                 case 2:
-                    // 모집글 선택
-                    System.out.print("모집글 번호: ");
-                    int no = sc.nextInt();
-                    meetInfo(no);
+                    meetInfo(0);
                     break;
                 case 3:
                     ((MeetService)service).menu(2, 0);
@@ -55,14 +53,16 @@ public class MeetMenu extends MENU<Meet> {
         }
     }
 
-    /**
-     * no : 게시글 번호
-     */
-    public void meetInfo(int no) {
+    public void meetInfo(int memberNo) {
+        System.out.println("-----------------------------------------------------");
+        System.out.print("모집글 번호: ");
+        int no = sc.nextInt();
+        ((MeetService)service).menu(-1, no);
+
         boolean flag = true;
         while(flag) {
-            System.out.println("-----------------------------------------------------");
-            ((MeetService)service).menu(-1, no);
+            // System.out.println("-----------------------------------------------------");
+            // ((MeetService)service).menu(-1, no);
             System.out.println("-----------------------------------------------------");
             System.out.println("1. 모집글 수정 / 2. 참가 / 3. 참가 취소 / 4. 해당 모집글 댓글 조회 / 5. 이전");
             System.out.println("-----------------------------------------------------");
