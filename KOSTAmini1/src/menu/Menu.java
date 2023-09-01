@@ -12,18 +12,21 @@ import dao.LocationDao;
 import dao.MeetDao;
 import dao.MeetReplyDao;
 import dao.MemberDao;
+import dao.RepliesDao;
 import service.ArticleService;
 import service.FavoriteService;
 import service.LocationService;
 import service.MeetReplyService;
 import service.MeetService;
 import service.MemberService;
+import service.RepliesService;
 import vo.Article;
 import vo.Favorite;
 import vo.Location;
 import vo.Meet;
 import vo.MeetReply;
 import vo.Member;
+import vo.Replies;
 
 public class Menu<T> {
     private Scanner sc;
@@ -101,6 +104,7 @@ public class Menu<T> {
         list.add(new BoardMenu(sc, new ArticleService(sc, new ArticleDao<Article>(manager), manager), manager));
         list.add(new LocationMenu(sc, new LocationService(sc, new LocationDao<Location>(manager), manager), manager));
         list.add(new FavoriteMenu(sc, new FavoriteService(sc, new FavoriteDao<Favorite>(manager), manager), manager));
+        list.add(new RepliesMenu(sc, new RepliesService(sc, new RepliesDao<Replies>(manager), manager), manager));
         
         // menuList.add(((MENU<Member>)new MemberMenu(sc, new MemberService(sc, new MemberDao<Member>()), this)));
         // menuList.add(((MENU<Article>)new BoardMenu(sc, new ArticleService(sc, new ArticleDao<Article>()), this)));

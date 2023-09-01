@@ -7,7 +7,6 @@ import java.util.Scanner;
 import common.MENU;
 import common.Manager;
 import common.SERVICE;
-import dao.MemberDao;
 import service.ArticleService;
 import service.MemberService;
 import vo.Article;
@@ -28,7 +27,7 @@ public class BoardMenu extends MENU<Article> {
 
 	public BoardMenu(Scanner sc, SERVICE<Article> service, Manager manager) {
 		super(sc, service, manager);
-		mService = new MemberService(sc, new MemberDao(manager), manager);
+		mService = ((MemberService) this.manager.getService("MemberService"));
 	}
 
 	@Override

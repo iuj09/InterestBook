@@ -20,6 +20,7 @@ public class RepliesMenu extends MENU<Replies> {
 		user = ((MemberService) this.manager.getService("MemberService")).nowMember();
 	}
 
+	@Override
 	public void menu1(Article a) {
 		boolean flag = true;
 		while (flag) {
