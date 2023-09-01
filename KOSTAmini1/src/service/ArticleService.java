@@ -21,6 +21,7 @@ public class ArticleService extends SERVICE<Article> {
 	public ArticleService(Scanner sc, CRUD<Article> dao, Manager manager) {
 		super(sc, dao, manager);
 		mService = new MemberService(sc, new MemberDao(manager), manager);
+
 	}
 
 	// add.

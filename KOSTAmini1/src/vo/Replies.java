@@ -83,8 +83,9 @@ public class Replies {
 
 	@Override
 	public String toString() {
-		return "작성자:" + member_no + " 게시판 번호:" + article_no + " \n [" + no + "] " + content + " 작성일:" + w_date + " 수정일:"
-				+ e_date + " 좋아요:" + heart;
+		return "_______________________________________________________\n" + "작성자:" + member_no + " / 게시판 번호:"
+				+ article_no + " \n [" + no + "] " + content + " 작성일:" + w_date + " 수정일:" + e_date + " 좋아요:" + heart
+				+ "\n_______________________________________________________ ";
 	}
 
 }

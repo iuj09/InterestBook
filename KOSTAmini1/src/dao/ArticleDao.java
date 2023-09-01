@@ -172,7 +172,7 @@ public class ArticleDao<T extends Article> extends CRUD<Article> {
 		return list;
 	}
 
-	// 제목으로 검색
+	// 내용으로 검색
 	public ArrayList<Article> selectByContent(String content) {
 		ArrayList<Article> list = new ArrayList<Article>();
 
