@@ -107,8 +107,7 @@ public class MeetService extends SERVICE<Meet> {
 
     private void edit(MeetDao<Meet> dao, Meet original) throws SQLException {
         boolean flag = true;
-        Meet fresh = new Meet();
-        fresh.setNo(original.getNo());
+        Meet fresh = original;
         boolean[] finish = new boolean[]{false, false, false};
         while(flag) {
             System.out.println("-----------------------------------------------------");
@@ -125,10 +124,8 @@ public class MeetService extends SERVICE<Meet> {
                         System.out.print("새롭게 바꿀 제목: ");
                         String title = sc.next();
                         fresh.setTitle(title);
-                        dao.update(fresh);
-                        fresh.setTitle("");
                         finish[0] = true;
-                    } else { System.out.println("제목 수정 완료");}
+                    }
                     break;
                 case 2:
                     if(!finish[1]) {
@@ -136,10 +133,8 @@ public class MeetService extends SERVICE<Meet> {
                         System.out.print("새롭게 바꿀 내용: ");
                         String content = sc.next();
                         fresh.setContent(content);
-                        dao.update(fresh);
-                        fresh.setContent(null);
                         finish[1] = true;
-                    } else { System.out.println("내용 수정 완료");}
+                    }
                     break;
                 case 3:
                     if(!finish[2]) {
@@ -147,10 +142,8 @@ public class MeetService extends SERVICE<Meet> {
                         System.out.print("새롭게 모집 인원 수: ");
                         int recurit = sc.nextInt();
                         fresh.setRecurit(recurit);
-                        dao.update(fresh);
-                        fresh.setRecurit(0);
                         finish[2] = true;
-                    } else { System.out.println("모집 인원 수정 완료");}
+                    }
                     break;
                 case 4:
                     dao.update(fresh);
