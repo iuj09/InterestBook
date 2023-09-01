@@ -6,33 +6,37 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
+import common.CRUD;
+import common.Manager;
 import common.SERVICE;
 import dao.ArticleDao;
+import dao.MemberDao;
 import vo.Article;
+import vo.Member;
 
 public class ArticleService extends SERVICE<Article> {
-	public ArticleService(Scanner sc, ArticleDao<Article> dao) {
-		super(sc, dao);
-		System.out.println("Aricle Service 클래스 생성!");
+	private MemberService mService;
+	private final int perPage = 5;
+
+	public ArticleService(Scanner sc, CRUD<Article> dao, Manager manager) {
+		super(sc, dao, manager);
+		mService = new MemberService(sc, new MemberDao(manager), manager);
+
 	}
 
-	// 글 작성.
-	public void addArticle(Scanner sc) {
-		System.out.println("=== 글 작성 ===");
-
-		System.out.print("title: ");
-		String title = sc.next();
-		System.out.print("content: ");
-		String content = sc.next();
+	// add.
+	public boolean addArticle(String title, String content) {
+		Member user = ((MemberService) mService).nowMember();
 
 		try {
-			dao.insert(new Article(0, title, content, 0, null, null, 0, 0));
+			dao.insert(new Article(0, title, content, 0, null, null, user.getNo(), user.getFavoriteNo()));
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return false;
 		}
 
-		System.out.println("글 작성 완료.");
+//		System.out.println("글 작성 완료.");
+		return true;
 	}
 
 	// 전체 불러와서 출력
@@ -55,33 +59,130 @@ public class ArticleService extends SERVICE<Article> {
 		}
 	}
 
-	// 페이지네이션하여 게시글 목록 반환(최신순)
-	public void getPagedArticles(int page) {
+	// index
+	public HashMap<String, Object> indexArticle(int page) {
+		HashMap<String, Object> context = new HashMap<>();
+		Member user = ((MemberService) mService).nowMember();
+		HashMap<String, Object> args = null;
+		if (user != null) {
+			args = new HashMap<>();
+			args.put("FAVORITES_NO", user.getFavoriteNo());
+		}
 
-	}
-
-	// 페이지네이션하여 게시글 목록 출력(최신순) // param으로 list?
-	public void printArticle(int page) {
-		System.out.println("================= 게시판 =================");
-		System.out.println("번호   제목               작성자   작성일  ");
-		System.out.println("----------------------------------------");
-
-		List<Article> Articles = ((ArticleDao<Article>) dao).selectByFavorite(1); // user 객체
-		List<Article> sortedArticles = reverseList(Articles);
+		ArrayList<Article> articles = ((ArticleDao<Article>) dao).select1(args);
+		List<Article> sortedArticles = reverseList(articles);
 		List<Article> pageArticles = pagedList(sortedArticles, page);
 		int totalPageCount = (int) Math.ceil((double) sortedArticles.size() / 5);
 
-		if (pageArticles == null) {
-			System.out.println("잘못된 페이지 번호입니다. 전체 페이지 수: " + totalPageCount);
-			return;
-		}
-		for (Article a : pageArticles) {
-			System.out.printf(" %-3d | %-15s | %3s | %-1s\n", pageArticles.indexOf(a) + 1, a.getTitle(), a.getWriter(),
-					a.getwDate());
-		} // 날짜 출력 형식
+		context.put("articles", pageArticles);
+		context.put("totalPage", totalPageCount);
+		return context;
+	}
 
-		System.out.println("----------------------------------------");
-		System.out.println(page + " / " + totalPageCount);
+	// detail. article 객체를 받음
+	public HashMap<String, Object> detailArticle(Article a) {
+		HashMap<String, Object> context = new HashMap<>();
+		Member user = ((MemberService) mService).nowMember();
+
+		int likeCount = ((ArticleDao<Article>) dao).likeCount(a.getNum());
+		int repliesCount = ((ArticleDao<Article>) dao).repliesCount(a.getNum());
+		boolean islike = ((ArticleDao<Article>) dao).isLike(a.getNum(), a.getNum());
+
+		context.put("likeCount", likeCount);
+		context.put("repliesCount", repliesCount);
+		context.put("islike", islike);
+
+		return context;
+	}
+
+	// search
+	public HashMap<String, Object> searchArticles(String s, int cmd, int pageNum) {
+		HashMap<String, Object> context = new HashMap<>();
+		Member user = ((MemberService) mService).nowMember();
+		HashMap<String, Object> args = new HashMap<>();;
+
+		ArrayList<Article> articles = new ArrayList();
+		
+		String[] words = s.split(" ");
+		if (cmd < 4) {
+			if (cmd == 1 || cmd == 3) {
+				for (String w : words) {
+					args.put("title", w);
+				}
+			}
+			if (cmd == 2 || cmd == 3) {
+				for (String w : words) {
+					args.put("content", w);
+				}
+			}
+			articles = ((ArticleDao<Article>) dao).select1(args);
+		} else if (cmd == 4) {
+			words[0] = ""; // 서브 쿼리 필요
+		} else if (cmd == 5) {
+			words[0] = ""; // 서브 쿼리 필요
+		}
+		
+		List<Article> sortedArticles = reverseList(articles);
+		List<Article> pageArticles = pagedList(sortedArticles, pageNum);
+		int totalPageCount = (int) Math.ceil((double) sortedArticles.size() / 5);
+
+		context.put("articles", pageArticles);
+		context.put("totalPage", totalPageCount);
+		return context;
+	}
+
+	// searchByMId
+	public ArrayList<Article> searchByMemberNo(int num) {
+		ArrayList<Article> articles;
+		HashMap<String, Object> args = new HashMap<>() {
+			{
+				put("MEMBERS_NO", num);
+			}
+		};
+		articles = ((ArticleDao<Article>) dao).select1(args);
+
+		return articles;
+	}
+
+	// edit
+	public boolean editArticle(int num, String title, String content) {
+		Member user = ((MemberService) mService).nowMember();
+
+		try {
+			dao.update(new Article(num, title, content, 0, null, null, user.getNo(), user.getFavoriteNo()));
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+
+//		System.out.println("글 수정 완료.");
+		return true;
+	}
+
+	// del
+	public boolean delArticle(int num) {
+		try {
+			dao.delete(num);
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+
+		return true;
+	}
+
+	// like Article
+	public String likeArticle(Article a) {
+		Member user = ((MemberService) mService).nowMember();
+		String msg;
+		if (((ArticleDao<Article>) dao).isLike(user.getNo(), a.getNum())) {
+			((ArticleDao<Article>) dao).dislikeArticle(user.getNo(), a.getNum());
+			msg = a.getNum() + " 번 게시글을 좋아요 취소했습니다.\n";
+		} else {
+			((ArticleDao<Article>) dao).likeArticle(user.getNo(), a.getNum());
+			msg = a.getNum() + " 번 게시글을 좋아요 했습니다.\n";
+		}
+		return msg;
 	}
 
 	// 페이지에서 게시물 선택해서 디테일 출력
@@ -96,17 +197,17 @@ public class ArticleService extends SERVICE<Article> {
 				return;
 			}
 
-			Article a = pageArticles.get(sel - 1);
-			Boolean flag = true;
+			Article article = pageArticles.get(sel - 1);
+			Boolean flag1 = true;
 
-			while (flag) {
-				System.out.println(a.getNum());
-				System.out.println("제목  : " + a.getTitle());
-				System.out.println("작성일 : " + a.getwDate());
-				System.out.println("작성자 : " + a.getWriter());
-				System.out.println("좋아요 수: " + ((ArticleDao<Article>) dao).likeCount(a.getNum())); //
+			while (flag1) {
+				System.out.println(article.getNum());
+				System.out.println("제목  : " + article.getTitle());
+				System.out.println("작성일 : " + article.getwDate());
+				System.out.println("작성자 : " + article.getWriter());
+				System.out.println("좋아요 수: " + ((ArticleDao<Article>) dao).likeCount(article.getNum())); //
 				System.out.println("-------------------------------------------");
-				System.out.println(a.getContent());
+				System.out.println(article.getContent());
 				System.out.println("-------------------------------------------");
 
 				// 댓글 추가
@@ -119,15 +220,15 @@ public class ArticleService extends SERVICE<Article> {
 					System.out.println("준비중");
 					break;
 				case 2:
-					if (((ArticleDao<Article>) dao).isLike(1, a.getNum())) {
+					if (((ArticleDao<Article>) dao).isLike(1, article.getNum())) {
 						System.out.println("이미 좋아요 하였습니다.");
 					} else {
-						((ArticleDao<Article>) dao).likeArticle(1, a.getNum());
+						((ArticleDao<Article>) dao).likeArticle(1, article.getNum());
 					}
 					break;
 				case 3:
-					if (((ArticleDao<Article>) dao).isLike(1, a.getNum())) {
-						((ArticleDao<Article>) dao).dislikeArticle(1, a.getNum());
+					if (((ArticleDao<Article>) dao).isLike(1, article.getNum())) {
+						((ArticleDao<Article>) dao).dislikeArticle(1, article.getNum());
 					} else {
 						System.out.println("아직 좋아요를 하지 않았습니다.");
 					}
@@ -139,21 +240,21 @@ public class ArticleService extends SERVICE<Article> {
 
 					System.out.print("> new Title: ");
 					String title = sc.next();
-					a.setTitle(title);
+					article.setTitle(title);
 					// 줄 처리
 					System.out.print("> new content: ");
 					String content = sc.next();
-					a.setContent(content);
+					article.setContent(content);
 
-					dao.update(a);
+					dao.update(article);
 
 					System.out.println("글 수정 완료.");
 					break;
 				case 5:
-					dao.delete(a.getNum());
+					dao.delete(article.getNum());
 					return;
 				case 0:
-					flag = false;
+					flag1 = false;
 					return;
 				}
 
@@ -318,7 +419,8 @@ public class ArticleService extends SERVICE<Article> {
 
 			// 댓글 추가
 
-			System.out.println("1.댓글보기 2.좋아요 3.좋아요취소 4.수정 5.삭제 0.목록");
+			System.out.println("1.댓글보기 2.좋아요"
+					+ (((ArticleDao<Article>) dao).isLike(1, a.getNum()) == false ? " 취소" : "") + " 4.수정 5.삭제 0.목록"); // 유저
 			System.out.print("> 메뉴: ");
 			int cmd = sc.nextInt();
 			switch (cmd) {
@@ -327,19 +429,12 @@ public class ArticleService extends SERVICE<Article> {
 				break;
 			case 2:
 				if (((ArticleDao<Article>) dao).isLike(1, a.getNum())) {
-					System.out.println("이미 좋아요 하였습니다.");
+					((ArticleDao<Article>) dao).dislikeArticle(1, a.getNum());
 				} else {
 					((ArticleDao<Article>) dao).likeArticle(1, a.getNum());
 				}
 				break;
 			case 3:
-				if (((ArticleDao<Article>) dao).isLike(1, a.getNum())) {
-					((ArticleDao<Article>) dao).dislikeArticle(1, a.getNum());
-				} else {
-					System.out.println("아직 좋아요를 하지 않았습니다.");
-				}
-				break;
-			case 4:
 				// 자신글만 수정
 
 				System.out.println("=== 게시글 수정 ===");

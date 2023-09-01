@@ -7,11 +7,13 @@ import java.util.Map.Entry;
 
 import common.CRUD;
 import common.DBConnect;
+import common.Manager;
 import vo.Member;
 
 public class MemberDao<T extends Member> extends CRUD<Member> {
 
-	public  MemberDao() {
+	public  MemberDao(Manager manager) {
+		super(manager);
 		db = DBConnect.getInstance();
 	}
 	
@@ -72,6 +74,12 @@ public class MemberDao<T extends Member> extends CRUD<Member> {
 		ps.executeUpdate();
 	}
 	
+	/**
+	 * 회원 검색
+	 * 	- selectIdName => select id, name, locno, favno from members
+	 *  - select => select * from members
+	 *  
+	 */
 	//select id, name, locNo, favNo where ?
 	public ArrayList<Member> selectIdName(HashMap<String, String> args) throws SQLException{
 		ArrayList<Member> list = new ArrayList<>();
@@ -146,8 +154,7 @@ public class MemberDao<T extends Member> extends CRUD<Member> {
 		}
 		return list;
 	}
-	
-	
+		
 	//회원 탈퇴
 	public void delete(int no) throws SQLException {
 		conn = db.conn();

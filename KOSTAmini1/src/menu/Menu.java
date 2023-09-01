@@ -34,8 +34,9 @@ public class Menu<T> {
     }
 
     public void menu() {
+    	boolean flag = true;
         menuList();
-        while(true) {
+        while(flag) {
             System.out.println("-----------------------------------------------------");
             System.out.println("1. " + (MemberLog.member == null ? "회원 가입" : "마이페이지")  + " / 2." + (MemberLog.member == null ? "로그인" : "로그아웃") + " / 3.회원 검색 / 4.게시물 검색 / 5.Meet 검색 / 6." + (MemberLog.member == null ? "종료" : "회원 탈퇴") + (MemberLog.member != null ? " / 0.뒤로" : ""));
             System.out.println("-----------------------------------------------------");
@@ -49,28 +50,19 @@ public class Menu<T> {
             	if(MemberLog.member == null) {
             		((MemberService)this.manager.getService("MemberService")).join(sc);
             	}else {
-            		System.out.println("마이페이지");
-            		System.out.println("-----------------------------------------------------");
-            		System.out.println("1.내 정보 조회 / 2.내 정보 수정 / 3.내 게시물 조회 / 4.모집글 참가 내역 조회 / 5.좋아요 표시한 게시물 조회" + (MemberLog.member.getAdmin().equals("1") ? " / 6.관리자 권한부여 / 7.지역 관리 / 8.관심사 관리": ""));
-            		System.out.println("-----------------------------------------------------");
-                    System.out.print(": ");
-            		((MemberService)this.manager.getService("MemberService")).myPage(sc.nextInt());
+            		((MemberMenu)this.manager.getMenu("MemberMenu")).myPage();
             	}
                 break;
             case 2:
             	if(MemberLog.member == null) {
             		((MemberService)this.manager.getService("MemberService")).login(sc);
+            		
             	}else {
             		((MemberService)this.manager.getService("MemberService")).logout();
             	}
             	break;
             case 3:
-            	System.out.println("회원 검색");
-            	System.out.println("-----------------------------------------------------");
-        		System.out.println("1.id로 검색 / 2.이름으로 검색 / 3.번호로 검색(관리자용) / 4.전체 검색(관리자용)");
-        		System.out.println("-----------------------------------------------------");
-                System.out.print(": ");
-        		((MemberService)this.manager.getService("MemberService")).searchMember(sc.nextInt());
+        		((MemberMenu)this.manager.getMenu("MemberMenu")).searchMember();
             	break;
             case 4:
 //            	menu.menuRun(2);
@@ -87,6 +79,7 @@ public class Menu<T> {
             	break;
             case 0:
             	if(MemberLog.member != null) {
+            		flag = false;
             		break;
             	}
         }
