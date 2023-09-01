@@ -97,16 +97,17 @@ public class BoardMenu extends MENU<Article> {
 						break;
 					case 2:
 						// 좋아요
-						dMsg = GREEN + ((ArticleService) service).likeArticle(article);
+						dMsg = GREEN + ((ArticleService) service).likeArticle(article) + RESET;
 						break;
 					case 3:
 						// 수정
 						System.out.println("=== 글 수정 ===");
 
 						System.out.print("> new title: ");
-						String title = sc.next();
+						sc.nextLine();
+						String title = sc.nextLine();
 						System.out.print("> new content: "); // 줄 처리
-						String content = sc.next();
+						String content = sc.nextLine();
 						boolean eResult = ((ArticleService) service).editArticle(article.getNum(), title, content); // user
 						if (eResult) {
 							iMsg = GREEN + "성공적으로 게시글이 수정되었습니다.\n" + RESET;
@@ -248,16 +249,17 @@ public class BoardMenu extends MENU<Article> {
 								break;
 							case 2:
 								// 좋아요
-								ddMsg = GREEN + ((ArticleService) service).likeArticle(article);
+								ddMsg = GREEN + ((ArticleService) service).likeArticle(article) + RESET;
 								break;
 							case 3:
 								// 수정
 								System.out.println("=== 글 수정 ===");
 
 								System.out.print("> new title: ");
-								String stitle = sc.next();
+								sc.nextLine();
+								String stitle = sc.nextLine();
 								System.out.print("> new content: "); // 줄 처리
-								String scontent = sc.next();
+								String scontent = sc.nextLine();
 								boolean eResult = ((ArticleService) service).editArticle(article.getNum(), stitle,
 										scontent); // user
 								if (eResult) {

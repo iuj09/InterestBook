@@ -302,9 +302,9 @@ public class ArticleService extends SERVICE<Article> {
 	public void addArticle(Scanner sc, int faId) {
 		System.out.println("=== 글 작성 ===");
 
-		System.out.print("title: ");
+		System.out.print("> title: ");
 		String title = sc.next();
-		System.out.print("content: ");
+		System.out.print("> content: ");
 		String content = sc.next();
 
 		try {
