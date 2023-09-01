@@ -27,9 +27,9 @@ public class MemberDao<T extends Member> extends CRUD<Member> {
 		ps.setString(2, m.getPwd());
 		ps.setString(3, m.getName());
 		ps.setString(4, m.getEmail());
-		ps.setInt(5, m.getLocationNo());
-		ps.setInt(6, m.getFavoriteNo());
-		ps.setString(7, m.getAdmin());
+		ps.setString(5, m.getAdmin());
+		ps.setInt(6, m.getLocationNo());
+		ps.setInt(7, m.getFavoriteNo());
 		
 		ps.executeUpdate();
 	}
@@ -116,7 +116,7 @@ public class MemberDao<T extends Member> extends CRUD<Member> {
 			
 			while(rs.next()) {
 				list.add(new Member(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4),
-						rs.getString(5),  rs.getDate(6), rs.getInt(7), rs.getInt(8), rs.getString(9)));
+						rs.getString(5),  rs.getDate(6), rs.getString(7), rs.getInt(8), rs.getInt(9)));
 			}
 		return list;
 		}
@@ -142,7 +142,7 @@ public class MemberDao<T extends Member> extends CRUD<Member> {
 		
 		while(rs.next()) {
 			list.add(new Member(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4),
-					rs.getString(5),  rs.getDate(6), rs.getInt(7), rs.getInt(8), rs.getString(9)));
+					rs.getString(5),  rs.getDate(6), rs.getString(7), rs.getInt(8), rs.getInt(9)));
 		}
 		return list;
 	}

@@ -73,7 +73,7 @@ public class Menu<T> {
         menuList.add(((MENU<Article>)new BoardMenu(sc, new ArticleService(sc, new ArticleDao<Article>()), this)));
         menuList.add((MENU<Member>)new MemberMenu(sc, new MemberService(sc, new MemberDao<Member>()), this));
         menuList.add((MENU<MeetReply>)new MeetReplyMenu(sc, new MeetReplyService(sc, new MeetReplyDao<MeetReply>()), this));
-
+        
         
         daoList.add((CRUD<T>)new MeetDao<Meet>());
         serviceList.add((SERVICE<T>)new MeetService(sc, (CRUD<Meet>)daoList.get(0)));
