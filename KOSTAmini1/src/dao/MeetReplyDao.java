@@ -6,11 +6,13 @@ import java.util.HashMap;
 
 import common.CRUD;
 import common.DBConnect;
+import common.Manager;
 import vo.MeetReply;
 
 public class MeetReplyDao<T extends MeetReply> extends CRUD<MeetReply> {
 
-    public MeetReplyDao() {
+    public MeetReplyDao(Manager manager) {
+        super(manager);
         db = DBConnect.getInstance();
     }
 

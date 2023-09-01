@@ -3,17 +3,15 @@ package menu;
 import java.util.Scanner;
 
 import common.MENU;
+import common.Manager;
 import common.SERVICE;
 import service.MeetReplyService;
 import vo.MeetReply;
 
 public class MeetReplyMenu extends MENU<MeetReply>{
 
-    public MeetReplyMenu(Scanner sc, SERVICE<MeetReply> service, Menu<?> menu) {
-        super(sc, service, menu);
-        this.sc = sc;
-        this.service = service;
-        this.menu = menu;
+    public MeetReplyMenu(Scanner sc, SERVICE<MeetReply> service,  Manager manager) {
+        super(sc, service, manager);
     }
 
     @Override
