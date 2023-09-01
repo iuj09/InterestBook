@@ -17,7 +17,6 @@ public class Meet extends VO {
     private int enter;
 
     public Meet() {}
-
     public Meet(int no, int recurit, String title, String content, Date wDate, Date eDate, Date deadLine,
             int locationNo, int memberNo, int enter) {
         this.no = no;
@@ -104,10 +103,18 @@ public class Meet extends VO {
         this.memberNo = memberNo;
     }
 
+    public int getEnter() {
+        return enter;
+    }
+
+    public void setEnter(int enter) {
+        this.enter = enter;
+    }
+
     @Override
     public String toString() {
         return "Meet [no=" + no + ", recurit=" + recurit + ", title=" + title + ", content=" + content + ", wDate="
                 + wDate + ", eDate=" + eDate + ", deadLine=" + deadLine + ", locationNo=" + locationNo + ", memberNo="
-                + memberNo + "]";
+                + memberNo + ", enter=" + enter + "]";
     }
 }
