@@ -10,7 +10,7 @@ import vo.Meet;
 
 public class MeetMenu extends MENU<Meet> {
 
-    public MeetMenu(Scanner sc, SERVICE<Meet> service,  Manager manager) {
+    public MeetMenu(Scanner sc, SERVICE<Meet> service, Manager manager) {
         super(sc, service, manager);
         this.sc = sc;
         this.service = service;

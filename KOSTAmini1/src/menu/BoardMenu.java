@@ -5,10 +5,13 @@ import java.util.List;
 import java.util.Scanner;
 
 import common.MENU;
+import common.Manager;
+import common.SERVICE;
 import dao.MemberDao;
 import service.ArticleService;
 import service.MemberService;
 import vo.Article;
+import vo.Meet;
 
 public class BoardMenu extends MENU<Article> {
 	private static int pageNum = 1;
@@ -23,9 +26,9 @@ public class BoardMenu extends MENU<Article> {
 	public static final String PURPLE = "\u001B[35m";
 	public static final String CYAN = "\u001B[36m";
 	public static final String RESET = "\u001B[0m";
-
-	public BoardMenu(Scanner sc, ArticleService aService, Menu<?> menu) {
-		super(sc, aService, menu);
+	
+	public BoardMenu(Scanner sc, SERVICE<Article> service, Manager manager) {
+		super(sc, service, manager);
 		mService = new MemberService(sc, new MemberDao());
 	}
 

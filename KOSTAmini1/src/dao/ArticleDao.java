@@ -10,11 +10,12 @@ import java.util.Map.Entry;
 
 import common.CRUD;
 import common.DBConnect;
+import common.Manager;
 import vo.Article;
 
 public class ArticleDao<T extends Article> extends CRUD<Article> {
-	public ArticleDao() {
-		System.out.println("ArticleDao 클래스 생성!");
+	public ArticleDao(Manager manager) {
+		super(manager);
 		db = DBConnect.getInstance();
 	}
 

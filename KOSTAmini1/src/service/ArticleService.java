@@ -7,18 +7,21 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 
+import common.CRUD;
+import common.Manager;
 import common.SERVICE;
 import dao.ArticleDao;
 import dao.MemberDao;
 import vo.Article;
+import vo.Meet;
 import vo.Member;
 
 public class ArticleService extends SERVICE<Article> {
 	private MemberService mService;
 	private int perPage;
 
-	public ArticleService(Scanner sc, ArticleDao<Article> dao) {
-		super(sc, dao);
+	public ArticleService(Scanner sc, CRUD<Article> dao, Manager manager) {
+		super(sc, dao, manager);
 		mService = new MemberService(sc, new MemberDao());
 		perPage = 5;
 	}
