@@ -129,4 +129,5 @@ public class FavoriteService extends SERVICE<Favorite>{
 			System.out.println(e.getMessage());
 		}
 	}
+
 }
