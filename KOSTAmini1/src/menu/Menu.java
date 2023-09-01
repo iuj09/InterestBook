@@ -79,8 +79,8 @@ public class Menu<T> {
             	}else {
             		System.exit(0);
             	}
-            	break;
-            case 0:
+				break;
+			case 0:
             	if(MemberLog.member != null) {
             		flag = false;
             		break;
