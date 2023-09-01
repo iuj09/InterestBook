@@ -29,6 +29,7 @@ public class RepliesDao<T extends Replies> extends CRUD<Replies> {
 		ps.setInt(3, r.getArticle_no());
 		ps.setInt(4, r.getMember_no());
 		int cnt = ps.executeUpdate();
+
 		System.out.println(cnt + "개의 댓글이 작성됨");
 		System.out.println();
 	}
@@ -36,6 +37,7 @@ public class RepliesDao<T extends Replies> extends CRUD<Replies> {
 	// 댓글 번호로 검색
 	public Replies selectByNo(int no) throws SQLException {
 		conn = db.conn();
+
 		sql = "select * from Replies where no = ?";
 
 		ps = conn.prepareStatement(sql);
@@ -49,18 +51,20 @@ public class RepliesDao<T extends Replies> extends CRUD<Replies> {
 	}
 
 	// 게시글 번호로 검색
-	public Replies selectByArtNo(int no) throws SQLException {
+	public ArrayList<Replies> selectByArtNo(int no) throws SQLException {
+		ArrayList<Replies> list = new ArrayList<Replies>();
 		conn = db.conn();
+		
 		sql = "select * from Replies where articles_no = ?";
 
 		ps = conn.prepareStatement(sql);
 		ps.setInt(1, no);
 		rs = ps.executeQuery();
-		if (rs.next()) {
-			return new Replies(rs.getInt(1), rs.getString(2), rs.getDate(3), rs.getDate(4), rs.getInt(5), rs.getInt(6),
-					rs.getInt(7));
+		while (rs.next()) {
+			list.add(new Replies(rs.getInt(1), rs.getString(2), rs.getDate(3), rs.getDate(4), rs.getInt(5), rs.getInt(6),
+					rs.getInt(7)));
 		}
-		return null;
+		return list;
 	}
 
 	// 댓글 보기
@@ -110,7 +114,7 @@ public class RepliesDao<T extends Replies> extends CRUD<Replies> {
 		System.out.println();
 	}
 
-	// 좋아요 추가
+	// 좋아요 카운트추가
 	public void updateHeart(Replies r) throws SQLException {
 		conn = db.conn();
 

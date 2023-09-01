@@ -311,4 +311,10 @@ public class BoardMenu extends MENU<Article> {
 			}
 		}
 	}
+
+	@Override
+	public void menu1(Article a) {
+		// TODO Auto-generated method stub
+		
+	}
 }
