@@ -273,8 +273,9 @@ public class MemberService extends SERVICE<Member> {
 			Member m = nowMember();
 			if(m != null) {
 	            System.out.println("좋아요 표시한 게시물 조회");
-	            
-	            
+	            HashMap<String, String> amap = new HashMap<String, String>();
+	            ArrayList<Article> alist =((ArticleService)this.manager.getService("ArticleService")).likedArticles(m.getNo());
+	            ((ArticleService)this.manager.getService("ArticleService")).printAll(alist);
 			}    
 		}catch(SQLException e) {
 			System.out.println(e.getMessage());

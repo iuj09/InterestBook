@@ -68,18 +68,10 @@ public class Menu<T> {
         		((MemberMenu)this.manager.getMenu("MemberMenu")).searchMember();
             	break;
             case 4:
-<<<<<<< HEAD
             	((BoardMenu)this.manager.getMenu("BoardMenu")).menu();
-=======
-            ((BoardMenu)this.manager.getMenu("BoardMenu")).menu();
->>>>>>> refs/heads/master
             	break;
             case 5:
-<<<<<<< HEAD
-            	((MeetMenu)this.manager.getMenu("MeetMenu")).menu();
-=======
            	    menuRun(0);
->>>>>>> refs/heads/master
             	break;
             case 6:
             	if(MemberLog.member != null) {
@@ -87,8 +79,8 @@ public class Menu<T> {
             	}else {
             		System.exit(0);
             	}
-            	break;
-            case 0:
+				break;
+			case 0:
             	if(MemberLog.member != null) {
             		flag = false;
             		break;
@@ -112,27 +104,10 @@ public class Menu<T> {
         list.add(new LocationMenu(sc, new LocationService(sc, new LocationDao<Location>(manager), manager), manager));
         // 4. 관심사
         list.add(new FavoriteMenu(sc, new FavoriteService(sc, new FavoriteDao<Favorite>(manager), manager), manager));
-<<<<<<< HEAD
-        list.add(new BoardMenu(sc, new ArticleService(sc, new ArticleDao<Article>(manager), manager), manager));
-        list.add(new RepliesMenu(sc, new RepliesService(sc, new RepliesDao<Replies>(manager), manager), manager));
-        
-        // menuList.add(((MENU<Member>)new MemberMenu(sc, new MemberService(sc, new MemberDao<Member>()), this)));
-        // menuList.add(((MENU<Article>)new BoardMenu(sc, new ArticleService(sc, new ArticleDao<Article>()), this)));
-        // menuList.add((MENU<Member>)new MemberMenu(sc, new MemberService(sc, new MemberDao<Member>()), this));
-        // menuList.add((MENU<MeetReply>)new MeetReplyMenu(sc, new MeetReplyService(sc, new MeetReplyDao<MeetReply>()), this));
-        // manager = new Manager<>();
-        // manager.setMenu((MENU<T>)new MeetMenu(sc, new MeetService(sc, new MeetDao<Meet>()), this));
-
-        // for() {
-
-        // }
-
-=======
         // 5. 게시판
         list.add(new BoardMenu(sc, new ArticleService(sc, new ArticleDao<Article>(manager), manager), manager));
         // 6. 게시판 댓글
         list.add(new RepliesMenu(sc, new RepliesService(sc, new RepliesDao<Replies>(manager), manager), manager));
->>>>>>> refs/heads/master
     }
 
     private void menuRun(int num) {
