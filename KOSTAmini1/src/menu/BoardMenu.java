@@ -28,7 +28,7 @@ public class BoardMenu extends MENU<Article> {
 
 	public BoardMenu(Scanner sc, SERVICE<Article> service, Manager manager) {
 		super(sc, service, manager);
-		mService = new MemberService(sc, new MemberDao());
+		mService = new MemberService(sc, new MemberDao(manager), manager);
 	}
 
 	@Override

@@ -14,11 +14,12 @@ public class Meet extends VO {
     private Date deadLine;
     private int locationNo;
     private int memberNo;
+    private int enter;
 
     public Meet() {}
 
     public Meet(int no, int recurit, String title, String content, Date wDate, Date eDate, Date deadLine,
-            int locationNo, int memberNo) {
+            int locationNo, int memberNo, int enter) {
         this.no = no;
         this.recurit = recurit;
         this.title = title;
@@ -28,6 +29,7 @@ public class Meet extends VO {
         this.deadLine = deadLine;
         this.locationNo = locationNo;
         this.memberNo = memberNo;
+        this.enter = enter;
     }
 
     public int getNo() {

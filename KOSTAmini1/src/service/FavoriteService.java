@@ -47,7 +47,7 @@ public class FavoriteService extends SERVICE<Favorite>{
 		}
 	}
 	
-	public void searchFavByNo(Scanner sc) {
+	public void searchFavByNum(Scanner sc) {
 		try(FavoriteDao<Favorite> dao = (FavoriteDao<Favorite>) this.dao){
 			Member m = ((MemberService)this.manager.getService("MemberService")).nowMember();
 			if(m != null) {
