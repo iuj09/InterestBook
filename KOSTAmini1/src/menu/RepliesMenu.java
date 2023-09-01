@@ -11,17 +11,16 @@ import vo.Member;
 import vo.Replies;
 
 public class RepliesMenu extends MENU<Replies> {
-	private Member user;
 
 	public RepliesMenu(Scanner sc, RepliesService service, Manager manager) {
 		super(sc, service, manager);
 		this.sc = sc;
 		this.service = service;
-		user = ((MemberService) this.manager.getService("MemberService")).nowMember();
 	}
 
 	@Override
 	public void menu1(Article a) {
+		Member user = ((MemberService) this.manager.getService("MemberService")).nowMember();
 		boolean flag = true;
 		while (flag) {
 			((RepliesService) service).printAll(a);
@@ -36,10 +35,10 @@ public class RepliesMenu extends MENU<Replies> {
 				((RepliesService) service).addReplies(sc, a, user);
 				break;
 			case 2:
-				((RepliesService) service).updateReplies(sc, user);
+				((RepliesService) service).updateReplies(sc, user, a);
 				break;
 			case 3:
-				((RepliesService) service).delReplies(sc, user);
+				((RepliesService) service).delReplies(sc, user, a);
 				break;
 			case 4:
 				((RepliesService) service).Like(a, user);
