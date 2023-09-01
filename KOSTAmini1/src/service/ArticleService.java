@@ -185,6 +185,16 @@ public class ArticleService extends SERVICE<Article> {
 		return msg;
 	}
 
+	// 좋아요한 게시물 반환
+	public ArrayList<Article> likedArticles(int num) {
+		ArrayList<Article> list = new ArrayList<>();
+		
+		list = ((ArticleDao<Article>) dao).getLikedArticles(num);
+		
+		return list;
+	}
+	
+	
 	// 페이지에서 게시물 선택해서 디테일 출력
 	public void selectArticle(Scanner sc, int page, int sel) {
 		try {
@@ -302,9 +312,9 @@ public class ArticleService extends SERVICE<Article> {
 	public void addArticle(Scanner sc, int faId) {
 		System.out.println("=== 글 작성 ===");
 
-		System.out.print("title: ");
+		System.out.print("> title: ");
 		String title = sc.next();
-		System.out.print("content: ");
+		System.out.print("> content: ");
 		String content = sc.next();
 
 		try {

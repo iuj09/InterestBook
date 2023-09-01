@@ -10,7 +10,6 @@ import common.Manager;
 import vo.MeetReply;
 
 public class MeetReplyDao<T extends MeetReply> extends CRUD<MeetReply> {
-
     public MeetReplyDao(Manager manager) {
         super(manager);
         db = DBConnect.getInstance();
@@ -18,7 +17,13 @@ public class MeetReplyDao<T extends MeetReply> extends CRUD<MeetReply> {
 
     @Override
     public void insert(MeetReply t) throws SQLException {
-    
+        conn = db.conn();
+
+        sql = "INSERT INTO MEETS_REPLIES(NO, CONTENT, MEETS_NO, MEMBERS_NO) VALUES(MEETS_REPLIES_SEQUENCE.NEXTVAL, CONTENT, ?, ?)";
+
+        ps = conn.prepareStatement(sql);
+
+        ps.executeUpdate();
     }
 
     @Override
@@ -46,8 +51,17 @@ public class MeetReplyDao<T extends MeetReply> extends CRUD<MeetReply> {
     }
 
     @Override
-    public void update(MeetReply t) throws SQLException {
-    
+    public void update(MeetReply meetReply) throws SQLException {
+        conn = db.conn();
+
+        sql = "UPDATE MEETS_REPLIES SET" +
+                " CONTENT = \'" + meetReply.getContent() + "\'," +
+                " E_DATE = SYSDATE," + 
+                " IN_REPLY = \'" + meetReply.getIn_replay() + "\',";
+
+        ps = conn.prepareStatement(sql);
+
+        ps.executeUpdate();
     }
 
     @Override

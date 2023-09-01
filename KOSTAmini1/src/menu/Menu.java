@@ -40,8 +40,8 @@ public class Menu<T> {
     }
 
     public void menu() {
-    	boolean flag = true;
         menuList();
+        boolean flag = true;
         while(flag) {
             System.out.println("-----------------------------------------------------");
             System.out.println("1. " + (MemberLog.member == null ? "회원 가입" : "마이페이지")  + " / 2." + (MemberLog.member == null ? "로그인" : "로그아웃") + " / 3.회원 검색 / 4.게시물 조회 / 5.Meet 조회 / 6." + (MemberLog.member == null ? "종료" : "회원 탈퇴") + (MemberLog.member != null ? " / 0.종료" : ""));
@@ -49,8 +49,6 @@ public class Menu<T> {
             System.out.print(": ");
             int num = sc.nextInt();
 
-            System.out.println();
-            // num - 1 : ArrayList는 0부터 시작하기 때문에 입력값 - 1
             switch(num) {
             case 1:
             	if(MemberLog.member == null) {
@@ -62,7 +60,6 @@ public class Menu<T> {
             case 2:
             	if(MemberLog.member == null) {
             		((MemberService)this.manager.getService("MemberService")).login(sc);
-            		
             	}else {
             		((MemberService)this.manager.getService("MemberService")).logout();
             	}
@@ -71,10 +68,18 @@ public class Menu<T> {
         		((MemberMenu)this.manager.getMenu("MemberMenu")).searchMember();
             	break;
             case 4:
+<<<<<<< HEAD
             	((BoardMenu)this.manager.getMenu("BoardMenu")).menu();
+=======
+            ((BoardMenu)this.manager.getMenu("BoardMenu")).menu();
+>>>>>>> refs/heads/master
             	break;
             case 5:
+<<<<<<< HEAD
             	((MeetMenu)this.manager.getMenu("MeetMenu")).menu();
+=======
+           	    menuRun(0);
+>>>>>>> refs/heads/master
             	break;
             case 6:
             	if(MemberLog.member != null) {
@@ -97,12 +102,17 @@ public class Menu<T> {
      * 예시 : list.add(new 클래스Menu(sc, new 클래스Service(sc, new 클래스Dao<클래스>(manager), manager), manager));
      */
     private void menuList() {
-
+        // 0. 모집글
     	list.add(new MeetMenu(sc, new MeetService(sc, new MeetDao<Meet>(manager), manager), manager));
+        // 1. 모집글 댓글
         list.add(new MeetReplyMenu(sc, new MeetReplyService(sc, new MeetReplyDao<MeetReply>(manager), manager), manager));
+        // 2. 멤버관리
         list.add(new MemberMenu(sc, new MemberService(sc, new MemberDao<Member>(manager), manager), manager));
+        // 3. 지역
         list.add(new LocationMenu(sc, new LocationService(sc, new LocationDao<Location>(manager), manager), manager));
+        // 4. 관심사
         list.add(new FavoriteMenu(sc, new FavoriteService(sc, new FavoriteDao<Favorite>(manager), manager), manager));
+<<<<<<< HEAD
         list.add(new BoardMenu(sc, new ArticleService(sc, new ArticleDao<Article>(manager), manager), manager));
         list.add(new RepliesMenu(sc, new RepliesService(sc, new RepliesDao<Replies>(manager), manager), manager));
         
@@ -117,6 +127,12 @@ public class Menu<T> {
 
         // }
 
+=======
+        // 5. 게시판
+        list.add(new BoardMenu(sc, new ArticleService(sc, new ArticleDao<Article>(manager), manager), manager));
+        // 6. 게시판 댓글
+        list.add(new RepliesMenu(sc, new RepliesService(sc, new RepliesDao<Replies>(manager), manager), manager));
+>>>>>>> refs/heads/master
     }
 
     private void menuRun(int num) {

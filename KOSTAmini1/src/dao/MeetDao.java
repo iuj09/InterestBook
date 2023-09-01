@@ -24,8 +24,6 @@ public class MeetDao<T extends Meet> extends CRUD<Meet> {
         sql = "INSERT INTO MEETS(NO, RECURIT, TITLE, CONTENT, DEADLINE, LOCATIONS_NO, MEMBERS_NO) " + 
                 "VALUES (MEETS_NO_SEQUENCE.NEXTVAL, ?, ?, ?, TO_DATE(SYSDATE, \'yyyy/mm/dd hh24:mi:ss\'), ?, ?)";
         
-        System.out.println(sql);
-
         ps = conn.prepareStatement(sql);
 
         ps.setInt(1, meet.getRecurit());
@@ -84,17 +82,12 @@ public class MeetDao<T extends Meet> extends CRUD<Meet> {
     public void update(Meet meet) throws SQLException {
         conn = db.conn();
 
-        sql = "UPDATE MEETS SET ";
-
-        if(meet.getTitle() != null && !meet.getTitle().equals("")) {
-            sql += "TITLE = \'" + meet.getTitle() + "\' " + "WHERE NO = \'" + meet.getNo() + "\'";
-        } else if(meet.getContent() != null && !meet.getContent().equals("")) {
-            sql += "CONTENT = \'" + meet.getContent() + "\' " + "WHERE NO = \'" + meet.getNo() + "\'";
-        } else if(meet.getRecurit() != 0) {
-            sql += "RECURIT = \'" + meet.getRecurit() + "\' " + "WHERE NO = \'" + meet.getNo() + "\'";
-        } else {
-            sql += "E_DATE = SYSDATE" + "WHERE NO = \'" + meet.getNo() + "\'";
-        }
+        sql = "UPDATE MEETS SET" +
+                " TITLE = \'" + meet.getTitle() + "\'," + 
+                " CONTENT = \'" + meet.getContent() + "\'," +
+                " RECURIT = \'" + meet.getRecurit() + "\'," +
+                " E_DATE = SYSDATE" + 
+                " WHERE NO = \'" + meet.getNo() + "\'";
 
         System.out.println(sql);
 
@@ -125,8 +118,11 @@ public class MeetDao<T extends Meet> extends CRUD<Meet> {
     
     @Override
     public void delete(int no) throws SQLException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'delete'");
+        conn = db.conn();
+
+        sql = "";
+
+        ps = conn.prepareStatement(sql);
     }
 
     @Override
