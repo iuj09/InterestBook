@@ -86,7 +86,7 @@ public class MemberDao<T extends Member> extends CRUD<Member> {
 		
 		conn = db.conn();
 		
-		sql = "select id, name, location_no, favorite_no from members where ";
+		sql = "select id, name, locations_no, favorites_no from members where ";
 		
 		int cnt = args.size() -1;
 		for(Entry<String, String> entry : args.entrySet()) {
