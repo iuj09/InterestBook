@@ -282,6 +282,7 @@ public class MemberService extends SERVICE<Member> {
 			if(m != null) {
 	            System.out.println("좋아요 표시한 게시물 조회");
 	            
+	            
 			}    
 		}catch(SQLException e) {
 			System.out.println(e.getMessage());

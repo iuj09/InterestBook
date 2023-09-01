@@ -6,21 +6,27 @@ import java.util.Scanner;
 import common.MENU;
 import common.Manager;
 import common.MemberLog;
+import dao.ArticleDao;
 import dao.FavoriteDao;
 import dao.LocationDao;
 import dao.MeetDao;
 import dao.MeetReplyDao;
 import dao.MemberDao;
+import dao.RepliesDao;
+import service.ArticleService;
 import service.FavoriteService;
 import service.LocationService;
 import service.MeetReplyService;
 import service.MeetService;
 import service.MemberService;
+import service.RepliesService;
+import vo.Article;
 import vo.Favorite;
 import vo.Location;
 import vo.Meet;
 import vo.MeetReply;
 import vo.Member;
+import vo.Replies;
 
 public class Menu<T> {
     private Scanner sc;
@@ -38,7 +44,7 @@ public class Menu<T> {
         menuList();
         while(flag) {
             System.out.println("-----------------------------------------------------");
-            System.out.println("1. " + (MemberLog.member == null ? "회원 가입" : "마이페이지")  + " / 2." + (MemberLog.member == null ? "로그인" : "로그아웃") + " / 3.회원 검색 / 4.게시물 검색 / 5.Meet 검색 / 6." + (MemberLog.member == null ? "종료" : "회원 탈퇴") + (MemberLog.member != null ? " / 0.뒤로" : ""));
+            System.out.println("1. " + (MemberLog.member == null ? "회원 가입" : "마이페이지")  + " / 2." + (MemberLog.member == null ? "로그인" : "로그아웃") + " / 3.회원 검색 / 4.게시물 조회 / 5.Meet 조회 / 6." + (MemberLog.member == null ? "종료" : "회원 탈퇴") + (MemberLog.member != null ? " / 0.종료" : ""));
             System.out.println("-----------------------------------------------------");
             System.out.print(": ");
             int num = sc.nextInt();
@@ -65,10 +71,10 @@ public class Menu<T> {
         		((MemberMenu)this.manager.getMenu("MemberMenu")).searchMember();
             	break;
             case 4:
-//            	menu.menuRun(2);
+            	((BoardMenu)this.manager.getMenu("BoardMenu")).menu();
             	break;
             case 5:
-//            	menu.menuRun(0);
+            	((MeetMenu)this.manager.getMenu("MeetMenu")).menu();
             	break;
             case 6:
             	if(MemberLog.member != null) {
@@ -97,6 +103,8 @@ public class Menu<T> {
         list.add(new MemberMenu(sc, new MemberService(sc, new MemberDao<Member>(manager), manager), manager));
         list.add(new LocationMenu(sc, new LocationService(sc, new LocationDao<Location>(manager), manager), manager));
         list.add(new FavoriteMenu(sc, new FavoriteService(sc, new FavoriteDao<Favorite>(manager), manager), manager));
+        list.add(new BoardMenu(sc, new ArticleService(sc, new ArticleDao<Article>(manager), manager), manager));
+        list.add(new RepliesMenu(sc, new RepliesService(sc, new RepliesDao<Replies>(manager), manager), manager));
         
         // menuList.add(((MENU<Member>)new MemberMenu(sc, new MemberService(sc, new MemberDao<Member>()), this)));
         // menuList.add(((MENU<Article>)new BoardMenu(sc, new ArticleService(sc, new ArticleDao<Article>()), this)));
