@@ -3,6 +3,7 @@ package service;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 
@@ -22,23 +23,19 @@ public class ArticleService extends SERVICE<Article> {
 		perPage = 5;
 	}
 
-	// 글 작성.
-	public void addArticle(Scanner sc) {
-		System.out.println("=== 글 작성 ===");
-
-		System.out.print("title: ");
-		String title = sc.next();
-		System.out.print("content: ");
-		String content = sc.next();
+	// add.
+	public boolean addArticle(String title, String content) {
+		Member user = ((MemberService) mService).nowMember();
 
 		try {
-			dao.insert(new Article(0, title, content, 0, null, null, 0, 0));
+			dao.insert(new Article(0, title, content, 0, null, null, user.getNo(), user.getFavoriteNo()));
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return false;
 		}
 
-		System.out.println("글 작성 완료.");
+//		System.out.println("글 작성 완료.");
+		return true;
 	}
 
 	// 전체 불러와서 출력
@@ -61,12 +58,7 @@ public class ArticleService extends SERVICE<Article> {
 		}
 	}
 
-	// 페이지네이션하여 게시글 목록 반환(최신순)
-	public void getPagedArticles(int page) {
-
-	}
-
-	// 페이지네이션하여 게시글 목록 출력(최신순) // param으로 list?
+	// index
 	public HashMap<String, Object> printArticle(int page) {
 		HashMap<String, Object> context = new HashMap<>();
 		Member user = ((MemberService) mService).nowMember();
@@ -85,6 +77,69 @@ public class ArticleService extends SERVICE<Article> {
 		return context;
 	}
 
+	// detail. article 객체를 받음
+	public HashMap<String, Object> detailArticle(Article a) {
+		HashMap<String, Object> context = new HashMap<>();
+		Member user = ((MemberService) mService).nowMember();
+
+		int likeCount = ((ArticleDao<Article>) dao).likeCount(a.getNum());
+		int repliesCount = ((ArticleDao<Article>) dao).repliesCount(a.getNum());
+		boolean islike = ((ArticleDao<Article>) dao).isLike(a.getNum(), a.getNum());
+
+		context.put("likeCount", likeCount);
+		context.put("repliesCount", repliesCount);
+		context.put("islike", islike);
+
+		return context;
+	}
+
+	// search
+	public HashMap<String, Object> searchArticles(String s) {
+		HashMap<String, Object> context = new HashMap<>();
+		HashMap<String, Object> args = new HashMap<>();
+
+		String[] words = s.split(" ");
+
+		for (String w : words) {
+			args.put("title", w);
+			args.put("content", w);
+		}
+//		context.put("call", s);
+		ArrayList<Article> articles = ((ArticleDao<Article>) dao).search(args);
+		context.put("Articles", articles);
+
+		return context;
+	}
+
+	// edit
+	public boolean editArticle(int num, String title, String content) {
+		Member user = ((MemberService) mService).nowMember();
+
+		try {
+			dao.update(new Article(num, title, content, 0, null, null, user.getNo(), user.getFavoriteNo()));
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+
+//		System.out.println("글 수정 완료.");
+		return true;
+	}
+
+	// del
+	public boolean delArticle(int num) {
+		try {
+			dao.delete(num);
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+
+//		System.out.println("글 수정 완료.");
+		return true;
+	}
+
+	
 	// 페이지에서 게시물 선택해서 디테일 출력
 	public void selectArticle(Scanner sc, int page, int sel) {
 		try {
@@ -97,17 +152,17 @@ public class ArticleService extends SERVICE<Article> {
 				return;
 			}
 
-			Article a = pageArticles.get(sel - 1);
-			Boolean flag = true;
+			Article article = pageArticles.get(sel - 1);
+			Boolean flag1 = true;
 
-			while (flag) {
-				System.out.println(a.getNum());
-				System.out.println("제목  : " + a.getTitle());
-				System.out.println("작성일 : " + a.getwDate());
-				System.out.println("작성자 : " + a.getWriter());
-				System.out.println("좋아요 수: " + ((ArticleDao<Article>) dao).likeCount(a.getNum())); //
+			while (flag1) {
+				System.out.println(article.getNum());
+				System.out.println("제목  : " + article.getTitle());
+				System.out.println("작성일 : " + article.getwDate());
+				System.out.println("작성자 : " + article.getWriter());
+				System.out.println("좋아요 수: " + ((ArticleDao<Article>) dao).likeCount(article.getNum())); //
 				System.out.println("-------------------------------------------");
-				System.out.println(a.getContent());
+				System.out.println(article.getContent());
 				System.out.println("-------------------------------------------");
 
 				// 댓글 추가
@@ -120,15 +175,15 @@ public class ArticleService extends SERVICE<Article> {
 					System.out.println("준비중");
 					break;
 				case 2:
-					if (((ArticleDao<Article>) dao).isLike(1, a.getNum())) {
+					if (((ArticleDao<Article>) dao).isLike(1, article.getNum())) {
 						System.out.println("이미 좋아요 하였습니다.");
 					} else {
-						((ArticleDao<Article>) dao).likeArticle(1, a.getNum());
+						((ArticleDao<Article>) dao).likeArticle(1, article.getNum());
 					}
 					break;
 				case 3:
-					if (((ArticleDao<Article>) dao).isLike(1, a.getNum())) {
-						((ArticleDao<Article>) dao).dislikeArticle(1, a.getNum());
+					if (((ArticleDao<Article>) dao).isLike(1, article.getNum())) {
+						((ArticleDao<Article>) dao).dislikeArticle(1, article.getNum());
 					} else {
 						System.out.println("아직 좋아요를 하지 않았습니다.");
 					}
@@ -140,21 +195,21 @@ public class ArticleService extends SERVICE<Article> {
 
 					System.out.print("> new Title: ");
 					String title = sc.next();
-					a.setTitle(title);
+					article.setTitle(title);
 					// 줄 처리
 					System.out.print("> new content: ");
 					String content = sc.next();
-					a.setContent(content);
+					article.setContent(content);
 
-					dao.update(a);
+					dao.update(article);
 
 					System.out.println("글 수정 완료.");
 					break;
 				case 5:
-					dao.delete(a.getNum());
+					dao.delete(article.getNum());
 					return;
 				case 0:
-					flag = false;
+					flag1 = false;
 					return;
 				}
 
