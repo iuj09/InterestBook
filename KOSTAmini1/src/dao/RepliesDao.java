@@ -103,7 +103,7 @@ public class RepliesDao<T extends Replies> extends CRUD<Replies> {
 	// 댓글 삭제
 	public void delete(Replies r) throws SQLException {
 		conn = db.conn();
-		sql = "delete from Replies where no=? and member_no=?";
+		sql = "delete from Replies where no=? and members_no=?";
 
 		ps = conn.prepareStatement(sql);
 		ps.setInt(1, r.getNo());
@@ -164,7 +164,7 @@ public class RepliesDao<T extends Replies> extends CRUD<Replies> {
 			ps.setInt(3, rId);
 
 			int cnt = ps.executeUpdate();
-			System.out.println("member" + mId + " 님이 " + aId + " 댓글 좋아요함");
+			System.out.println("member" + mId + " 님이 " + rId + "번 댓글 좋아요함");
 			System.out.println();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -185,7 +185,7 @@ public class RepliesDao<T extends Replies> extends CRUD<Replies> {
 			ps.setInt(3, rId);
 
 			int cnt = ps.executeUpdate();
-			System.out.println("member" + mId + " 님이 " + aId + " 댓글 좋아요 취소함");
+			System.out.println("member" + mId + " 님이 " + rId + "번 댓글 좋아요 취소함");
 			System.out.println();
 		} catch (SQLException e) {
 			e.printStackTrace();
