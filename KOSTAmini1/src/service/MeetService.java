@@ -160,7 +160,7 @@ public class MeetService extends SERVICE<Meet> {
         }
     }
 
-    private Meet infoMeet(MeetDao<Meet> dao, int no) throws SQLException {
+    public Meet infoMeet(MeetDao<Meet> dao, int no) throws SQLException {
         HashMap<String, String> map = new HashMap<>();
         map.put("NO", String.valueOf(no));
         return (Meet)dao.select(map).get(0);
