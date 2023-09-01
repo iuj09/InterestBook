@@ -29,7 +29,7 @@ public class BoardMenu extends MENU<Article> {
 	
 	public BoardMenu(Scanner sc, SERVICE<Article> service, Manager manager) {
 		super(sc, service, manager);
-		mService = new MemberService(sc, new MemberDao());
+		mService = new MemberService(sc, new MemberDao(manager), manager);
 	}
 
 	@Override
@@ -38,7 +38,7 @@ public class BoardMenu extends MENU<Article> {
 		int m = 0;
 		String iMsg = "";
 		while (flag) {
-			HashMap<String, Object> indexContext = ((ArticleService) service).printArticle(pageNum);
+			HashMap<String, Object> indexContext = ((ArticleService) service).indexArticle(pageNum);
 			int totalPage = (int) indexContext.get("totalPage");
 			List<Article> articles = (List<Article>) indexContext.get("articles"); // 팔로우 정렬?
 			System.out.println("================= 게시판 =================");

@@ -10,6 +10,7 @@ import common.Manager;
 import common.MemberLog;
 import common.SERVICE;
 import dao.MemberDao;
+import vo.Article;
 import vo.Favorite;
 import vo.Location;
 import vo.Member;
@@ -61,13 +62,13 @@ public class MemberService extends SERVICE<Member> {
 			
 			System.out.println("[지역 선택]");
 			ArrayList<Location> loclist = ((LocationService)this.manager.getService("LocationService")).searchAllLoc();
-			printLocList(loclist);
+			((LocationService)this.manager.getService("LocationService")).printList(loclist);
 			System.out.print("location:");
 			int loc = sc.nextInt();
 			
 			System.out.println("[관심사 선택]");
 			ArrayList<Favorite> favlist = ((FavoriteService)this.manager.getService("FavoriteService")).searchAllFav();
-			printFavList(favlist);
+			((FavoriteService)this.manager.getService("FavoriteService")).printList(favlist);
 			System.out.print("favorite:");
 			int fav = sc.nextInt();
 			
@@ -100,7 +101,7 @@ public class MemberService extends SERVICE<Member> {
 			map.put("pwd", pwd);
 			if(id.equals(dao.select(map).get(0).getId()) ||
 					pwd.equals(dao.select(map).get(0).getPwd())) {
-				MemberLog.member = ((MemberDao<Member>)dao).select(map).get(0);
+				MemberLog.member = dao.select(map).get(0);
 				System.out.println("로그인");
 			}else {
 				System.out.println("아이디와 비밀번호를 다시 확인해주세요");
@@ -160,7 +161,7 @@ public class MemberService extends SERVICE<Member> {
 	               		Member editm = editlist.get(0);
 	                  		
 	               		editm.setAdmin("1");
-	               		((MemberDao<Member>)dao).updateAdm(editm);
+	               		dao.updateAdm(editm);
 	               	}else {
 	               		System.out.println("관리자 권한 부여 작업을 취소합니다.");
 	               		return;
@@ -186,17 +187,7 @@ public class MemberService extends SERVICE<Member> {
 		}
 	}
 	
-	public void printLocList(ArrayList<Location> list) {
-		for(Location l : list) {
-			System.out.println(l);
-		}
-	}
 	
-	public void printFavList(ArrayList<Favorite> list) {
-		for(Favorite f : list) {
-			System.out.println(f);
-		}
-	}
 	/**
 	 * 마이페이지
 	 *  - 내 정보 조회
@@ -262,10 +253,10 @@ public class MemberService extends SERVICE<Member> {
 			Member m = nowMember();
 			if(m != null) {
 	            System.out.println("내 게시물 조회");
-	            HashMap<String, String> map = new HashMap<String, String>();
-	            
-	            
-	            
+	            HashMap<String, String> amap = new HashMap<String, String>();
+	            ArrayList<Article> alist = ((ArticleService)this.manager.getService("ArticleService")).searchByMemberNo(m.getNo());
+	            ((ArticleService)this.manager.getService("ArticleService")).printAll(alist);
+			}
 		}catch(SQLException e) {
 			System.out.println(e.getMessage());
 		}
@@ -277,7 +268,8 @@ public class MemberService extends SERVICE<Member> {
 			Member m = nowMember();
 			if(m != null) {
 	            System.out.println("Meet 참가 내역 조회");
-	            
+	            ((MeetService)this.manager.getService("MeetService")).menu(4, m.getNo());
+			}   
 		}catch(SQLException e) {
 			System.out.println(e.getMessage());
 		}
@@ -290,6 +282,7 @@ public class MemberService extends SERVICE<Member> {
 			if(m != null) {
 	            System.out.println("좋아요 표시한 게시물 조회");
 	            
+			}    
 		}catch(SQLException e) {
 			System.out.println(e.getMessage());
 		}
@@ -368,7 +361,7 @@ public class MemberService extends SERVICE<Member> {
 	               	return;
 	            }
 			}else {
-				System.out.println("관리자 계정으로 로그인 후 이용 가능합니다.");
+				System.out.println("관리자 계정으로 로그인 후 이용 가능합니다");
 				return;
 			}
 		}catch(SQLException e) {
@@ -383,17 +376,18 @@ public class MemberService extends SERVICE<Member> {
 		try (MemberDao<Member> dao = (MemberDao<Member>) this.dao) {
 			Member m = nowMember();
 			if(m.getId() != null) {
-				HashMap<String, String> map = new HashMap<String, String>();
-	            map.put("id", MemberLog.member.getId());
-	                   
-	            ArrayList<Member> list = dao.select(map);
-
 	            if(m.getAdmin().equals("1")) {
 	            	System.out.println("전체 회원 검색");
 	    			
 	    			ArrayList<Member> mlist = dao.select(null);
 	    			printList(mlist);
+	            }else {
+	            	System.out.println("관리자 계정이 아닙니다");
+	            	return;
 	            }
+			}else {
+				System.out.println("관리자 계정으로 로그인 후 이용 가능합니다");
+				return;
 			}
 		} catch(SQLException e) {
 			System.out.println(e.getMessage());

@@ -7,11 +7,13 @@ import java.util.HashMap;
 
 import common.CRUD;
 import common.DBConnect;
+import common.Manager;
 import vo.Replies;
 
 public class RepliesDao<T extends Replies> extends CRUD<Replies> {
 
-	public RepliesDao() {
+	public RepliesDao(Manager manager) {
+		super(manager);
 		db = DBConnect.getInstance();
 	}
 

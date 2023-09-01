@@ -16,12 +16,11 @@ import vo.Member;
 
 public class ArticleService extends SERVICE<Article> {
 	private MemberService mService;
-	private int perPage;
+	private final int perPage = 5;
 
 	public ArticleService(Scanner sc, CRUD<Article> dao, Manager manager) {
 		super(sc, dao, manager);
-		mService = new MemberService(sc, new MemberDao());
-		perPage = 5;
+		mService = new MemberService(sc, new MemberDao(manager), manager);
 	}
 
 	// add.
@@ -96,52 +95,54 @@ public class ArticleService extends SERVICE<Article> {
 	}
 
 	// search
-	public HashMap<String, Object> searchArticles(String s) {
+	public HashMap<String, Object> searchArticles(String s, int cmd, int pageNum) {
 		HashMap<String, Object> context = new HashMap<>();
 		Member user = ((MemberService) mService).nowMember();
-		HashMap<String, Object> args = null;
-		if (user != null) {
-			args = new HashMap<>();
-			args.put("FAVORITES_NO", user.getFavoriteNo());
-		}
+		HashMap<String, Object> args = new HashMap<>();;
 
-		ArrayList<Article> articles = ((ArticleDao<Article>) dao).select1(args);
+		ArrayList<Article> articles = new ArrayList();
+		
+		String[] words = s.split(" ");
+		if (cmd < 4) {
+			if (cmd == 1 || cmd == 3) {
+				for (String w : words) {
+					args.put("title", w);
+				}
+			}
+			if (cmd == 2 || cmd == 3) {
+				for (String w : words) {
+					args.put("content", w);
+				}
+			}
+			articles = ((ArticleDao<Article>) dao).select1(args);
+		} else if (cmd == 4) {
+			words[0] = ""; // 서브 쿼리 필요
+		} else if (cmd == 5) {
+			words[0] = ""; // 서브 쿼리 필요
+		}
+		
 		List<Article> sortedArticles = reverseList(articles);
-		List<Article> pageArticles = pagedList(sortedArticles, 0);
+		List<Article> pageArticles = pagedList(sortedArticles, pageNum);
 		int totalPageCount = (int) Math.ceil((double) sortedArticles.size() / 5);
 
 		context.put("articles", pageArticles);
 		context.put("totalPage", totalPageCount);
 		return context;
-		
-		
-//		HashMap<String, Object> context = new HashMap<>();
-//		HashMap<String, Object> args = new HashMap<>();
-
-//		String[] words = s.split(" ");
-
-//		for (String w : words) {
-//			args.put("title", w);
-//			args.put("content", w);
-//		}
-//		context.put("call", s);
-//		ArrayList<Article> articles = ((ArticleDao<Article>) dao).search(args);
-//		context.put("Articles", articles);
-
-//		return context;
 	}
 
 	// searchByMId
 	public ArrayList<Article> searchByMemberNo(int num) {
 		ArrayList<Article> articles;
-		HashMap<String, Object> args = new HashMap<>() {{
-			put("MEMBERS_NO", num);
-		}};
+		HashMap<String, Object> args = new HashMap<>() {
+			{
+				put("MEMBERS_NO", num);
+			}
+		};
 		articles = ((ArticleDao<Article>) dao).select1(args);
-		
+
 		return articles;
 	}
-	
+
 	// edit
 	public boolean editArticle(int num, String title, String content) {
 		Member user = ((MemberService) mService).nowMember();
@@ -182,7 +183,7 @@ public class ArticleService extends SERVICE<Article> {
 		}
 		return msg;
 	}
-	
+
 	// 페이지에서 게시물 선택해서 디테일 출력
 	public void selectArticle(Scanner sc, int page, int sel) {
 		try {
