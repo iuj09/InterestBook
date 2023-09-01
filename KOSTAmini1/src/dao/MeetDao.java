@@ -7,11 +7,14 @@ import java.util.Map.Entry;
 
 import common.CRUD;
 import common.DBConnect;
+import common.Manager;
 import vo.Meet;
 
 public class MeetDao<T extends Meet> extends CRUD<Meet> {
-    public MeetDao() {
-        System.out.println("MeetDao 클래스 생성!");
+    public MeetDao(Manager manager) {
+        super(manager);
+        // System.out.println("MeetDao 클래스 생성!");
+        // System.out.println(manager.hashCode());
         db = DBConnect.getInstance();
     }
 

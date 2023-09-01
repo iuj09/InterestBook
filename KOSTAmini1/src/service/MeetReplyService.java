@@ -4,14 +4,15 @@ import java.sql.SQLException;
 import java.util.Scanner;
 
 import common.CRUD;
+import common.Manager;
 import common.SERVICE;
 import dao.MeetReplyDao;
 import vo.MeetReply;
 
 public class MeetReplyService extends SERVICE<MeetReply> {
 
-    public MeetReplyService(Scanner sc, CRUD<MeetReply> dao) {
-        super(sc, dao);
+    public MeetReplyService(Scanner sc, CRUD<MeetReply> dao, Manager manager) {
+        super(sc, dao, manager);
     }
     
     public void menu(int num, int no) {

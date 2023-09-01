@@ -13,9 +13,10 @@ public abstract class CRUD<T> implements AutoCloseable{
     protected PreparedStatement ps;
     protected ResultSet rs;
     protected String sql;
+    protected Manager manager;
 
-    public CRUD() {
-        System.out.println("CRUD 클래스 생성!");
+    public CRUD(Manager manager) {
+        manager.setDao(this);
     }
     
     /**

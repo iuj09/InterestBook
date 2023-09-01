@@ -5,14 +5,16 @@ import java.util.HashMap;
 import java.util.Scanner;
 
 import common.CRUD;
+import common.Manager;
 import common.SERVICE;
 import dao.MeetDao;
 import vo.Meet;
 
 public class MeetService extends SERVICE<Meet> {
 
-    public MeetService(Scanner sc, CRUD<Meet> dao) {
-        super(sc, dao);
+    public MeetService(Scanner sc, CRUD<Meet> dao, Manager manager) {
+        super(sc, dao, manager);
+        System.out.println("MeetService 클래스 생성!");
         this.dao = dao;
     }
 
