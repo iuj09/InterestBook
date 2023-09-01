@@ -68,7 +68,7 @@ public class Menu<T> {
         		((MemberMenu)this.manager.getMenu("MemberMenu")).searchMember();
             	break;
             case 4:
-           	    menuRun(5);
+            ((BoardMenu)this.manager.getMenu("BoardMenu")).menu();
             	break;
             case 5:
            	    menuRun(0);
