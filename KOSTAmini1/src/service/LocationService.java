@@ -1,26 +1,20 @@
 package service;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Properties;
 import java.util.Scanner;
 
 import common.CRUD;
-import common.Info;
-import common.MemberLog;
+import common.Manager;
 import common.SERVICE;
 import dao.LocationDao;
-import dao.MemberDao;
 import vo.Location;
 import vo.Member;
 
 public class LocationService extends SERVICE<Location>{
-	public LocationService(Scanner sc, CRUD<Location> dao) {
-		super(sc, dao);
+	public LocationService(Scanner sc, CRUD<Location> dao, Manager manager) {
+		super(sc, dao, manager);
 	}
 
 	public void printList(ArrayList<Location> list) {
@@ -31,7 +25,7 @@ public class LocationService extends SERVICE<Location>{
 	
 	public void addLoc(Scanner sc) {
 		try(LocationDao<Location> dao = (LocationDao<Location>) this.dao){
-			Member m = ((MemberService<Member>)service).nowMember();
+			Member m = ((MemberService)this.manager.getService("MemberService")).nowMember();
 			if(m != null) {
                 if(m.getAdmin().equals("1")) {
                    	System.out.println("지역 추가");
@@ -54,7 +48,7 @@ public class LocationService extends SERVICE<Location>{
 	
 	public void searchLocByNum(Scanner sc) {
 		try(LocationDao<Location> dao = (LocationDao<Location>) this.dao){
-			Member m = ((MemberService<Member>)service).nowMember();
+			Member m = ((MemberService)this.manager.getService("MemberService")).nowMember();
 			if(m != null) {
                if(m.getAdmin().equals("1")) {
             	   System.out.println("조회할 지역 번호 입력");
@@ -74,18 +68,20 @@ public class LocationService extends SERVICE<Location>{
 		}
 	}
 	
-	public void searchAllLoc() {
+	public ArrayList<Location> searchAllLoc() {
 		try(LocationDao<Location> dao = (LocationDao<Location>) this.dao){
            	ArrayList<Location> loclist = dao.select(null);
-          	printList(loclist);
+           	
+           	return loclist;
 		} catch(SQLException e) {
 			System.out.println(e.getMessage());
 		}
+		return null;
 	}
 	
 	public void editLoc(Scanner sc) {
 		try(LocationDao<Location> dao = (LocationDao<Location>) this.dao){
-			Member m = ((MemberService<Member>)service).nowMember();
+			Member m = ((MemberService)this.manager.getService("MemberService")).nowMember();
 			if(m != null) {
                 if(m.getAdmin().equals("1")) {
                    	System.out.println("지역 수정");
@@ -112,7 +108,7 @@ public class LocationService extends SERVICE<Location>{
 	
 	public void delLoc(Scanner sc) {
 		try(LocationDao<Location> dao = (LocationDao<Location>) this.dao){
-			Member m = ((MemberService<Member>)service).nowMember();
+			Member m = ((MemberService)this.manager.getService("MemberService")).nowMember();
 			if(m != null) {
                 if(m.getAdmin().equals("1")) {
                    	System.out.println("지역 삭제");

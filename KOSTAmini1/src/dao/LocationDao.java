@@ -7,12 +7,13 @@ import java.util.Map.Entry;
 
 import common.CRUD;
 import common.DBConnect;
+import common.Manager;
 import vo.Location;
-import vo.Member;
 
 public class LocationDao<T extends Location> extends CRUD<Location> {
 	
-	public LocationDao() {
+	public LocationDao(Manager manager) {
+		super(manager);
 		db = DBConnect.getInstance();
 	}
 	

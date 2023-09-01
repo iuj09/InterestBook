@@ -7,11 +7,13 @@ import java.util.Map.Entry;
 
 import common.CRUD;
 import common.DBConnect;
+import common.Manager;
 import vo.Member;
 
 public class MemberDao<T extends Member> extends CRUD<Member> {
 
-	public  MemberDao() {
+	public  MemberDao(Manager manager) {
+		super(manager);
 		db = DBConnect.getInstance();
 	}
 	
