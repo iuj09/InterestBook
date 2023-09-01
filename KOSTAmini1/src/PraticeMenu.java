@@ -16,6 +16,7 @@ import service.MeetReplyService;
 import service.MeetService;
 import service.MemberService;
 import vo.Meet;
+import vo.MeetReply;
 import vo.Member;
 
 public class PraticeMenu {
@@ -54,9 +55,9 @@ public class PraticeMenu {
     }
 
     private void menuList() {
-        // list.add(new MemberMenu(sc, new MemberService(sc, new MemberDao<Member>(manager), manager), manager));
+        list.add(new MemberMenu(sc, new MemberService(sc, new MemberDao<Member>(manager), manager), manager));
         list.add(new MeetMenu(sc, new MeetService(sc, new MeetDao<Meet>(manager), manager), manager));
-        // list.add(new MeetReplyMenu(sc, new MeetReplyService(sc, new MeetReplyDao<MeetReply>(manager), manager), manager));
+        list.add(new MeetReplyMenu(sc, new MeetReplyService(sc, new MeetReplyDao<MeetReply>(manager), manager), manager));
     }
 
     private void menuRun(int num) {
