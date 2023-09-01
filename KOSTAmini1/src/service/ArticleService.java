@@ -3,7 +3,6 @@ package service;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 
@@ -13,7 +12,6 @@ import common.SERVICE;
 import dao.ArticleDao;
 import dao.MemberDao;
 import vo.Article;
-import vo.Meet;
 import vo.Member;
 
 public class ArticleService extends SERVICE<Article> {
@@ -62,14 +60,15 @@ public class ArticleService extends SERVICE<Article> {
 	}
 
 	// index
-	public HashMap<String, Object> printArticle(int page) {
+	public HashMap<String, Object> indexArticle(int page) {
 		HashMap<String, Object> context = new HashMap<>();
 		Member user = ((MemberService) mService).nowMember();
-		HashMap<String, Object> args = new HashMap<>() {
-			{
-				put("FAVORITES_NO", user.getFavoriteNo());
-			}
-		};
+		HashMap<String, Object> args = null;
+		if (user != null) {
+			args = new HashMap<>();
+			args.put("FAVORITES_NO", user.getFavoriteNo());
+		}
+
 		ArrayList<Article> articles = ((ArticleDao<Article>) dao).select1(args);
 		List<Article> sortedArticles = reverseList(articles);
 		List<Article> pageArticles = pagedList(sortedArticles, page);
@@ -99,21 +98,50 @@ public class ArticleService extends SERVICE<Article> {
 	// search
 	public HashMap<String, Object> searchArticles(String s) {
 		HashMap<String, Object> context = new HashMap<>();
-		HashMap<String, Object> args = new HashMap<>();
-
-		String[] words = s.split(" ");
-
-		for (String w : words) {
-			args.put("title", w);
-			args.put("content", w);
+		Member user = ((MemberService) mService).nowMember();
+		HashMap<String, Object> args = null;
+		if (user != null) {
+			args = new HashMap<>();
+			args.put("FAVORITES_NO", user.getFavoriteNo());
 		}
-//		context.put("call", s);
-		ArrayList<Article> articles = ((ArticleDao<Article>) dao).search(args);
-		context.put("Articles", articles);
 
+		ArrayList<Article> articles = ((ArticleDao<Article>) dao).select1(args);
+		List<Article> sortedArticles = reverseList(articles);
+		List<Article> pageArticles = pagedList(sortedArticles, 0);
+		int totalPageCount = (int) Math.ceil((double) sortedArticles.size() / 5);
+
+		context.put("articles", pageArticles);
+		context.put("totalPage", totalPageCount);
 		return context;
+		
+		
+//		HashMap<String, Object> context = new HashMap<>();
+//		HashMap<String, Object> args = new HashMap<>();
+
+//		String[] words = s.split(" ");
+
+//		for (String w : words) {
+//			args.put("title", w);
+//			args.put("content", w);
+//		}
+//		context.put("call", s);
+//		ArrayList<Article> articles = ((ArticleDao<Article>) dao).search(args);
+//		context.put("Articles", articles);
+
+//		return context;
 	}
 
+	// searchByMId
+	public ArrayList<Article> searchByMemberNo(int num) {
+		ArrayList<Article> articles;
+		HashMap<String, Object> args = new HashMap<>() {{
+			put("MEMBERS_NO", num);
+		}};
+		articles = ((ArticleDao<Article>) dao).select1(args);
+		
+		return articles;
+	}
+	
 	// edit
 	public boolean editArticle(int num, String title, String content) {
 		Member user = ((MemberService) mService).nowMember();
@@ -138,10 +166,22 @@ public class ArticleService extends SERVICE<Article> {
 			return false;
 		}
 
-//		System.out.println("글 수정 완료.");
 		return true;
 	}
 
+	// like Article
+	public String likeArticle(Article a) {
+		Member user = ((MemberService) mService).nowMember();
+		String msg;
+		if (((ArticleDao<Article>) dao).isLike(user.getNo(), a.getNum())) {
+			((ArticleDao<Article>) dao).dislikeArticle(user.getNo(), a.getNum());
+			msg = a.getNum() + " 번 게시글을 좋아요 취소했습니다.\n";
+		} else {
+			((ArticleDao<Article>) dao).likeArticle(user.getNo(), a.getNum());
+			msg = a.getNum() + " 번 게시글을 좋아요 했습니다.\n";
+		}
+		return msg;
+	}
 	
 	// 페이지에서 게시물 선택해서 디테일 출력
 	public void selectArticle(Scanner sc, int page, int sel) {
