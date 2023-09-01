@@ -1,6 +1,5 @@
 package menu;
 
-import java.sql.SQLException;
 import java.util.Scanner;
 
 import common.MENU;
@@ -9,6 +8,7 @@ import common.MemberLog;
 import common.SERVICE;
 import dao.MemberDao;
 import service.MemberService;
+import vo.Article;
 import vo.Member;
 
 public class MemberMenu extends MENU<Member> {
@@ -97,6 +97,12 @@ public class MemberMenu extends MENU<Member> {
     			break;
     		}
     	}
+	}
+
+	@Override
+	public void menu1(Article a) {
+		// TODO Auto-generated method stub
+		
 	}
     
 }
