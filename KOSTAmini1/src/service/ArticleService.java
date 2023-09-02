@@ -9,16 +9,19 @@ import common.CRUD;
 import common.Manager;
 import common.SERVICE;
 import dao.ArticleDao;
+import dao.MemberDao;
 import vo.Article;
 import vo.Member;
 
 public class ArticleService extends SERVICE<Article> {
 	private MemberService mService;
+	private MemberDao mDao;
 	private final int perPage = 5;
 
 	public ArticleService(Scanner sc, CRUD<Article> dao, Manager manager) {
 		super(sc, dao, manager);
 		mService = ((MemberService) this.manager.getService("MemberService"));
+		mDao = ((MemberDao) this.manager.getDao("MemberDao"));
 	}
 
 	// add. 제목과 내용을 받아서 글쓰기.
@@ -116,7 +119,7 @@ public class ArticleService extends SERVICE<Article> {
 			System.out.println("게시물이 없습니다.");
 		} else {
 			for (Article a : articles) {
-				System.out.printf(" %-3d | %-15s | %3s | %-1s\n", articles.indexOf(a) + 1, a.getTitle(), a.getWriter(),
+				System.out.printf(" %-3d | %-15s | %3s | %-1s\n", articles.indexOf(a) + 1, a.getTitle(), mDao.getMember(a.getWriter()).getName(),
 						a.getwDate());
 			} // 날짜 출력 형식 // 작성자 출력 형식
 		}
@@ -129,7 +132,7 @@ public class ArticleService extends SERVICE<Article> {
 	// detail. article 객체를 받음
 	public HashMap<String, Object> detailArticle(Article a) {
 		HashMap<String, Object> context = new HashMap<>();
-		Member user = ((MemberService) mService).nowMember();
+		Member user = mService.nowMember();
 
 		int likeCount = ((ArticleDao<Article>) dao).likeCount(a.getNum());
 		int repliesCount = ((ArticleDao<Article>) dao).repliesCount(a.getNum());
@@ -147,7 +150,7 @@ public class ArticleService extends SERVICE<Article> {
 		System.out.println("글번호 : " + a.getNum());
 		System.out.println("제목  : " + a.getTitle());
 		System.out.println("작성일 : " + a.getwDate());
-		System.out.println("작성자 : " + a.getWriter());
+		System.out.println("작성자 : " + mDao.getMember(a.getWriter()).getName());
 		System.out.println("좋아요 수: " + ((ArticleDao<Article>) dao).likeCount(a.getNum())); // context
 		System.out.println("댓글 수: " + ((ArticleDao<Article>) dao).repliesCount(a.getNum())); // context
 		System.out.println("-------------------------------------------");
@@ -159,7 +162,7 @@ public class ArticleService extends SERVICE<Article> {
 	// search
 	public HashMap<String, Object> searchArticles(String s, int cmd, int pageNum) {
 		HashMap<String, Object> context = new HashMap<>();
-		Member user = ((MemberService) mService).nowMember();
+		Member user = mService.nowMember();
 		HashMap<String, Object> args = new HashMap<>();
 		;
 
@@ -208,7 +211,7 @@ public class ArticleService extends SERVICE<Article> {
 
 	// 좋아요 토글
 	public String likeArticle(Article a) {
-		Member user = ((MemberService) mService).nowMember();
+		Member user = mService.nowMember();
 		String msg;
 		if (((ArticleDao<Article>) dao).isLike(user.getNo(), a.getNum())) {
 			((ArticleDao<Article>) dao).dislikeArticle(user.getNo(), a.getNum());

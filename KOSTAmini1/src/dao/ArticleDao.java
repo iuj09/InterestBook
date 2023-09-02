@@ -12,7 +12,7 @@ import common.DBConnect;
 import common.Manager;
 import vo.Article;
 
-public class ArticleDao<T extends Article> extends CRUD<Article> implements AutoCloseable {
+public class ArticleDao<T extends Article> extends CRUD<Article> {
 	public ArticleDao(Manager manager) {
 		super(manager);
 		db = DBConnect.getInstance();

@@ -185,8 +185,8 @@ public class MemberDao<T extends Member> extends CRUD<Member> {
 			rs = ps.executeQuery();
 
 			if (rs.next()) {
-				m = new Member(rs.getString(1), rs.getString(2),
-						rs.getInt(3), rs.getInt(4));
+				m = new Member(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4),
+						rs.getString(5),  rs.getDate(6), rs.getString(7), rs.getInt(8), rs.getInt(9));
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block

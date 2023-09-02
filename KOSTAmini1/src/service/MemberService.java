@@ -13,7 +13,6 @@ import dao.MemberDao;
 import vo.Article;
 import vo.Favorite;
 import vo.Location;
-import vo.Meet;
 import vo.Member;
 
 public class MemberService extends SERVICE<Member> {
