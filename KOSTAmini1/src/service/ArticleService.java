@@ -20,11 +20,10 @@ public class ArticleService extends SERVICE<Article> {
 
 	public ArticleService(Scanner sc, CRUD<Article> dao, Manager manager) {
 		super(sc, dao, manager);
-		mService = new MemberService(sc, new MemberDao(manager), manager);
-
+		mService = ((MemberService) this.manager.getService("MemberService"));
 	}
 
-	// add.
+	// add. 제목과 내용을 받아서 글쓰기.
 	public boolean addArticle(String title, String content) {
 		Member user = ((MemberService) mService).nowMember();
 
@@ -85,7 +84,7 @@ public class ArticleService extends SERVICE<Article> {
 		return true;
 	}
 
-	// index
+	// index를 위한 articles추출. context 반환.
 	public HashMap<String, Object> indexArticle(int page) {
 		HashMap<String, Object> context = new HashMap<>();
 		Member user = ((MemberService) mService).nowMember();
@@ -96,13 +95,37 @@ public class ArticleService extends SERVICE<Article> {
 		}
 
 		ArrayList<Article> articles = ((ArticleDao<Article>) dao).select1(args);
-		List<Article> sortedArticles = reverseList(articles);
-		List<Article> pageArticles = pagedList(sortedArticles, page);
+		ArrayList<Article> sortedArticles = reverseList(articles);
+		ArrayList<Article> pageArticles = pagedList(sortedArticles, page);
+		int totalArticleCount = articles.size();
 		int totalPageCount = (int) Math.ceil((double) sortedArticles.size() / 5);
 
 		context.put("articles", pageArticles);
 		context.put("totalPage", totalPageCount);
+		context.put("totalArticleCount", totalArticleCount);
 		return context;
+	}
+
+	// printIndex.
+	public void printIndex(HashMap<String, Object> context, String msg, int pageNum) {
+		ArrayList<Article> articles = (ArrayList<Article>) context.get("articles"); // 팔로우 정렬?
+		int totalPage = (int) context.get("totalPage");
+		int totalArticleCount = (int) context.get("totalArticleCount");
+		System.out.println("================= 게시판 =================");
+		System.out.println("번호   제목               작성자   작성일  ");
+		System.out.println("----------------------------------------");
+		if (context.get("articles") == null) {
+			System.out.println("게시물이 없습니다.");
+		} else {
+			for (Article a : articles) {
+				System.out.printf(" %-3d | %-15s | %3s | %-1s\n", articles.indexOf(a) + 1, a.getTitle(), a.getWriter(),
+						a.getwDate());
+			} // 날짜 출력 형식 // 작성자 출력 형식
+		}
+
+		System.out.println("----------------------------------------");
+		System.out.println(pageNum + " / " + totalPage + " (" + totalArticleCount + ")");
+		System.out.printf(msg);
 	}
 
 	// detail. article 객체를 받음
@@ -121,6 +144,20 @@ public class ArticleService extends SERVICE<Article> {
 		return context;
 	}
 
+	// printDetail
+	public void printDetail(Article a, String msg) {
+		System.out.println("글번호 : " + a.getNum());
+		System.out.println("제목  : " + a.getTitle());
+		System.out.println("작성일 : " + a.getwDate());
+		System.out.println("작성자 : " + a.getWriter());
+		System.out.println("좋아요 수: " + ((ArticleDao<Article>) dao).likeCount(a.getNum())); // context
+		System.out.println("댓글 수: " + ((ArticleDao<Article>) dao).repliesCount(a.getNum())); // context
+		System.out.println("-------------------------------------------");
+		System.out.println(a.getContent());
+		System.out.println("-------------------------------------------");
+		System.out.printf(msg);
+	}
+	
 	// search
 	public HashMap<String, Object> searchArticles(String s, int cmd, int pageNum) {
 		HashMap<String, Object> context = new HashMap<>();
@@ -149,8 +186,8 @@ public class ArticleService extends SERVICE<Article> {
 			words[0] = ""; // 서브 쿼리 필요
 		}
 
-		List<Article> sortedArticles = reverseList(articles);
-		List<Article> pageArticles = pagedList(sortedArticles, pageNum);
+		ArrayList<Article> sortedArticles = reverseList(articles);
+		ArrayList<Article> pageArticles = pagedList(sortedArticles, pageNum);
 		int totalPageCount = (int) Math.ceil((double) sortedArticles.size() / 5);
 
 		context.put("articles", pageArticles);
@@ -195,8 +232,8 @@ public class ArticleService extends SERVICE<Article> {
 	}
 
 	// 원본list와 페이지num을 param으로 받아서 페이지네이션된 리스트 반환
-	public static <T> List<T> pagedList(List<T> list, int page) {
-		List<T> pagedList = new ArrayList<>(5);
+	public ArrayList<Article> pagedList(ArrayList<Article> list, int page) {
+		ArrayList<Article> pagedList = new ArrayList<>(5);
 
 		int perPage = 5;
 		int startArticleIndex = (page - 1) * perPage;
@@ -206,14 +243,14 @@ public class ArticleService extends SERVICE<Article> {
 			return null;
 		}
 
-		pagedList = list.subList(startArticleIndex, endArticleIndex);
+		pagedList = (ArrayList<Article>) list.subList(startArticleIndex, endArticleIndex);
 
 		return pagedList;
 	}
 
 	// 정렬이 반대인 복사본 리스트를 반환.
-	public static <T> List<T> reverseList(List<T> list) {
-		List<T> reverse = new ArrayList<>(list.size());
+	public ArrayList<Article> reverseList(ArrayList<Article> list) {
+		ArrayList<Article> reverse = new ArrayList<>(list.size());
 
 		for (int i = list.size() - 1; i >= 0; i--) {
 			reverse.add(list.get(i));

@@ -1,5 +1,6 @@
 package menu;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
@@ -8,12 +9,11 @@ import common.MENU;
 import common.Manager;
 import common.SERVICE;
 import service.ArticleService;
-import service.MemberService;
 import vo.Article;
 
 public class BoardMenu extends MENU<Article> {
 	private static int pageNum = 1, sPageNum = 1;
-
+	
 	public static final String BLACK = "\u001B[30m";
 	public static final String WHITE = "\u001B[37m";
 	public static final String RED = "\u001B[31m";
@@ -30,61 +30,39 @@ public class BoardMenu extends MENU<Article> {
 
 	@Override
 	public void menu() {
-		boolean flag = true;
-		int m = 0;
+		boolean iFlag = true;
+		int iCmd = 0;
 		String iMsg = "";
-		while (flag) {
+		while (iFlag) {
 			HashMap<String, Object> iContext = ((ArticleService) service).indexArticle(pageNum);
-			int totalPage = (int) iContext.get("totalPage");
-			List<Article> articles = (List<Article>) iContext.get("articles"); // 팔로우 정렬?
-			System.out.println("================= 게시판 =================");
-			System.out.println("번호   제목               작성자   작성일  ");
-			System.out.println("----------------------------------------");
-			if (iContext.get("articles") == null) {
-				System.out.println("게시물이 없습니다.");
-			} else {
-				for (Article a : articles) {
-					System.out.printf(" %-3d | %-15s | %3s | %-1s\n", articles.indexOf(a) + 1, a.getTitle(),
-							a.getWriter(), a.getwDate());
-				} // 날짜 출력 형식 // 작성자 출력 형식
-			}
+			((ArticleService) service).printIndex(iContext, iMsg, pageNum);
 
-			System.out.println("----------------------------------------");
-			System.out.println(pageNum + " / " + totalPage);
-			System.out.printf(iMsg);
+			ArrayList<Article> articles = (ArrayList<Article>) iContext.get("articles");
+			int totalPage = (Integer) iContext.get("totalPage");
 			iMsg = "";
+			
 			System.out.println("1-5.글선택 6.이전페이지 7.다음페이지 8.글쓰기 9.검색 0.뒤로"); // 좋아요순 정렬?
-			m = sc.nextInt();
-			switch (m) {
+			System.out.print("> 메뉴: ");
+			iCmd = sc.nextInt();
+			switch (iCmd) {
 			case 1:
 			case 2:
 			case 3:
 			case 4:
 			case 5:
-				if (m > articles.size()) {
+				if (iCmd > articles.size()) {
 					iMsg = RED + "잘못된 글 번호입니다.\n" + RESET;
 					break;
 				}
-				Boolean dflag = true;
+				Boolean dFlag = true;
 				String dMsg = "";
-				while (dflag) {
-					Article article = articles.get(m - 1);
+				while (dFlag) {
+					Article article = articles.get(iCmd - 1);
 					HashMap<String, Object> dContext = ((ArticleService) service).detailArticle(article);
+
 					Boolean islike = (Boolean) (dContext.get("islike"));
-
-					System.out.println("글번호 : " + article.getNum());
-					System.out.println("제목  : " + article.getTitle());
-					System.out.println("작성일 : " + article.getwDate());
-					System.out.println("작성자 : " + article.getWriter());
-					System.out.println("좋아요 수: " + dContext.get("likeCount")); // context
-					System.out.println("댓글 수: " + dContext.get("repliesCount")); // context
-					System.out.println("-------------------------------------------");
-					System.out.println(article.getContent());
-					System.out.println("-------------------------------------------");
-					// 댓글 추가
-
-					System.out.printf(dMsg);
 					dMsg = "";
+					
 					System.out.println("1.댓글보기 2.좋아요" + (islike ? " 취소" : "") + " 3.수정 4.삭제 0.목록"); // 작성자만
 					System.out.print("> 메뉴: ");
 					int cmd = sc.nextInt();
@@ -122,7 +100,7 @@ public class BoardMenu extends MENU<Article> {
 						}
 						break;
 					case 0:
-						dflag = false;
+						dFlag = false;
 						break;
 					}
 
@@ -298,13 +276,13 @@ public class BoardMenu extends MENU<Article> {
 						}
 						break;
 					case 0:
-						flag = false;
+						iFlag = false;
 						sPageNum = 1;
 						return;
 					}
 				}
 			case 0:
-				flag = false;
+				iFlag = false;
 				pageNum = 1;
 				return;
 			}
