@@ -106,7 +106,7 @@ public class ArticleDao<T extends Article> extends CRUD<Article> implements Auto
 	public Article getArticle(int num) {
 		Article article = null;
 		conn = db.conn();
-		sql = "SELECT * FROM articles WHERE num = ?";
+		sql = "SELECT * FROM articles WHERE no = ?";
 
 		try {
 			ps = conn.prepareStatement(sql);
