@@ -13,7 +13,6 @@ import vo.Article;
 
 public class BoardMenu extends MENU<Article> {
 	private static int pageNum = 1, sPageNum = 1;
-	private MemberService mService;
 
 	public static final String BLACK = "\u001B[30m";
 	public static final String WHITE = "\u001B[37m";
@@ -27,7 +26,6 @@ public class BoardMenu extends MENU<Article> {
 
 	public BoardMenu(Scanner sc, SERVICE<Article> service, Manager manager) {
 		super(sc, service, manager);
-		mService = ((MemberService) this.manager.getService("MemberService"));
 	}
 
 	@Override
@@ -36,13 +34,13 @@ public class BoardMenu extends MENU<Article> {
 		int m = 0;
 		String iMsg = "";
 		while (flag) {
-			HashMap<String, Object> indexContext = ((ArticleService) service).indexArticle(pageNum);
-			int totalPage = (int) indexContext.get("totalPage");
-			List<Article> articles = (List<Article>) indexContext.get("articles"); // 팔로우 정렬?
+			HashMap<String, Object> iContext = ((ArticleService) service).indexArticle(pageNum);
+			int totalPage = (int) iContext.get("totalPage");
+			List<Article> articles = (List<Article>) iContext.get("articles"); // 팔로우 정렬?
 			System.out.println("================= 게시판 =================");
 			System.out.println("번호   제목               작성자   작성일  ");
 			System.out.println("----------------------------------------");
-			if (indexContext.get("articles") == null) {
+			if (iContext.get("articles") == null) {
 				System.out.println("게시물이 없습니다.");
 			} else {
 				for (Article a : articles) {
@@ -71,15 +69,15 @@ public class BoardMenu extends MENU<Article> {
 				String dMsg = "";
 				while (dflag) {
 					Article article = articles.get(m - 1);
-					HashMap<String, Object> detailContext = ((ArticleService) service).detailArticle(article);
-					Boolean islike = (Boolean) (detailContext.get("islike"));
+					HashMap<String, Object> dContext = ((ArticleService) service).detailArticle(article);
+					Boolean islike = (Boolean) (dContext.get("islike"));
 
-					System.out.println(article.getNum());
+					System.out.println("글번호 : " + article.getNum());
 					System.out.println("제목  : " + article.getTitle());
 					System.out.println("작성일 : " + article.getwDate());
 					System.out.println("작성자 : " + article.getWriter());
-					System.out.println("좋아요 수: " + detailContext.get("likeCount")); // context
-					System.out.println("댓글 수: " + detailContext.get("repliesCount")); // context
+					System.out.println("좋아요 수: " + dContext.get("likeCount")); // context
+					System.out.println("댓글 수: " + dContext.get("repliesCount")); // context
 					System.out.println("-------------------------------------------");
 					System.out.println(article.getContent());
 					System.out.println("-------------------------------------------");
@@ -194,7 +192,7 @@ public class BoardMenu extends MENU<Article> {
 					System.out.println("================= 게시판 =================");
 					System.out.println("번호   제목               작성자   작성일  ");
 					System.out.println("----------------------------------------");
-					if (indexContext.get("articles") == null) {
+					if (iContext.get("articles") == null) {
 						System.out.println("게시물이 없습니다.");
 					} else {
 						for (Article a : articles) {
