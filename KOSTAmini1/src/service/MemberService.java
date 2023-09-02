@@ -13,6 +13,7 @@ import dao.MemberDao;
 import vo.Article;
 import vo.Favorite;
 import vo.Location;
+import vo.Meet;
 import vo.Member;
 
 public class MemberService extends SERVICE<Member> {
@@ -192,8 +193,10 @@ public class MemberService extends SERVICE<Member> {
 	 * 마이페이지
 	 *  - 내 정보 조회
 	 *  - 내 정보 수정
-	 *  - meet 참가 확인
+	 *  - 내 게시물 조회
 	 *  - 좋아요 표시한 게시물 확인
+	 *  - 내 meet 게시물 조회
+	 *  - meet 참가 확인
 	 */
 	//내 정보 조회
 	public void myInfo(Scanner sc) {
@@ -259,18 +262,7 @@ public class MemberService extends SERVICE<Member> {
 			}
 		}catch(SQLException e) {
 			System.out.println(e.getMessage());
-		}
-	}
-	
-	//meet 참가 내역 조회
-	public void checkMeet(Scanner sc) {
-		try(MemberDao<Member> dao = (MemberDao<Member>) this.dao) {
-			Member m = nowMember();
-			if(m != null) {
-	            System.out.println("Meet 참가 내역 조회");
-	            ((MeetService)this.manager.getService("MeetService")).menu(4, m.getNo());
-			}   
-		}catch(SQLException e) {
+		}catch(Exception e) {
 			System.out.println(e.getMessage());
 		}
 	}
@@ -281,9 +273,43 @@ public class MemberService extends SERVICE<Member> {
 			Member m = nowMember();
 			if(m != null) {
 	            System.out.println("좋아요 표시한 게시물 조회");
-	            
+	            HashMap<String, String> amap = new HashMap<String, String>();
+	            ArrayList<Article> alist =((ArticleService)this.manager.getService("ArticleService")).likedArticles(m.getNo());
+	            ((ArticleService)this.manager.getService("ArticleService")).printAll(alist);
 			}    
 		}catch(SQLException e) {
+			System.out.println(e.getMessage());
+		}catch(Exception e) {
+			System.out.println(e.getMessage());
+		}
+	}
+	
+	//내 meet 게시물 조회
+	public void myMeets(Scanner sc) {
+		try(MemberDao<Member> dao = (MemberDao<Member>) this.dao) {
+			Member m = nowMember();
+			if(m != null) {
+				System.out.println("내 모집글 조회");
+				((MeetService)this.manager.getService("MeetService")).menu(4, m.getNo());
+			}
+		}catch(SQLException e) {
+			System.out.println(e.getMessage());
+		}catch(Exception e) {
+			System.out.println(e.getMessage());
+		}
+	}
+	
+	//meet 참가 내역 조회(final)
+	public void checkMeet(Scanner sc) {
+		try(MemberDao<Member> dao = (MemberDao<Member>) this.dao) {
+			Member m = nowMember();
+			if(m != null) {
+	            System.out.println("Meet 참가 내역 조회");
+	            
+			}   
+		}catch(SQLException e) {
+			System.out.println(e.getMessage());
+		}catch(Exception e) {
 			System.out.println(e.getMessage());
 		}
 	}
@@ -307,7 +333,7 @@ public class MemberService extends SERVICE<Member> {
 			map.put("id", id);
 			
 			ArrayList<Member> list = new ArrayList<>();
-			list = ((MemberDao<Member>) dao).selectIdName(map);
+			list = dao.selectIdName(map);
 			printList(list);
 		}catch(SQLException e) {
 			System.out.println(e.getMessage());

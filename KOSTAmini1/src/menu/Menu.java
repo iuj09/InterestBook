@@ -44,7 +44,7 @@ public class Menu<T> {
         boolean flag = true;
         while(flag) {
             System.out.println("-----------------------------------------------------");
-            System.out.println("1. " + (MemberLog.member == null ? "회원 가입" : "마이페이지")  + " / 2." + (MemberLog.member == null ? "로그인" : "로그아웃") + " / 3.회원 검색 / 4.게시물 검색 / 5.Meet 검색 / 6." + (MemberLog.member == null ? "종료" : "회원 탈퇴") + (MemberLog.member != null ? " / 0.뒤로" : ""));
+            System.out.println("1. " + (MemberLog.member == null ? "회원 가입" : "마이페이지")  + " / 2." + (MemberLog.member == null ? "로그인" : "로그아웃") + " / 3.회원 검색 / 4.게시물 조회 / 5.Meet 조회 / 6." + (MemberLog.member == null ? "종료" : "회원 탈퇴") + (MemberLog.member != null ? " / 0.종료" : ""));
             System.out.println("-----------------------------------------------------");
             System.out.print(": ");
             int num = sc.nextInt();
@@ -68,7 +68,7 @@ public class Menu<T> {
         		((MemberMenu)this.manager.getMenu("MemberMenu")).searchMember();
             	break;
             case 4:
-            ((BoardMenu)this.manager.getMenu("BoardMenu")).menu();
+            	((BoardMenu)this.manager.getMenu("BoardMenu")).menu();
             	break;
             case 5:
            	    menuRun(0);
@@ -79,8 +79,8 @@ public class Menu<T> {
             	}else {
             		System.exit(0);
             	}
-            	break;
-            case 0:
+				break;
+			case 0:
             	if(MemberLog.member != null) {
             		flag = false;
             		break;
