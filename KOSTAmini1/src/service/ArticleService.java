@@ -3,14 +3,12 @@ package service;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Scanner;
 
 import common.CRUD;
 import common.Manager;
 import common.SERVICE;
 import dao.ArticleDao;
-import dao.MemberDao;
 import vo.Article;
 import vo.Member;
 
@@ -243,7 +241,7 @@ public class ArticleService extends SERVICE<Article> {
 			return null;
 		}
 
-		pagedList = (ArrayList<Article>) list.subList(startArticleIndex, endArticleIndex);
+		pagedList = new ArrayList<>(list.subList(startArticleIndex, endArticleIndex));
 
 		return pagedList;
 	}
