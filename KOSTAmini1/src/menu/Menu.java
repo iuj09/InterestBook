@@ -3,19 +3,23 @@ package menu;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import common.CRUD;
 import common.MENU;
 import common.Manager;
 import common.MemberLog;
+import common.SERVICE;
 import dao.ArticleDao;
 import dao.FavoriteDao;
 import dao.LocationDao;
 import dao.MeetDao;
 import dao.MeetReplyDao;
 import dao.MemberDao;
+import dao.MeetRecuritDao;
 import dao.RepliesDao;
 import service.ArticleService;
 import service.FavoriteService;
 import service.LocationService;
+import service.MeetRecuritService;
 import service.MeetReplyService;
 import service.MeetService;
 import service.MemberService;
@@ -24,6 +28,7 @@ import vo.Article;
 import vo.Favorite;
 import vo.Location;
 import vo.Meet;
+import vo.MeetRecurit;
 import vo.MeetReply;
 import vo.Member;
 import vo.Replies;
@@ -31,16 +36,20 @@ import vo.Replies;
 public class Menu<T> {
     private Scanner sc;
     public Manager manager;
-    private ArrayList<MENU<?>> list;
+    private ArrayList<CRUD<?>> daoList;
+    private ArrayList<SERVICE<?>> serviceList;
+    private ArrayList<MENU<?>> menuList;
 
     public Menu() {
         sc = new Scanner(System.in);
-        list = new ArrayList<>();
         manager = new Manager();
+        daoList = new ArrayList<>();
+        serviceList = new ArrayList<>();
+        menuList = new ArrayList<>();
     }
 
     public void menu() {
-        menuList();
+        list();
         boolean flag = true;
         while(flag) {
             System.out.println("-----------------------------------------------------");
@@ -85,7 +94,7 @@ public class Menu<T> {
             		flag = false;
             		break;
             	}
-        }
+            }
         }
     }
     
@@ -93,24 +102,26 @@ public class Menu<T> {
      * db테이블 및 기능과 관련된 객체 초기화 및 관련 객체를 담는 ArrayList 및 그 객체를 한 곳에서 묶는 Manager 클래스
      * 예시 : list.add(new 클래스Menu(sc, new 클래스Service(sc, new 클래스Dao<클래스>(manager), manager), manager));
      */
-    private void menuList() {
+    private void list() {
         // 0. 모집글
-    	list.add(new MeetMenu(sc, new MeetService(sc, new MeetDao<Meet>(manager), manager), manager));
+    	menuList.add(new MeetMenu(sc, new MeetService(sc, new MeetDao<>(manager), manager), manager));
         // 1. 모집글 댓글
-        list.add(new MeetReplyMenu(sc, new MeetReplyService(sc, new MeetReplyDao<MeetReply>(manager), manager), manager));
+        menuList.add(new MeetReplyMenu(sc, new MeetReplyService(sc, new MeetReplyDao<MeetReply>(manager), manager), manager));
         // 2. 멤버관리
-        list.add(new MemberMenu(sc, new MemberService(sc, new MemberDao<Member>(manager), manager), manager));
+        menuList.add(new MemberMenu(sc, new MemberService(sc, new MemberDao<Member>(manager), manager), manager));
         // 3. 지역
-        list.add(new LocationMenu(sc, new LocationService(sc, new LocationDao<Location>(manager), manager), manager));
+        menuList.add(new LocationMenu(sc, new LocationService(sc, new LocationDao<Location>(manager), manager), manager));
         // 4. 관심사
-        list.add(new FavoriteMenu(sc, new FavoriteService(sc, new FavoriteDao<Favorite>(manager), manager), manager));
+        menuList.add(new FavoriteMenu(sc, new FavoriteService(sc, new FavoriteDao<Favorite>(manager), manager), manager));
         // 5. 게시판
-        list.add(new BoardMenu(sc, new ArticleService(sc, new ArticleDao<Article>(manager), manager), manager));
+        menuList.add(new BoardMenu(sc, new ArticleService(sc, new ArticleDao<Article>(manager), manager), manager));
         // 6. 게시판 댓글
-        list.add(new RepliesMenu(sc, new RepliesService(sc, new RepliesDao<Replies>(manager), manager), manager));
+        menuList.add(new RepliesMenu(sc, new RepliesService(sc, new RepliesDao<Replies>(manager), manager), manager));
+        // 7. 모집글에 참석한 인원에 대한 DAO
+        menuList.add(new MeetRecuritMenu(sc, new MeetRecuritService(sc, new MeetRecuritDao<MeetRecurit>(manager), manager), manager));
     }
 
     private void menuRun(int num) {
-        list.get(num).menu();
+        menuList.get(num).menu();
     }
 }

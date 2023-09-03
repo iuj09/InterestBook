@@ -73,4 +73,8 @@ public class Manager {
         }
         return null;
     }
+
+    public ArrayList<CRUD> getAllDaoList() {
+        return dao;
+    }
 }
