@@ -14,14 +14,16 @@ import vo.Article;
 import vo.Member;
 
 public class ArticleService extends SERVICE<Article> {
-	private MemberService mService;
+	private ArticleDao<?> aDao;
 	private MemberDao<?> mDao;
+	private MemberService mService;
 	private final int perPage = 5;
 
 	public ArticleService(Scanner sc, CRUD<Article> dao, Manager manager) {
 		super(sc, dao, manager);
-		mService = ((MemberService) this.manager.getService("MemberService"));
+		aDao = (ArticleDao<?>) this.dao;
 		mDao = ((MemberDao<?>) this.manager.getDao("MemberDao"));
+		mService = ((MemberService) this.manager.getService("MemberService"));
 	}
 
 	// add. 제목과 내용을 받아서 글쓰기.
@@ -29,7 +31,7 @@ public class ArticleService extends SERVICE<Article> {
 		Member user = mService.nowMember();
 
 		try {
-			dao.insert(new Article(0, title, content, 0, null, null, user.getNo(), user.getFavoriteNo()));
+			aDao.insert(new Article(0, title, content, 0, null, null, user.getNo(), user.getFavoriteNo()));
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return false;
@@ -44,7 +46,7 @@ public class ArticleService extends SERVICE<Article> {
 		ArrayList<Article> articles;
 
 		try {
-			articles = dao.select(null);
+			articles = aDao.select(null);
 			printAll(articles);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -64,7 +66,7 @@ public class ArticleService extends SERVICE<Article> {
 		Member user = mService.nowMember();
 
 		try {
-			dao.update(new Article(num, title, content, 0, null, null, 0, 0));
+			aDao.update(new Article(num, title, content, 0, null, null, 0, 0));
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return false;
@@ -76,7 +78,7 @@ public class ArticleService extends SERVICE<Article> {
 	// del
 	public boolean delArticle(int num) {
 		try {
-			dao.delete(num);
+			aDao.delete(num);
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return false;
@@ -95,7 +97,7 @@ public class ArticleService extends SERVICE<Article> {
 			args.put("FAVORITES_NO", user.getFavoriteNo());
 		}
 
-		ArrayList<Article> articles = ((ArticleDao<Article>) dao).select1(args);
+		ArrayList<Article> articles = aDao.select1(args);
 		ArrayList<Article> sortedArticles = reverseList(articles);
 		ArrayList<Article> pageArticles = pagedList(sortedArticles, pageNum);
 		int totalArticleCount = articles.size();
@@ -107,7 +109,7 @@ public class ArticleService extends SERVICE<Article> {
 		return context;
 	}
 
-	// printIndex. 
+	// printIndex.
 	public void printIndex(HashMap<String, Object> context, String msg, int pageNum) {
 		ArrayList<Article> articles = (ArrayList<Article>) context.get("articles"); // 팔로우 정렬?
 		int totalPage = (int) context.get("totalPage");
@@ -134,9 +136,9 @@ public class ArticleService extends SERVICE<Article> {
 		HashMap<String, Object> context = new HashMap<>();
 		Member user = mService.nowMember();
 
-		int likeCount = ((ArticleDao<Article>) dao).likeCount(a.getNum());
-		int repliesCount = ((ArticleDao<Article>) dao).repliesCount(a.getNum());
-		boolean islike = ((ArticleDao<Article>) dao).isLike(a.getNum(), a.getNum());
+		int likeCount = aDao.likeCount(a.getNum());
+		int repliesCount = aDao.repliesCount(a.getNum());
+		boolean islike = aDao.isLike(a.getNum(), a.getNum());
 
 		context.put("likeCount", likeCount);
 		context.put("repliesCount", repliesCount);
@@ -151,8 +153,8 @@ public class ArticleService extends SERVICE<Article> {
 		System.out.println("제목  : " + a.getTitle());
 		System.out.println("작성일 : " + a.getwDate());
 		System.out.println("작성자 : " + mDao.getMember(a.getWriter()).getName());
-		System.out.println("좋아요 수: " + ((ArticleDao<Article>) dao).likeCount(a.getNum())); // context
-		System.out.println("댓글 수: " + ((ArticleDao<Article>) dao).repliesCount(a.getNum())); // context
+		System.out.println("좋아요 수: " + aDao.likeCount(a.getNum())); // context
+		System.out.println("댓글 수: " + aDao.repliesCount(a.getNum())); // context
 		System.out.println("-------------------------------------------");
 		System.out.println(a.getContent());
 		System.out.println("-------------------------------------------");
@@ -164,12 +166,16 @@ public class ArticleService extends SERVICE<Article> {
 		HashMap<String, Object> context = new HashMap<>();
 		Member user = mService.nowMember();
 		HashMap<String, Object> args = new HashMap<>();
-		;
 
 		ArrayList<Article> articles = new ArrayList<>();
+		int fId = 0;
 
-		String[] words = s.split(" ");
+		if (user != null) {
+			fId = user.getFavoriteNo();
+		}
+
 		if (cmd < 4) {
+			String[] words = s.split(" ");
 			if (cmd == 1 || cmd == 3) {
 				for (String w : words) {
 					args.put("title", w);
@@ -180,19 +186,21 @@ public class ArticleService extends SERVICE<Article> {
 					args.put("content", w);
 				}
 			}
-			articles = ((ArticleDao<Article>) dao).select1(args);
-		} else if (cmd == 4) {
-			words[0] = ""; // 서브 쿼리 필요
-		} else if (cmd == 5) {
-			words[0] = ""; // 서브 쿼리 필요
+		} else if (cmd == 4) { // name으로 검색
+			args.put("name", s);
+		} else if (cmd == 5) { // id로 검색
+			args.put("id", s);
 		}
+		articles = aDao.searchJoinMember(args, fId);
 
 		ArrayList<Article> sortedArticles = reverseList(articles);
 		ArrayList<Article> pageArticles = pagedList(sortedArticles, pageNum);
 		int totalPageCount = (int) Math.ceil((double) sortedArticles.size() / 5);
-
+		int totalArticleCount = articles.size();
+		
 		context.put("articles", pageArticles);
 		context.put("totalPage", totalPageCount);
+		context.put("totalArticleCount", totalArticleCount);
 		return context;
 	}
 
@@ -204,7 +212,7 @@ public class ArticleService extends SERVICE<Article> {
 				put("MEMBERS_NO", num);
 			}
 		};
-		articles = ((ArticleDao<Article>) dao).select1(args);
+		articles = aDao.select1(args);
 
 		return articles;
 	}
@@ -213,11 +221,11 @@ public class ArticleService extends SERVICE<Article> {
 	public String likeArticle(Article a) {
 		Member user = mService.nowMember();
 		String msg;
-		if (((ArticleDao<Article>) dao).isLike(user.getNo(), a.getNum())) {
-			((ArticleDao<Article>) dao).dislikeArticle(user.getNo(), a.getNum());
+		if (aDao.isLike(user.getNo(), a.getNum())) {
+			aDao.dislikeArticle(user.getNo(), a.getNum());
 			msg = a.getNum() + " 번 게시글을 좋아요 취소했습니다.\n";
 		} else {
-			((ArticleDao<Article>) dao).likeArticle(user.getNo(), a.getNum());
+			aDao.likeArticle(user.getNo(), a.getNum());
 			msg = a.getNum() + " 번 게시글을 좋아요 했습니다.\n";
 		}
 		return msg;
@@ -227,7 +235,7 @@ public class ArticleService extends SERVICE<Article> {
 	public ArrayList<Article> likedArticles(int num) {
 		ArrayList<Article> list = new ArrayList<>();
 
-		list = ((ArticleDao<Article>) dao).getLikedArticles(num);
+		list = aDao.getLikedArticles(num);
 
 		return list;
 	}
