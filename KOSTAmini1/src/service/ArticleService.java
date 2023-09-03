@@ -141,7 +141,10 @@ public class ArticleService extends SERVICE<Article> {
 
 		int likeCount = aDao.likeCount(a.getNum());
 		int repliesCount = aDao.repliesCount(a.getNum());
-		boolean islike = aDao.isLike(a.getNum(), a.getNum());
+		boolean islike = false;
+		if (user != null) {
+			islike = aDao.isLike(user.getNo(), a.getNum());
+		}
 
 		context.put("likeCount", likeCount);
 		context.put("repliesCount", repliesCount);
@@ -224,12 +227,16 @@ public class ArticleService extends SERVICE<Article> {
 	public String likeArticle(Article a) {
 		Member user = mService.nowMember();
 		String msg;
-		if (aDao.isLike(user.getNo(), a.getNum())) {
-			aDao.dislikeArticle(user.getNo(), a.getNum());
-			msg = a.getNum() + " 번 게시글을 좋아요 취소했습니다.\n";
+		if (user == null) {
+			msg = "로그인 후 이용해주세요.\n";
 		} else {
-			aDao.likeArticle(user.getNo(), a.getNum());
-			msg = a.getNum() + " 번 게시글을 좋아요 했습니다.\n";
+			if (aDao.isLike(user.getNo(), a.getNum())) {
+				aDao.dislikeArticle(user.getNo(), a.getNum());
+				msg = a.getNum() + " 번 게시글을 좋아요 취소했습니다.\n";
+			} else {
+				aDao.likeArticle(user.getNo(), a.getNum());
+				msg = a.getNum() + " 번 게시글을 좋아요 했습니다.\n";
+			}
 		}
 		return msg;
 	}
