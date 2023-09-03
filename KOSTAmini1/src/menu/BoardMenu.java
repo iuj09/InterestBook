@@ -156,8 +156,8 @@ public class BoardMenu extends MENU<Article> {
 
 				sCmd = sc.nextInt();
 				if (sCmd < 4) {
-					// TODO
 					System.out.print("> 검색할 단어(공백으로 여러단어 구분): ");
+					// TODO
 				} else if (sCmd == 4) {
 					// TODO
 					System.out.print("> 검색할 작성자: ");
