@@ -15,18 +15,18 @@ import vo.Member;
 
 public class ArticleService extends SERVICE<Article> {
 	private MemberService mService;
-	private MemberDao mDao;
+	private MemberDao<?> mDao;
 	private final int perPage = 5;
 
 	public ArticleService(Scanner sc, CRUD<Article> dao, Manager manager) {
 		super(sc, dao, manager);
 		mService = ((MemberService) this.manager.getService("MemberService"));
-		mDao = ((MemberDao) this.manager.getDao("MemberDao"));
+		mDao = ((MemberDao<?>) this.manager.getDao("MemberDao"));
 	}
 
 	// add. 제목과 내용을 받아서 글쓰기.
 	public boolean addArticle(String title, String content) {
-		Member user = ((MemberService) mService).nowMember();
+		Member user = mService.nowMember();
 
 		try {
 			dao.insert(new Article(0, title, content, 0, null, null, user.getNo(), user.getFavoriteNo()));
@@ -61,10 +61,10 @@ public class ArticleService extends SERVICE<Article> {
 
 	// edit
 	public boolean editArticle(int num, String title, String content) {
-		Member user = ((MemberService) mService).nowMember();
+		Member user = mService.nowMember();
 
 		try {
-			dao.update(new Article(num, title, content, 0, null, null, user.getNo(), user.getFavoriteNo()));
+			dao.update(new Article(num, title, content, 0, null, null, 0, 0));
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return false;
@@ -85,10 +85,10 @@ public class ArticleService extends SERVICE<Article> {
 		return true;
 	}
 
-	// index를 위한 articles추출. context 반환.
-	public HashMap<String, Object> indexArticle(int page) {
+	// index를 위한 리스트. 검색 후 page에 따라 페이지네이션하여 articles추출. context 반환.
+	public HashMap<String, Object> indexArticle(int pageNum) {
 		HashMap<String, Object> context = new HashMap<>();
-		Member user = ((MemberService) mService).nowMember();
+		Member user = mService.nowMember();
 		HashMap<String, Object> args = null;
 		if (user != null) {
 			args = new HashMap<>();
@@ -97,7 +97,7 @@ public class ArticleService extends SERVICE<Article> {
 
 		ArrayList<Article> articles = ((ArticleDao<Article>) dao).select1(args);
 		ArrayList<Article> sortedArticles = reverseList(articles);
-		ArrayList<Article> pageArticles = pagedList(sortedArticles, page);
+		ArrayList<Article> pageArticles = pagedList(sortedArticles, pageNum);
 		int totalArticleCount = articles.size();
 		int totalPageCount = (int) Math.ceil((double) sortedArticles.size() / 5);
 
@@ -107,7 +107,7 @@ public class ArticleService extends SERVICE<Article> {
 		return context;
 	}
 
-	// printIndex.
+	// printIndex. 
 	public void printIndex(HashMap<String, Object> context, String msg, int pageNum) {
 		ArrayList<Article> articles = (ArrayList<Article>) context.get("articles"); // 팔로우 정렬?
 		int totalPage = (int) context.get("totalPage");
@@ -119,8 +119,8 @@ public class ArticleService extends SERVICE<Article> {
 			System.out.println("게시물이 없습니다.");
 		} else {
 			for (Article a : articles) {
-				System.out.printf(" %-3d | %-15s | %3s | %-1s\n", articles.indexOf(a) + 1, a.getTitle(), mDao.getMember(a.getWriter()).getName(),
-						a.getwDate());
+				System.out.printf(" %-3d | %-15s | %3s | %-1s\n", articles.indexOf(a) + 1, a.getTitle(),
+						mDao.getMember(a.getWriter()).getName(), a.getwDate());
 			} // 날짜 출력 형식 // 작성자 출력 형식
 		}
 
@@ -158,8 +158,8 @@ public class ArticleService extends SERVICE<Article> {
 		System.out.println("-------------------------------------------");
 		System.out.printf(msg);
 	}
-	
-	// search
+
+	// search 결과 articles추출. context 반환.
 	public HashMap<String, Object> searchArticles(String s, int cmd, int pageNum) {
 		HashMap<String, Object> context = new HashMap<>();
 		Member user = mService.nowMember();
@@ -234,9 +234,8 @@ public class ArticleService extends SERVICE<Article> {
 
 	// 원본list와 페이지num을 param으로 받아서 페이지네이션된 리스트 반환
 	public ArrayList<Article> pagedList(ArrayList<Article> list, int page) {
-		ArrayList<Article> pagedList = new ArrayList<>(5);
+		ArrayList<Article> pagedList = new ArrayList<>(perPage);
 
-		int perPage = 5;
 		int startArticleIndex = (page - 1) * perPage;
 		int endArticleIndex = Math.min(page * perPage, list.size());
 
