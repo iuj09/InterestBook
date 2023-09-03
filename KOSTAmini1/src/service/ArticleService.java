@@ -9,12 +9,14 @@ import common.CRUD;
 import common.Manager;
 import common.SERVICE;
 import dao.ArticleDao;
+import dao.FavoriteDao;
 import dao.MemberDao;
 import vo.Article;
 import vo.Member;
 
 public class ArticleService extends SERVICE<Article> {
 	private ArticleDao<?> aDao;
+	private FavoriteDao<?> fDao;
 	private MemberDao<?> mDao;
 	private MemberService mService;
 	private final int perPage = 5;
@@ -22,6 +24,7 @@ public class ArticleService extends SERVICE<Article> {
 	public ArticleService(Scanner sc, CRUD<Article> dao, Manager manager) {
 		super(sc, dao, manager);
 		aDao = (ArticleDao<?>) this.dao;
+		fDao = ((FavoriteDao<?>) this.manager.getDao("FavoriteDao"));
 		mDao = ((MemberDao<?>) this.manager.getDao("MemberDao"));
 		mService = ((MemberService) this.manager.getService("MemberService"));
 	}
@@ -114,19 +117,19 @@ public class ArticleService extends SERVICE<Article> {
 		ArrayList<Article> articles = (ArrayList<Article>) context.get("articles"); // 팔로우 정렬?
 		int totalPage = (int) context.get("totalPage");
 		int totalArticleCount = (int) context.get("totalArticleCount");
-		System.out.println("================= 게시판 =================");
-		System.out.println("번호   제목               작성자   작성일  ");
-		System.out.println("----------------------------------------");
+		System.out.println("=========================== 게시판 ===========================");
+		System.out.println("번호                  제목                  작성자   작성일  ");
+		System.out.println("-----------------------------------------------------------");
 		if (context.get("articles") == null) {
 			System.out.println("게시물이 없습니다.");
 		} else {
 			for (Article a : articles) {
-				System.out.printf(" %-3d | %-15s | %3s | %-1s\n", articles.indexOf(a) + 1, a.getTitle(),
-						mDao.getMember(a.getWriter()).getName(), a.getwDate());
+				String t = "[%s] %s [%d]".formatted(fDao.getName(a.getCategory()), a.getTitle(), aDao.repliesCount(a.getNum()));
+				System.out.printf(" %-3d | %-30s | %3s | %-1s\n", articles.indexOf(a) + 1, t, mDao.getMember(a.getWriter()).getName(), a.getwDate());
 			} // 날짜 출력 형식 // 작성자 출력 형식
 		}
 
-		System.out.println("----------------------------------------");
+		System.out.println("-----------------------------------------------------------");
 		System.out.println(pageNum + " / " + totalPage + " (" + totalArticleCount + ")");
 		System.out.printf(msg);
 	}
@@ -197,7 +200,7 @@ public class ArticleService extends SERVICE<Article> {
 		ArrayList<Article> pageArticles = pagedList(sortedArticles, pageNum);
 		int totalPageCount = (int) Math.ceil((double) sortedArticles.size() / 5);
 		int totalArticleCount = articles.size();
-		
+
 		context.put("articles", pageArticles);
 		context.put("totalPage", totalPageCount);
 		context.put("totalArticleCount", totalArticleCount);
