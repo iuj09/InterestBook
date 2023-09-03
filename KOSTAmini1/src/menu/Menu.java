@@ -58,36 +58,36 @@ public class Menu<T> {
             System.out.print(": ");
             int num = sc.nextInt();
 
-            switch(num) {
-            case 1:
-            	if(MemberLog.member == null) {
-            		((MemberService)this.manager.getService("MemberService")).join(sc);
-            	}else {
-            		((MemberMenu)this.manager.getMenu("MemberMenu")).myPage();
-            	}
-                break;
-            case 2:
-            	if(MemberLog.member == null) {
-            		((MemberService)this.manager.getService("MemberService")).login(sc);
-            	}else {
-            		((MemberService)this.manager.getService("MemberService")).logout();
-            	}
-            	break;
-            case 3:
-        		((MemberMenu)this.manager.getMenu("MemberMenu")).searchMember();
-            	break;
-            case 4:
-            	((BoardMenu)this.manager.getMenu("BoardMenu")).menu();
-            	break;
-            case 5:
-           	    menuRun(0);
-            	break;
-            case 6:
-            	if(MemberLog.member != null) {
-            		((MemberService)this.manager.getService("MemberService")).delMember(sc);
-            	}else {
-            		System.exit(0);
-            	}
+			switch (num) {
+			case 1:
+				if (MemberLog.member == null) {
+					((MemberService) this.manager.getService("MemberService")).join(sc);
+				} else {
+					((MemberMenu) this.manager.getMenu("MemberMenu")).myPage();
+				}
+				break;
+			case 2:
+				if (MemberLog.member == null) {
+					((MemberService) this.manager.getService("MemberService")).login(sc);
+				} else {
+					((MemberService) this.manager.getService("MemberService")).logout();
+				}
+				break;
+			case 3:
+				((MemberMenu) this.manager.getMenu("MemberMenu")).searchMember();
+				break;
+			case 4:
+				((BoardMenu) this.manager.getMenu("BoardMenu")).menu();
+				break;
+			case 5:
+				menuRun(0);
+				break;
+			case 6:
+				if (MemberLog.member != null) {
+					((MemberService) this.manager.getService("MemberService")).delMember(sc);
+				} else {
+					System.exit(0);
+				}
 				break;
 			case 0:
             	if(MemberLog.member != null) {
