@@ -128,5 +128,6 @@ public class MemberMenu extends MENU<Member> {
 		// TODO Auto-generated method stub
 		
 	}
-    
+
+	
 }
