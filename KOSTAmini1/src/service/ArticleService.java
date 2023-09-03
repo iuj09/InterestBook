@@ -32,7 +32,10 @@ public class ArticleService extends SERVICE<Article> {
 	// add. 제목과 내용을 받아서 글쓰기.
 	public boolean addArticle(String title, String content) {
 		Member user = mService.nowMember();
-
+		if (user == null) {
+			System.out.println("로그인 후 이용해주세요.");
+			return false;
+		}
 		try {
 			aDao.insert(new Article(0, title, content, 0, null, null, user.getNo(), user.getFavoriteNo()));
 		} catch (SQLException e) {
@@ -67,12 +70,20 @@ public class ArticleService extends SERVICE<Article> {
 	// edit
 	public boolean editArticle(int num, String title, String content) {
 		Member user = mService.nowMember();
-
-		try {
-			aDao.update(new Article(num, title, content, 0, null, null, 0, 0));
-		} catch (SQLException e) {
-			e.printStackTrace();
+		if (user == null) {
+			System.out.println("로그인 후 이용해주세요.");
 			return false;
+		}
+
+		if (aDao.getArticle(num).getWriter() == user.getNo() || user.getAdmin().equals("1")) {
+			try {
+				aDao.update(new Article(num, title, content, 0, null, null, 0, 0));
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return false;
+			}
+		} else {
+			System.out.println("자신의 글만 수정할 수 있습니다.");
 		}
 
 		return true;
@@ -80,11 +91,21 @@ public class ArticleService extends SERVICE<Article> {
 
 	// del
 	public boolean delArticle(int num) {
-		try {
-			aDao.delete(num);
-		} catch (SQLException e) {
-			e.printStackTrace();
+		Member user = mService.nowMember();
+		if (user == null) {
+			System.out.println("로그인 후 이용해주세요.");
 			return false;
+		}
+
+		if (aDao.getArticle(num).getWriter() == user.getNo() || user.getAdmin().equals("1")) {
+			try {
+				aDao.delete(num);
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return false;
+			}
+		} else {
+			System.out.println("자신의 글만 삭제할 수 있습니다.");
 		}
 
 		return true;
@@ -125,7 +146,8 @@ public class ArticleService extends SERVICE<Article> {
 		} else {
 			for (Article a : articles) {
 				String t = "[%s] %s [%d]".formatted(fDao.getName(a.getCategory()), a.getTitle(), aDao.repliesCount(a.getNum()));
-				System.out.printf(" %-3d | %-30s | %3s | %-1s\n", articles.indexOf(a) + 1, t, mDao.getMember(a.getWriter()).getName(), a.getwDate());
+				System.out.printf(" %-3d | %-30s | %3s | %-1s\n", articles.indexOf(a) + 1, t,
+						mDao.getMember(a.getWriter()).getName(), a.getwDate());
 			} // 날짜 출력 형식 // 작성자 출력 형식
 		}
 

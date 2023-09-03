@@ -8,11 +8,14 @@ import common.MENU;
 import common.Manager;
 import common.SERVICE;
 import service.ArticleService;
+import service.MemberService;
 import vo.Article;
+import vo.Member;
 
 public class BoardMenu extends MENU<Article> {
 	private static int pageNum = 1, sPageNum = 1;
 	private ArticleService aService;
+	private MemberService mService;
 	private RepliesMenu rMenu;
 	
 	public static final String BLACK = "\u001B[30m";
@@ -28,12 +31,13 @@ public class BoardMenu extends MENU<Article> {
 	public BoardMenu(Scanner sc, SERVICE<Article> service, Manager manager) {
 		super(sc, service, manager);
 		aService = (ArticleService) service;
+		mService = ((MemberService) this.manager.getService("MemberService"));
 		rMenu = ((RepliesMenu)this.manager.getMenu("RepliesMenu"));
 	}
 
 	@Override
 	public void menu() {
-		
+		Member user = mService.nowMember();
 		boolean iFlag = true;
 		int iCmd = 0;
 		String iMsg = "";
@@ -84,6 +88,10 @@ public class BoardMenu extends MENU<Article> {
 						break;
 					case 3:
 						// 수정
+						if (user == null) {
+							dMsg = RED + "로그인 후에 이용해주세요.\n" + RESET; 
+							break;
+						}
 						System.out.println("=== 글 수정 ===");
 
 						System.out.print("> new title: ");
@@ -100,6 +108,10 @@ public class BoardMenu extends MENU<Article> {
 						break;
 					case 4:
 						// 삭제
+						if (user == null) {
+							iMsg = RED + "로그인 후에 이용해주세요.\n" + RESET; 
+							break;
+						}
 						boolean dResult = aService.delArticle(article.getNum()); // user
 						if (dResult) {
 							iMsg = GREEN + "성공적으로 게시글이 삭제되었습니다.\n" + RESET;
@@ -132,6 +144,10 @@ public class BoardMenu extends MENU<Article> {
 				break;
 			case 8:
 				// 글쓰기
+				if (user == null) {
+					iMsg = RED + "로그인 후에 이용해주세요.\n" + RESET; 
+					break;
+				}
 				System.out.println("=== 글 작성 ===");
 
 				System.out.print("> title: ");
@@ -218,6 +234,10 @@ public class BoardMenu extends MENU<Article> {
 								break;
 							case 3:
 								// 검색 글 수정
+								if (user == null) {
+									sdMsg = RED + "로그인 후에 이용해주세요.\n" + RESET; 
+									break;
+								}
 								System.out.println("=== 글 수정 ===");
 
 								System.out.print("> new title: ");
@@ -228,9 +248,9 @@ public class BoardMenu extends MENU<Article> {
 								boolean eResult = aService.editArticle(article.getNum(), stitle,
 										scontent); // user
 								if (eResult) {
-									sMsg = GREEN + "성공적으로 게시글이 수정되었습니다.\n" + RESET;
+									sdMsg = GREEN + "성공적으로 게시글이 수정되었습니다.\n" + RESET;
 								} else {
-									sMsg = RED + "글 수정 실패!!\n" + RESET;
+									sdMsg = RED + "글 수정 실패!!\n" + RESET;
 								}
 								break;
 							case 4:
@@ -241,7 +261,8 @@ public class BoardMenu extends MENU<Article> {
 								} else {
 									sMsg = RED + "게시글 삭제 실패!!\n" + RESET;
 								}
-								break;
+								sPageNum = 1; // 처음으로?
+								return;
 							case 0:
 								sdFlag = false;
 								break;
