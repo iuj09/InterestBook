@@ -172,6 +172,30 @@ public class MemberDao<T extends Member> extends CRUD<Member> {
 		
 	}
 	
+	// 번호로 회원 하나 get
+	public Member getMember(int num) {
+		Member m = null;
+		conn = db.conn();
+		sql = "SELECT * FROM members WHERE no = ?";
+
+		try {
+			ps = conn.prepareStatement(sql);
+
+			ps.setInt(1, num);
+			rs = ps.executeQuery();
+
+			if (rs.next()) {
+				m = new Member(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4),
+						rs.getString(5),  rs.getDate(6), rs.getString(7), rs.getInt(8), rs.getInt(9));
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return m;
+	}
+	
 	public void close() throws SQLException {
         if (rs != null)
             rs.close();

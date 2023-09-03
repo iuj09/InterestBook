@@ -5,7 +5,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map.Entry;
 
 import common.CRUD;
@@ -66,8 +65,8 @@ public class ArticleDao<T extends Article> extends CRUD<Article> {
 		rs = ps.executeQuery();
 
 		while (rs.next()) {
-			list.add(new Article(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getDate(5),
-					rs.getDate(6), rs.getInt(7), rs.getInt(8)));
+			list.add(new Article(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getDate(5), rs.getDate(6),
+					rs.getInt(7), rs.getInt(8)));
 		}
 
 		return list;
@@ -101,6 +100,30 @@ public class ArticleDao<T extends Article> extends CRUD<Article> {
 		int cnt = ps.executeUpdate();
 		System.out.println(cnt + " 줄 삭제 됨.");
 	}
+	
+	// 번호로 게시물 하나 get
+	public Article getArticle(int num) {
+		Article article = null;
+		conn = db.conn();
+		sql = "SELECT * FROM articles WHERE no = ?";
+
+		try {
+			ps = conn.prepareStatement(sql);
+
+			ps.setInt(1, num);
+			rs = ps.executeQuery();
+
+			if (rs.next()) {
+				article = new Article(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getDate(5), rs.getDate(6),
+						rs.getInt(7), rs.getInt(8));
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return article;
+	}
 
 	// 이름으로 검색. 서브쿼리 필요
 	public ArrayList<Article> selectByWriter(String writer) {
@@ -118,8 +141,8 @@ public class ArticleDao<T extends Article> extends CRUD<Article> {
 			ResultSet rs = pstmt.executeQuery();
 
 			while (rs.next()) {
-				list.add(new Article(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getDate(5),
-						rs.getDate(6), rs.getInt(7), rs.getInt(8)));
+				list.add(new Article(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getDate(5), rs.getDate(6),
+						rs.getInt(7), rs.getInt(8)));
 			}
 
 		} catch (SQLException e) {
@@ -146,8 +169,8 @@ public class ArticleDao<T extends Article> extends CRUD<Article> {
 			ResultSet rs = pstmt.executeQuery();
 
 			while (rs.next()) {
-				list.add(new Article(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getDate(5),
-						rs.getDate(6), rs.getInt(7), rs.getInt(8)));
+				list.add(new Article(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getDate(5), rs.getDate(6),
+						rs.getInt(7), rs.getInt(8)));
 			}
 
 		} catch (SQLException e) {
@@ -174,8 +197,8 @@ public class ArticleDao<T extends Article> extends CRUD<Article> {
 			ResultSet rs = pstmt.executeQuery();
 
 			while (rs.next()) {
-				list.add(new Article(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getDate(5),
-						rs.getDate(6), rs.getInt(7), rs.getInt(8)));
+				list.add(new Article(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getDate(5), rs.getDate(6),
+						rs.getInt(7), rs.getInt(8)));
 			}
 
 		} catch (SQLException e) {
@@ -202,8 +225,8 @@ public class ArticleDao<T extends Article> extends CRUD<Article> {
 			ResultSet rs = ps.executeQuery();
 
 			while (rs.next()) {
-				list.add(new Article(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getDate(5),
-						rs.getDate(6), rs.getInt(7), rs.getInt(8)));
+				list.add(new Article(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getDate(5), rs.getDate(6),
+						rs.getInt(7), rs.getInt(8)));
 			}
 
 		} catch (SQLException e) {
@@ -306,15 +329,6 @@ public class ArticleDao<T extends Article> extends CRUD<Article> {
 		return cnt;
 	}
 
-	@Override
-	public void close() throws SQLException {
-		if (rs != null)
-			rs.close();
-		ps.close();
-		conn.close();
-		System.out.println("close() 작동!");
-	}
-
 	// object를 arg로 받는 새로운 select1
 	public ArrayList<Article> select1(HashMap<String, Object> args) {
 		ArrayList<Article> list = new ArrayList<>();
@@ -343,8 +357,8 @@ public class ArticleDao<T extends Article> extends CRUD<Article> {
 			rs = ps.executeQuery();
 
 			while (rs.next()) {
-				list.add(new Article(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getDate(5),
-						rs.getDate(6), rs.getInt(7), rs.getInt(8)));
+				list.add(new Article(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getDate(5), rs.getDate(6),
+						rs.getInt(7), rs.getInt(8)));
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -382,8 +396,8 @@ public class ArticleDao<T extends Article> extends CRUD<Article> {
 			rs = ps.executeQuery();
 
 			while (rs.next()) {
-				list.add(new Article(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getDate(5),
-						rs.getDate(6), rs.getInt(7), rs.getInt(8)));
+				list.add(new Article(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getDate(5), rs.getDate(6),
+						rs.getInt(7), rs.getInt(8)));
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -431,8 +445,8 @@ public class ArticleDao<T extends Article> extends CRUD<Article> {
 			ResultSet rs = pstmt.executeQuery();
 
 			while (rs.next()) {
-				list.add(new Article(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getDate(5),
-						rs.getDate(6), rs.getInt(7), rs.getInt(8)));
+				list.add(new Article(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getDate(5), rs.getDate(6),
+						rs.getInt(7), rs.getInt(8)));
 			}
 
 		} catch (SQLException e) {
@@ -443,4 +457,12 @@ public class ArticleDao<T extends Article> extends CRUD<Article> {
 		return list;
 	}
 
+	@Override
+	public void close() throws SQLException {
+		if (rs != null)
+			rs.close();
+		ps.close();
+		conn.close();
+		System.out.println("close() 작동!");
+	}
 }
