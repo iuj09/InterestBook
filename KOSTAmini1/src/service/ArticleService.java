@@ -9,12 +9,14 @@ import common.CRUD;
 import common.Manager;
 import common.SERVICE;
 import dao.ArticleDao;
+import dao.FavoriteDao;
 import dao.MemberDao;
 import vo.Article;
 import vo.Member;
 
 public class ArticleService extends SERVICE<Article> {
 	private ArticleDao<?> aDao;
+	private FavoriteDao<?> fDao;
 	private MemberDao<?> mDao;
 	private MemberService mService;
 	private final int perPage = 5;
@@ -22,6 +24,7 @@ public class ArticleService extends SERVICE<Article> {
 	public ArticleService(Scanner sc, CRUD<Article> dao, Manager manager) {
 		super(sc, dao, manager);
 		aDao = (ArticleDao<?>) this.dao;
+		fDao = ((FavoriteDao<?>) this.manager.getDao("FavoriteDao"));
 		mDao = ((MemberDao<?>) this.manager.getDao("MemberDao"));
 		mService = ((MemberService) this.manager.getService("MemberService"));
 	}
@@ -121,7 +124,7 @@ public class ArticleService extends SERVICE<Article> {
 			System.out.println("게시물이 없습니다.");
 		} else {
 			for (Article a : articles) {
-				System.out.printf(" %-3d | %-15s | %3s | %-1s\n", articles.indexOf(a) + 1, a.getTitle(),
+				System.out.printf(" %-3d | [%s] %-15s | %3s | %-1s\n", articles.indexOf(a) + 1, fDao.getName(a.getCategory()), a.getTitle(),
 						mDao.getMember(a.getWriter()).getName(), a.getwDate());
 			} // 날짜 출력 형식 // 작성자 출력 형식
 		}
