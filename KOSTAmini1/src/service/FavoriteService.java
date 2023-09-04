@@ -35,7 +35,7 @@ public class FavoriteService extends SERVICE<Favorite>{
                    	System.out.print("name:");
                    	String name = sc.next();
                    	
-                   	Favorite f = new Favorite(no, name);
+                   	Favorite f = new Favorite(no, name, 0);
                     	
                    	dao.insert(f);
                    	System.out.println("추가 완료");
@@ -57,7 +57,7 @@ public class FavoriteService extends SERVICE<Favorite>{
                    	String no = sc.next();
                    	HashMap<String, String> fmap = new HashMap<String, String>();
                     	
-                   	fmap.put("no", no);
+                   	fmap.put("f.no", no);
                    	
                    	ArrayList<Favorite> favlist = dao.select(fmap);
                    	
@@ -91,7 +91,7 @@ public class FavoriteService extends SERVICE<Favorite>{
                    	
                    	HashMap<String, String> fmap = new HashMap<String, String>();
                    	
-                   	fmap.put("no", no);
+                   	fmap.put("f.no", no);
                    	
                    	Favorite f = dao.select(fmap).get(0);
                    	f.setName(sc.next());
@@ -118,11 +118,12 @@ public class FavoriteService extends SERVICE<Favorite>{
                    	
                    	HashMap<String, String> fmap = new HashMap<String, String>();
                    	
-                   	fmap.put("no", no);
+                   	fmap.put("f.no", no);
                    	
                    	Favorite f = dao.select(fmap).get(0);
                    	dao.delete(f.getNo());
                    	System.out.println("삭제 완료");
+                   	return;
                 }
             }
 		}catch(SQLException e) {

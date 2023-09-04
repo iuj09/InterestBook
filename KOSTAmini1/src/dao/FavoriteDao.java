@@ -21,7 +21,7 @@ public class FavoriteDao<T extends Favorite> extends CRUD<Favorite> {
 		
 		conn = db.conn();
 		
-		sql = "insert into favorites values(?, ?)";
+		sql = "insert into favorites values(?, ?, 0)";
 		
 		ps = conn.prepareStatement(sql);
 		
@@ -37,38 +37,32 @@ public class FavoriteDao<T extends Favorite> extends CRUD<Favorite> {
 		conn = db.conn();
 		
 		if(args == null) {
-			sql = "select * from favorites";
+			sql = "select f.no, f.name, count(*) heart from favorites f, members m where f.no = m.favorites_no group by f.no, f.name order by f.no";
 			
 			ps = conn.prepareStatement(sql);
 			
 			rs = ps.executeQuery();
 			
 			while(rs.next()) {
-				list.add(new Favorite(rs.getInt(1), rs.getString(2)));
+				list.add(new Favorite(rs.getInt(1), rs.getString(2), rs.getInt(3)));
 			}
 		return list;
 		}
 		
-		sql = "select * from favorites where ";
+		sql = "select f.no, f.name, count(*) heart from favorites  f, members m where f.no = m.favorites_no group by f.no, f.name having ";
 		
-		int cnt = args.size() -1;
 		for(Entry<String, String> entry : args.entrySet()) {
-			if(entry.getKey().equals("no")) {
+			if(entry.getKey().equals("f.no")) {
 				Integer.parseInt(entry.getValue());
 			}
-			if (cnt > 0) {
-				sql += entry.getKey() + " = \'" + entry.getValue() + "\' and";
-			} else {
-				sql += entry.getKey() + " = \'" + entry.getValue() + "\' ";
-				cnt--;
-			}
+				sql += entry.getKey() + " = \'" + entry.getValue() + "\' order by f.no";
 		}
 		
 		ps = conn.prepareStatement(sql);
 		
 		rs = ps.executeQuery();
 		while(rs.next()) {
-			list.add(new Favorite(rs.getInt(1), rs.getString(2)));
+			list.add(new Favorite(rs.getInt(1), rs.getString(2), rs.getInt(3)));
 		}
 		return list;
 	}
