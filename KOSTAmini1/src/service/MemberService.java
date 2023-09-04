@@ -130,9 +130,9 @@ public class MemberService extends SERVICE<Member> {
 	            return m;
 			}
 		}catch(SQLException e) {
-			System.out.println(e.getMessage());
+//			System.out.println(e.getMessage());
 		}catch(Exception e) {
-			System.out.println(e.getMessage());
+//			System.out.println(e.getMessage());
 		}
 		return null;
 	}

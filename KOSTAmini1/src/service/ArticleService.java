@@ -32,7 +32,10 @@ public class ArticleService extends SERVICE<Article> {
 	// add. 제목과 내용을 받아서 글쓰기.
 	public boolean addArticle(String title, String content) {
 		Member user = mService.nowMember();
-
+		if (user == null) {
+			System.out.println("로그인 후 이용해주세요.");
+			return false;
+		}
 		try {
 			aDao.insert(new Article(0, title, content, 0, null, null, user.getNo(), user.getFavoriteNo()));
 		} catch (SQLException e) {
@@ -67,12 +70,20 @@ public class ArticleService extends SERVICE<Article> {
 	// edit
 	public boolean editArticle(int num, String title, String content) {
 		Member user = mService.nowMember();
-
-		try {
-			aDao.update(new Article(num, title, content, 0, null, null, 0, 0));
-		} catch (SQLException e) {
-			e.printStackTrace();
+		if (user == null) {
+			System.out.println("로그인 후 이용해주세요.");
 			return false;
+		}
+
+		if (aDao.getArticle(num).getWriter() == user.getNo() || user.getAdmin().equals("1")) {
+			try {
+				aDao.update(new Article(num, title, content, 0, null, null, 0, 0));
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return false;
+			}
+		} else {
+			System.out.println("자신의 글만 수정할 수 있습니다.");
 		}
 
 		return true;
@@ -80,11 +91,21 @@ public class ArticleService extends SERVICE<Article> {
 
 	// del
 	public boolean delArticle(int num) {
-		try {
-			aDao.delete(num);
-		} catch (SQLException e) {
-			e.printStackTrace();
+		Member user = mService.nowMember();
+		if (user == null) {
+			System.out.println("로그인 후 이용해주세요.");
 			return false;
+		}
+
+		if (aDao.getArticle(num).getWriter() == user.getNo() || user.getAdmin().equals("1")) {
+			try {
+				aDao.delete(num);
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return false;
+			}
+		} else {
+			System.out.println("자신의 글만 삭제할 수 있습니다.");
 		}
 
 		return true;
@@ -118,15 +139,16 @@ public class ArticleService extends SERVICE<Article> {
 		int totalPage = (int) context.get("totalPage");
 		int totalArticleCount = (int) context.get("totalArticleCount");
 		System.out.println("=========================== 게시판 ===========================");
-		System.out.println("번호                  제목                  작성자   작성일  ");
+		System.out.println("번호                  제목                  작성자       작성일    좋아요");
 		System.out.println("-----------------------------------------------------------");
 		if (context.get("articles") == null) {
 			System.out.println("게시물이 없습니다.");
 		} else {
 			for (Article a : articles) {
 				String t = "[%s] %s [%d]".formatted(fDao.getName(a.getCategory()), a.getTitle(), aDao.repliesCount(a.getNum()));
-				System.out.printf(" %-3d | %-30s | %3s | %-1s\n", articles.indexOf(a) + 1, t, mDao.getMember(a.getWriter()).getName(), a.getwDate());
-			} // 날짜 출력 형식 // 작성자 출력 형식
+				System.out.printf(" %-3d | %-30s | %3s | %-1s | %3d\n", articles.indexOf(a) + 1, t,
+						mDao.getMember(a.getWriter()).getName(), a.getwDate(), aDao.likeCount(a.getNum()));
+			} // 날짜 출력 형식
 		}
 
 		System.out.println("-----------------------------------------------------------");
@@ -141,7 +163,10 @@ public class ArticleService extends SERVICE<Article> {
 
 		int likeCount = aDao.likeCount(a.getNum());
 		int repliesCount = aDao.repliesCount(a.getNum());
-		boolean islike = aDao.isLike(a.getNum(), a.getNum());
+		boolean islike = false;
+		if (user != null) {
+			islike = aDao.isLike(user.getNo(), a.getNum());
+		}
 
 		context.put("likeCount", likeCount);
 		context.put("repliesCount", repliesCount);
@@ -224,12 +249,16 @@ public class ArticleService extends SERVICE<Article> {
 	public String likeArticle(Article a) {
 		Member user = mService.nowMember();
 		String msg;
-		if (aDao.isLike(user.getNo(), a.getNum())) {
-			aDao.dislikeArticle(user.getNo(), a.getNum());
-			msg = a.getNum() + " 번 게시글을 좋아요 취소했습니다.\n";
+		if (user == null) {
+			msg = "로그인 후 이용해주세요.\n";
 		} else {
-			aDao.likeArticle(user.getNo(), a.getNum());
-			msg = a.getNum() + " 번 게시글을 좋아요 했습니다.\n";
+			if (aDao.isLike(user.getNo(), a.getNum())) {
+				aDao.dislikeArticle(user.getNo(), a.getNum());
+				msg = a.getNum() + " 번 게시글을 좋아요 취소했습니다.\n";
+			} else {
+				aDao.likeArticle(user.getNo(), a.getNum());
+				msg = a.getNum() + " 번 게시글을 좋아요 했습니다.\n";
+			}
 		}
 		return msg;
 	}
@@ -267,5 +296,10 @@ public class ArticleService extends SERVICE<Article> {
 			reverse.add(list.get(i));
 		}
 		return reverse;
+	}
+
+	public Article getArticle(int num) {
+		Article article = aDao.getArticle(num);
+		return article;
 	}
 }
