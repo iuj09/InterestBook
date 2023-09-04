@@ -90,22 +90,18 @@ public class Menu<T> {
      * 예시 : list.add(new 클래스Menu(sc, new 클래스Service(sc, new 클래스Dao<클래스>(manager), manager), manager));
      */
     private void list() {
-        // 0. 모집글
+        // 모집글
     	menuList.add(new MeetMenu(sc, new MeetService(sc, new MeetDao<>(manager), manager), manager));
-        // 1. 모집글 댓글
-        // menuList.add(new MeetReplyMenu(sc, new MeetReplyService(sc, new MeetReplyDao<MeetReply>(manager), manager), manager));
-        // 2. 멤버관리
+        // 멤버관리
         menuList.add(new MemberMenu(sc, new MemberService(sc, new MemberDao<Member>(manager), manager), manager));
-        // 3. 지역
+        // 지역
         menuList.add(new LocationMenu(sc, new LocationService(sc, new LocationDao<Location>(manager), manager), manager));
-        // 4. 관심사
+        // 관심사
         menuList.add(new FavoriteMenu(sc, new FavoriteService(sc, new FavoriteDao<Favorite>(manager), manager), manager));
-        // 5. 게시판
+        // 게시판
         menuList.add(new BoardMenu(sc, new ArticleService(sc, new ArticleDao<Article>(manager), manager), manager));
-        // 6. 게시판 댓글
+        // 게시판 댓글
         menuList.add(new RepliesMenu(sc, new RepliesService(sc, new RepliesDao<Replies>(manager), manager), manager));
-        // 7. 모집글에 참석한 인원에 대한 DAO
-        // menuList.add(new MeetRecuritMenu(sc, new MeetRecuritService(sc, new MeetRecuritDao<MeetRecurit>(manager), manager), manager));
     }
 
     private void menuRun(int num) {
