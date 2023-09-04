@@ -121,6 +121,8 @@ public class RepliesService extends SERVICE<Replies> {
 							dao.updateHeart(new Replies(r.getNo(), r.getContent(), r.getW_date(), r.getE_date(),
 									r.getHeart(), r.getArticle_no(), r.getMember_no()));
 							dao.likeReply(m.getNo(), a.getNum(), r.getNo());
+							System.out.println(m.getId() + " 님이 " + no + "번 댓글 좋아요함");
+							System.out.println();
 						} else if (dao.isLike(m.getNo(), a.getNum(), r.getNo())) {
 							int heart = r.getHeart() - 1;
 							r.setHeart(heart);
@@ -130,6 +132,8 @@ public class RepliesService extends SERVICE<Replies> {
 							dao.updateHeart(new Replies(r.getNo(), r.getContent(), r.getW_date(), r.getE_date(),
 									r.getHeart(), r.getArticle_no(), r.getMember_no()));
 							dao.dislikeReply(m.getNo(), a.getNum(), r.getNo());
+							System.out.println(m.getId() + " 님이 " + no + "번 댓글 좋아요 취소함");
+							System.out.println();
 						}
 					} else {
 						System.out.println("댓글이 존재하지 않습니다");
