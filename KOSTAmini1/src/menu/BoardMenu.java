@@ -251,7 +251,7 @@ public class BoardMenu extends MENU<Article> {
 								} else {
 									sdMsg = RED + "글 수정 실패!!\n" + RESET;
 								}
-								return;
+								break;
 							case 4:
 								// 검색 글 삭제
 								boolean dResult = aService.delArticle(article.getNum()); // user
