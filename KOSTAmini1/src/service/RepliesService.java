@@ -24,6 +24,7 @@ public class RepliesService extends SERVICE<Replies> {
 		try {
 			if (loginCheck()) {
 				System.out.print("댓글 입력:");
+				sc.nextLine();
 				String con = sc.nextLine();
 				dao.insert(new Replies(0, con, null, null, 0, a.getNum(), m.getNo()));
 			}
