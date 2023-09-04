@@ -139,16 +139,16 @@ public class ArticleService extends SERVICE<Article> {
 		int totalPage = (int) context.get("totalPage");
 		int totalArticleCount = (int) context.get("totalArticleCount");
 		System.out.println("=========================== 게시판 ===========================");
-		System.out.println("번호                  제목                  작성자   작성일  ");
+		System.out.println("번호                  제목                  작성자       작성일    좋아요");
 		System.out.println("-----------------------------------------------------------");
 		if (context.get("articles") == null) {
 			System.out.println("게시물이 없습니다.");
 		} else {
 			for (Article a : articles) {
 				String t = "[%s] %s [%d]".formatted(fDao.getName(a.getCategory()), a.getTitle(), aDao.repliesCount(a.getNum()));
-				System.out.printf(" %-3d | %-30s | %3s | %-1s\n", articles.indexOf(a) + 1, t,
-						mDao.getMember(a.getWriter()).getName(), a.getwDate());
-			} // 날짜 출력 형식 // 작성자 출력 형식
+				System.out.printf(" %-3d | %-30s | %3s | %-1s | %3d\n", articles.indexOf(a) + 1, t,
+						mDao.getMember(a.getWriter()).getName(), a.getwDate(), aDao.likeCount(a.getNum()));
+			} // 날짜 출력 형식
 		}
 
 		System.out.println("-----------------------------------------------------------");
