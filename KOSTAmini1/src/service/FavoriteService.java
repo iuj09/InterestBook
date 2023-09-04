@@ -128,6 +128,7 @@ public class FavoriteService extends SERVICE<Favorite>{
 		}catch(SQLException e) {
 			System.out.println(e.getMessage());
 		}
+		
 	}
 
 }

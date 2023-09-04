@@ -21,7 +21,7 @@ public class FavoriteDao<T extends Favorite> extends CRUD<Favorite> {
 		
 		conn = db.conn();
 		
-		sql = "insert into favorites values(?, ?, 0)";
+		sql = "insert into favorites values(?, ?)";
 		
 		ps = conn.prepareStatement(sql);
 		
@@ -106,5 +106,6 @@ public class FavoriteDao<T extends Favorite> extends CRUD<Favorite> {
         ps.close();
         conn.close();
     }
+	
 
 }
