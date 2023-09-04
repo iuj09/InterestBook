@@ -62,12 +62,16 @@ public class RepliesService extends SERVICE<Replies> {
 					Replies r = dao.selectByNo(no);
 					// 로그인한 사용자와 작성자가 동일한지 체크
 					if (r.getMember_no() == m.getNo()) {
-						System.out.print("수정할 내용:");
-						sc.nextLine();
-						String content = sc.nextLine();
-						r.setContent(content);
-						dao.update(new Replies(r.getNo(), r.getContent(), r.getW_date(), r.getE_date(), r.getHeart(),
-								r.getArticle_no(), r.getMember_no()));
+						if (r.getArticle_no() == a.getNum()) {
+							System.out.print("수정할 내용:");
+							sc.nextLine();
+							String content = sc.nextLine();
+							r.setContent(content);
+							dao.update(new Replies(r.getNo(), r.getContent(), r.getW_date(), r.getE_date(),
+									r.getHeart(), r.getArticle_no(), r.getMember_no()));
+						} else {
+							System.out.println("댓글이 존재하지 않습니다");
+						}
 					} else {
 						System.out.println("본인 댓글만 수정가능합니다");
 					}
@@ -91,7 +95,11 @@ public class RepliesService extends SERVICE<Replies> {
 					Replies r = dao.selectByNo(no);
 					// 로그인한 사용자와 작성자가 동일한지 체크
 					if (r.getMember_no() == m.getNo()) {
-						dao.delete(r);
+						if (r.getArticle_no() == a.getNum()) {
+							dao.delete(r);
+						} else {
+							System.out.println("댓글이 존재하지 않습니다");
+						}
 					} else {
 						System.out.println("본인 댓글만 삭제가능합니다");
 					}

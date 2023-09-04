@@ -28,7 +28,6 @@ public class BoardMenu extends MENU<Article> {
 	public BoardMenu(Scanner sc, SERVICE<Article> service, Manager manager) {
 		super(sc, service, manager);
 		aService = (ArticleService) service;
-		rMenu = ((RepliesMenu)this.manager.getMenu("RepliesMenu"));
 	}
 
 	@Override
@@ -76,7 +75,7 @@ public class BoardMenu extends MENU<Article> {
 					switch (cmd) {
 					case 1:
 						// 댓글보기
-						rMenu.menu1(article);
+						((RepliesMenu)this.manager.getMenu("RepliesMenu")).menu1(article);
 						break;
 					case 2:
 						// 좋아요
@@ -210,7 +209,7 @@ public class BoardMenu extends MENU<Article> {
 							switch (sdCmd) {
 							case 1:
 								// 검색 글 댓글 보기
-								rMenu.menu1(article);
+								((RepliesMenu)this.manager.getMenu("RepliesMenu")).menu1(article);
 								break;
 							case 2:
 								// 검색 글 좋아요
