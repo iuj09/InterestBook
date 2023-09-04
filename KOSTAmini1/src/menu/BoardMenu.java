@@ -226,7 +226,7 @@ public class BoardMenu extends MENU<Article> {
 							switch (sdCmd) {
 							case 1:
 								// 검색 글 댓글 보기
-								rMenu.menu1(article);
+								((RepliesMenu)this.manager.getMenu("RepliesMenu")).menu1(article);
 								break;
 							case 2:
 								// 검색 글 좋아요
