@@ -12,13 +12,11 @@ import vo.Meet;
 
 public class MeetMenu extends MENU<Meet> {
     private MeetService meetService;
-    private Manager meetMenuManager;
 
     public MeetMenu(Scanner sc, SERVICE<Meet> service, Manager manager) {
         super(sc, service, manager);
         this.sc = sc;
         meetService = (MeetService)this.service;
-        meetMenuManager = manager;   
     }
 
     /**
@@ -30,12 +28,12 @@ public class MeetMenu extends MENU<Meet> {
      */
     @Override
     public void menu() {
-        String memeberName = (MemberLog.member != null) ? MemberLog.member.getId() : null;
+        // String memeberName = (MemberLog.member != null) ? MemberLog.member.getId() : null;
         int memberNo = (MemberLog.member != null) ? MemberLog.member.getNo() : -1;
         boolean flag = true;
         while(flag) {
             System.out.println("\n-----------------------------------------------------");
-            System.out.println("1. " + (memeberName == null ? "모집글 리스트" : memeberName + "님의 모집글 리스트") + " / 2. 모집글 상세 조회 / 3. 모집글 작성 / 4. 이전");
+            System.out.println("1. 모집글 리스트 / 2. 모집글 상세 조회 / 3. 모집글 작성 / 4. 이전");
             System.out.println("-----------------------------------------------------");
             System.out.print(": ");
             int num = sc.nextInt();
@@ -51,7 +49,8 @@ public class MeetMenu extends MENU<Meet> {
                     break;
                 case 3:
                     // write: 모집글 작성, 로그인 상태에서만 가능
-                    meetService. menu(2, memberNo, 0);
+                    if(memberNo != - 1) meetService.menu(2, memberNo, 0);
+                    else                System.out.println("로그인 후 사용 가능");
                     break;
                 case 4:
                     flag = false;
@@ -71,7 +70,7 @@ public class MeetMenu extends MENU<Meet> {
         boolean flag = true;
         while(flag) {
             System.out.println("-----------------------------------------------------");
-            System.out.println("1. 모집글 수정 / 2. 참가 / 3. 참가 취소 / 4. 해당 모집글 댓글 조회 / 5. 이전");
+            System.out.println("1. 모집글 수정 / 2. 이전");
             System.out.println("-----------------------------------------------------");
             System.out.print(": ");
             int num = sc.nextInt();
@@ -82,14 +81,6 @@ public class MeetMenu extends MENU<Meet> {
                     meetService.menu(3, memberNo, no);
                     break;
                 case 2:
-                    meetService.menu(5, memberNo, no);
-                    break;
-                case 3:
-                    break;
-                case 4:
-                    meetMenuManager.getMenu("MeetReplyMenu").menu();
-                    break;
-                case 5:
                     flag = false;
                     break;
             }

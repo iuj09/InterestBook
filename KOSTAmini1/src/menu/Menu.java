@@ -3,48 +3,35 @@ package menu;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import common.CRUD;
 import common.MENU;
 import common.Manager;
 import common.MemberLog;
-import common.SERVICE;
 import dao.ArticleDao;
 import dao.FavoriteDao;
 import dao.LocationDao;
 import dao.MeetDao;
-import dao.MeetReplyDao;
 import dao.MemberDao;
-import dao.MeetRecuritDao;
 import dao.RepliesDao;
 import service.ArticleService;
 import service.FavoriteService;
 import service.LocationService;
-import service.MeetRecuritService;
-import service.MeetReplyService;
 import service.MeetService;
 import service.MemberService;
 import service.RepliesService;
 import vo.Article;
 import vo.Favorite;
 import vo.Location;
-import vo.Meet;
-import vo.MeetRecurit;
-import vo.MeetReply;
 import vo.Member;
 import vo.Replies;
 
 public class Menu<T> {
     private Scanner sc;
-    public Manager manager;
-    private ArrayList<CRUD<?>> daoList;
-    private ArrayList<SERVICE<?>> serviceList;
+    private Manager manager;
     private ArrayList<MENU<?>> menuList;
 
     public Menu() {
         sc = new Scanner(System.in);
         manager = new Manager();
-        daoList = new ArrayList<>();
-        serviceList = new ArrayList<>();
         menuList = new ArrayList<>();
     }
 
@@ -106,7 +93,7 @@ public class Menu<T> {
         // 0. 모집글
     	menuList.add(new MeetMenu(sc, new MeetService(sc, new MeetDao<>(manager), manager), manager));
         // 1. 모집글 댓글
-        menuList.add(new MeetReplyMenu(sc, new MeetReplyService(sc, new MeetReplyDao<MeetReply>(manager), manager), manager));
+        // menuList.add(new MeetReplyMenu(sc, new MeetReplyService(sc, new MeetReplyDao<MeetReply>(manager), manager), manager));
         // 2. 멤버관리
         menuList.add(new MemberMenu(sc, new MemberService(sc, new MemberDao<Member>(manager), manager), manager));
         // 3. 지역
@@ -118,7 +105,7 @@ public class Menu<T> {
         // 6. 게시판 댓글
         menuList.add(new RepliesMenu(sc, new RepliesService(sc, new RepliesDao<Replies>(manager), manager), manager));
         // 7. 모집글에 참석한 인원에 대한 DAO
-        menuList.add(new MeetRecuritMenu(sc, new MeetRecuritService(sc, new MeetRecuritDao<MeetRecurit>(manager), manager), manager));
+        // menuList.add(new MeetRecuritMenu(sc, new MeetRecuritService(sc, new MeetRecuritDao<MeetRecurit>(manager), manager), manager));
     }
 
     private void menuRun(int num) {
