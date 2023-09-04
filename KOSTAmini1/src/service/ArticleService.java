@@ -297,4 +297,9 @@ public class ArticleService extends SERVICE<Article> {
 		}
 		return reverse;
 	}
+
+	public Article getArticle(int num) {
+		Article article = aDao.getArticle(num);
+		return article;
+	}
 }

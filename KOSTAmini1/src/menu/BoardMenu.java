@@ -67,7 +67,8 @@ public class BoardMenu extends MENU<Article> {
 				Boolean dFlag = true;
 				String dMsg = "";
 				while (dFlag) {
-					Article article = articles.get(iCmd - 1);
+					// detail
+					Article article = aService.getArticle(articles.get(iCmd - 1).getNum());
 					HashMap<String, Object> dContext = aService.detailArticle(article);
 					aService.printDetail(article, dMsg);
 					
@@ -101,9 +102,9 @@ public class BoardMenu extends MENU<Article> {
 						String content = sc.nextLine();
 						boolean eResult = aService.editArticle(article.getNum(), title, content); // user
 						if (eResult) {
-							iMsg = GREEN + "성공적으로 게시글이 수정되었습니다.\n" + RESET;
+							dMsg = GREEN + "성공적으로 게시글이 수정되었습니다.\n" + RESET;
 						} else {
-							iMsg = RED + "글 수정 실패!!\n" + RESET;
+							dMsg = RED + "글 수정 실패!!\n" + RESET;
 						}
 						break;
 					case 4:
@@ -184,9 +185,9 @@ public class BoardMenu extends MENU<Article> {
 				sc.nextLine();
 				String sWords = sc.nextLine();
 				int siCmd = 0;
-				boolean sflag = true;
+				boolean sFlag = true;
 				String sMsg = "";
-				while (sflag) {
+				while (sFlag) {
 					// articles 추출
 					HashMap<String, Object> sContext = aService.searchArticles(sWords, sCmd,
 							sPageNum);
@@ -213,7 +214,7 @@ public class BoardMenu extends MENU<Article> {
 						Boolean sdFlag = true;
 						String sdMsg = "";
 						while (sdFlag) {
-							Article article = sArticles.get(siCmd - 1);
+							Article article = aService.getArticle(sArticles.get(siCmd - 1).getNum());
 							HashMap<String, Object> detailContext = aService.detailArticle(article);
 							aService.printDetail(article, sdMsg);
 							
