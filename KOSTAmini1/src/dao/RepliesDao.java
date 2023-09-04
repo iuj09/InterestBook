@@ -66,6 +66,23 @@ public class RepliesDao<T extends Replies> extends CRUD<Replies> {
 		}
 		return list;
 	}
+	
+	// 해당 게시글에 있는 댓글만 리스트에 담기
+	public ArrayList<Replies> selectByArticle(int no) throws SQLException {
+		ArrayList<Replies> list = new ArrayList<Replies>();
+		conn = db.conn();
+
+		sql = "select * from Replies where articles_no = ?";
+
+		ps = conn.prepareStatement(sql);
+		ps.setInt(1, no);
+		rs = ps.executeQuery();
+		while (rs.next()) {
+			list.add(new Replies(rs.getInt(1), rs.getString(2), rs.getDate(3), rs.getDate(4), rs.getInt(5),
+					rs.getInt(6), rs.getInt(7)));
+		}
+		return list;
+	}
 
 	// 댓글 보기
 	// 시간순, 좋아요순 정렬(추가? // group by절)
