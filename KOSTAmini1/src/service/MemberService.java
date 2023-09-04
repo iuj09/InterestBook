@@ -13,7 +13,6 @@ import dao.MemberDao;
 import vo.Article;
 import vo.Favorite;
 import vo.Location;
-import vo.Meet;
 import vo.Member;
 
 public class MemberService extends SERVICE<Member> {
@@ -131,9 +130,9 @@ public class MemberService extends SERVICE<Member> {
 	            return m;
 			}
 		}catch(SQLException e) {
-			System.out.println(e.getMessage());
+//			System.out.println(e.getMessage());
 		}catch(Exception e) {
-			System.out.println(e.getMessage());
+//			System.out.println(e.getMessage());
 		}
 		return null;
 	}
@@ -290,7 +289,7 @@ public class MemberService extends SERVICE<Member> {
 			Member m = nowMember();
 			if(m != null) {
 				System.out.println("내 모집글 조회");
-				((MeetService)this.manager.getService("MeetService")).menu(4, m.getNo());
+				((MeetService)this.manager.getService("MeetService")).menu(4, m.getNo(), 0);
 			}
 		}catch(SQLException e) {
 			System.out.println(e.getMessage());

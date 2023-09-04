@@ -100,6 +100,24 @@ public class FavoriteDao<T extends Favorite> extends CRUD<Favorite> {
 		ps.executeUpdate();
 	}
 	
+	public String getName(int cId) {
+		String name = "";
+		conn = db.conn();
+		sql = "SELECT * FROM favorites WHERE no = ?";
+		try {
+			ps = conn.prepareStatement(sql);
+			ps.setInt(1, cId);
+			rs = ps.executeQuery();
+			if (rs.next()) {
+				name = rs.getString(2);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return name;
+	}
+	
 	public void close() throws SQLException {
         if (rs != null)
             rs.close();

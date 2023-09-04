@@ -23,10 +23,9 @@ public class RepliesService extends SERVICE<Replies> {
 	public void addReplies(Scanner sc, Article a, Member m) {
 		// 로그인 확인
 		try {
-			// 실제 사용시 !삭제하기
 			if (loginCheck()) {
 				System.out.print("댓글 입력:");
-				String con = sc.next();
+				String con = sc.nextLine();
 				dao.insert(new Replies(0, con, null, null, 0, a.getNum(), m.getNo()));
 			}
 		} catch (SQLException e) {
@@ -51,16 +50,13 @@ public class RepliesService extends SERVICE<Replies> {
 
 	// 댓글 수정
 	public void updateReplies(Scanner sc, Member m, Article a) {
-		// 로그인 확인
 		try {
-			// 실제 사용시 !삭제하기
 			if (loginCheck()) {
 				if (hasComment(a)) {
 					System.out.print("수정할 댓글번호:");
 					int no = 0;
 					no = sc.nextInt();
 					Replies r = dao.selectByNo(no);
-					// 로그인한 사용자와 작성자가 동일한지 체크
 					if (r.getMember_no() == m.getNo()) {
 						System.out.print("수정할 내용:");
 						sc.nextLine();
@@ -80,16 +76,13 @@ public class RepliesService extends SERVICE<Replies> {
 
 	// 번호로 삭제
 	public void delReplies(Scanner sc, Member m, Article a) {
-		// 로그인 확인
 		try {
-			// 실제 사용시 !삭제하기
 			if (loginCheck()) {
 				if (hasComment(a)) {
 					System.out.print("삭제할 댓글번호 입력:");
 					int no = 0;
 					no = sc.nextInt();
 					Replies r = dao.selectByNo(no);
-					// 로그인한 사용자와 작성자가 동일한지 체크
 					if (r.getMember_no() == m.getNo()) {
 						dao.delete(r);
 					} else {
@@ -117,8 +110,7 @@ public class RepliesService extends SERVICE<Replies> {
 					int no = 0;
 					no = sc.nextInt();
 					Replies r = dao.selectByNo(no);
-					// select * from replies where ? in (select * from replies where articles_no =
-					// ?);
+					// select * from replies where ? in (select * from replies where articles_no = ?);
 					// dao에서 재작업(rs.next()로 true / false)
 					if (!dao.isLike(m.getNo(), a.getNum(), r.getNo())) {
 						int heart = r.getHeart() + 1;
@@ -126,16 +118,15 @@ public class RepliesService extends SERVICE<Replies> {
 						dao.updateHeart(new Replies(r.getNo(), r.getContent(), r.getW_date(), r.getE_date(),
 								r.getHeart(), r.getArticle_no(), r.getMember_no()));
 						dao.likeReply(m.getNo(), a.getNum(), r.getNo());
-
 					} else if (dao.isLike(m.getNo(), a.getNum(), r.getNo())) {
 						int heart = r.getHeart() - 1;
 						r.setHeart(heart);
 						if (heart < 0) {
 							r.setHeart(heart + 1);
-							dao.updateHeart(new Replies(r.getNo(), r.getContent(), r.getW_date(), r.getE_date(),
-									r.getHeart(), r.getArticle_no(), r.getMember_no()));
-							dao.dislikeReply(m.getNo(), a.getNum(), r.getNo());
 						}
+						dao.updateHeart(new Replies(r.getNo(), r.getContent(), r.getW_date(), r.getE_date(),
+								r.getHeart(), r.getArticle_no(), r.getMember_no()));
+						dao.dislikeReply(m.getNo(), a.getNum(), r.getNo());
 					}
 				}
 			}

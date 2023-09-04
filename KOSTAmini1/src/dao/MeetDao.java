@@ -9,28 +9,31 @@ import common.CRUD;
 import common.DBConnect;
 import common.Manager;
 import vo.Meet;
-import vo.MeetJoin;
 
 public class MeetDao<T extends Meet> extends CRUD<Meet> {
     public MeetDao(Manager manager) {
         super(manager);
         db = DBConnect.getInstance();
+        for(CRUD crud : manager.getAllDaoList()) {
+            System.out.println(crud.toString());
+        }
     }
 
     @Override
     public void insert(Meet meet) throws SQLException {
         conn = db.conn();
 
-        sql = "INSERT INTO MEETS(NO, RECURIT, TITLE, CONTENT, DEADLINE, LOCATIONS_NO, MEMBERS_NO) " + 
-                "VALUES (MEETS_NO_SEQUENCE.NEXTVAL, ?, ?, ?, TO_DATE(SYSDATE, \'yyyy/mm/dd hh24:mi:ss\'), ?, ?)";
+        sql = "INSERT INTO MEETS(NO, RECURIT, ENTER, TITLE, CONTENT, DEADLINE, LOCATIONS_NO, MEMBERS_NO) " + 
+                "VALUES (MEETS_NO_SEQUENCE.NEXTVAL, ?, ?, ?, ?, SYSDATE, ?, ?)";
         
         ps = conn.prepareStatement(sql);
 
         ps.setInt(1, meet.getRecurit());
-        ps.setString(2, meet.getTitle());
-        ps.setString(3, meet.getContent());
-        ps.setInt(4, meet.getLocationNo());
-        ps.setInt(5, meet.getMemberNo());
+        ps.setInt(2, 1);
+        ps.setString(3, meet.getTitle());
+        ps.setString(4, meet.getContent());
+        ps.setInt(5, meet.getLocationNo());
+        ps.setInt(6, meet.getMemberNo());
 
         ps.executeUpdate();
     }
@@ -42,26 +45,27 @@ public class MeetDao<T extends Meet> extends CRUD<Meet> {
         conn = db.conn();
         
         sql = "SELECT * FROM MEETS";
-        if(args == null) {
+        if(args.isEmpty()) {
             ps = conn.prepareStatement(sql);
 
             rs = ps.executeQuery();
 
             while(rs.next()) {
-                list.add(new Meet(rs.getInt(1), rs.getInt(2), rs.getString(3),
-                        rs.getString(4), rs.getDate(5), rs.getDate(6),
-                        rs.getDate(7), rs.getInt(8), rs.getInt(9), rs.getInt(10)));
+                list.add(new Meet(rs.getInt(1), rs.getInt(2), rs.getInt(3),
+                        rs.getString(4), rs.getString(5), rs.getDate(6),
+                        rs.getDate(7), rs.getDate(8), rs.getInt(9), rs.getInt(10)));
             }
         } else {
             sql += " WHERE ";
             int cnt = args.size() -1;
             for(Entry<String, String> entry : args.entrySet()) {
                 if (cnt > 0) {
-                    sql += entry.getKey() + " = \'" + entry.getValue() + "\' AND";
+                    sql += entry.getKey() + " = \'" + entry.getValue() + "\' AND ";
                 } else {
                     sql += entry.getKey() + " = \'" + entry.getValue() + "\' ";
-                    cnt--;
+                    
                 }
+                cnt--;
 		    }
 
             ps = conn.prepareStatement(sql);
@@ -69,9 +73,9 @@ public class MeetDao<T extends Meet> extends CRUD<Meet> {
             rs = ps.executeQuery();
 
             while(rs.next()) {
-                list.add(new Meet(rs.getInt(1), rs.getInt(2), rs.getString(3),
-                        rs.getString(4), rs.getDate(5), rs.getDate(6),
-                        rs.getDate(7), rs.getInt(8), rs.getInt(9), rs.getInt(10)));
+                list.add(new Meet(rs.getInt(1), rs.getInt(2), rs.getInt(3),
+                        rs.getString(4), rs.getString(5), rs.getDate(6),
+                        rs.getDate(7), rs.getDate(8), rs.getInt(9), rs.getInt(10)));
             }
         }
 
@@ -96,24 +100,17 @@ public class MeetDao<T extends Meet> extends CRUD<Meet> {
         ps.executeUpdate();
     }
 
-    public ArrayList<MeetJoin> join(int memberNo) throws SQLException {
-        ArrayList<MeetJoin> list = new ArrayList<>();
-
+    public void join(int no, int memberNo) throws SQLException {
         conn = db.conn();
 
-        sql = "SELECT * FROM MEMBER_MEETS_JOIN WHERE MEMBERS_NO = ?";
+        sql = "UPDATE MEETS SET ENTER = ? WHERE MEMBERS_NO = ? AND NO = ?";
 
         ps = conn.prepareStatement(sql);
 
         ps.setInt(1, memberNo);
+        ps.setInt(2, no);
 
-        rs = ps.executeQuery();
-
-        while(rs.next()) {
-            list.add(new MeetJoin(rs.getInt(1), rs.getInt(2)));
-        }
-
-        return list;
+        ps.executeUpdate();
     }
     
     @Override
