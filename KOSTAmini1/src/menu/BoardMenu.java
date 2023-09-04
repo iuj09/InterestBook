@@ -210,7 +210,6 @@ public class BoardMenu extends MENU<Article> {
 				} else if (sCmd == 5) {
 					System.out.print("> 검색할 로그인id: ");
 				}
-				sc.nextLine();
 				String sWords = sc.nextLine();
 				int siCmd = 0;
 				boolean sFlag = true;
