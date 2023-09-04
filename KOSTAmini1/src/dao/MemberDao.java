@@ -21,7 +21,7 @@ public class MemberDao<T extends Member> extends CRUD<Member> {
 	public void insert(Member m) throws SQLException {
 		conn = db.conn();
 		
-		sql = "insert into members values(members_no_sequence.nextvall, ?, ?, ?, ?, sysdate, ?, ?, ?)";
+		sql = "insert into members values(members_no_sequence.nextval, ?, ?, ?, ?, sysdate, ?, ?, ?)";
 
 		ps = conn.prepareStatement(sql);
 		
