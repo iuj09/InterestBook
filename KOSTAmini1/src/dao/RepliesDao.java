@@ -54,21 +54,37 @@ public class RepliesDao<T extends Replies> extends CRUD<Replies> {
 	public ArrayList<Replies> selectByArtNo(int no) throws SQLException {
 		ArrayList<Replies> list = new ArrayList<Replies>();
 		conn = db.conn();
-		
+
 		sql = "select * from Replies where articles_no = ?";
 
 		ps = conn.prepareStatement(sql);
 		ps.setInt(1, no);
 		rs = ps.executeQuery();
 		while (rs.next()) {
-			list.add(new Replies(rs.getInt(1), rs.getString(2), rs.getDate(3), rs.getDate(4), rs.getInt(5), rs.getInt(6),
-					rs.getInt(7)));
+			list.add(new Replies(rs.getInt(1), rs.getString(2), rs.getDate(3), rs.getDate(4), rs.getInt(5),
+					rs.getInt(6), rs.getInt(7)));
+		}
+		return list;
+	}
+
+	// 해당 게시글에 있는 댓글만 리스트에 담기
+	public ArrayList<Replies> selectByArticle(int no) throws SQLException {
+		ArrayList<Replies> list = new ArrayList<Replies>();
+		conn = db.conn();
+
+		sql = "select * from Replies where articles_no = ?";
+
+		ps = conn.prepareStatement(sql);
+		ps.setInt(1, no);
+		rs = ps.executeQuery();
+		while (rs.next()) {
+			list.add(new Replies(rs.getInt(1), rs.getString(2), rs.getDate(3), rs.getDate(4), rs.getInt(5),
+					rs.getInt(6), rs.getInt(7)));
 		}
 		return list;
 	}
 
 	// 댓글 보기
-	// 시간순, 좋아요순 정렬(추가? // group by절)
 	public ArrayList<Replies> selectAll() throws SQLException {
 		ArrayList<Replies> list = new ArrayList<Replies>();
 		conn = db.conn();
@@ -89,11 +105,13 @@ public class RepliesDao<T extends Replies> extends CRUD<Replies> {
 	public void update(Replies r) throws SQLException {
 		conn = db.conn();
 
-		sql = "update Replies set content = ?, e_date = sysdate where no=?";
+		sql = "update Replies set content = ?, e_date = sysdate where no= ?and articles_no=? and members_no=?";
 
 		ps = conn.prepareStatement(sql);
 		ps.setString(1, r.getContent());
 		ps.setInt(2, r.getNo());
+		ps.setInt(3, r.getArticle_no());
+		ps.setInt(4, r.getMember_no());
 		int cnt = ps.executeUpdate();
 
 		System.out.println(cnt + "개의 댓글이 수정됨");
@@ -103,11 +121,12 @@ public class RepliesDao<T extends Replies> extends CRUD<Replies> {
 	// 댓글 삭제
 	public void delete(Replies r) throws SQLException {
 		conn = db.conn();
-		sql = "delete from Replies where no=? and members_no=?";
+		sql = "delete from Replies where no=? and members_no=? and articles_no=?";
 
 		ps = conn.prepareStatement(sql);
 		ps.setInt(1, r.getNo());
 		ps.setInt(2, r.getMember_no());
+		ps.setInt(3, r.getArticle_no());
 		int cnt = ps.executeUpdate();
 
 		System.out.println(cnt + "개의 댓글이 삭제됨");
@@ -164,8 +183,7 @@ public class RepliesDao<T extends Replies> extends CRUD<Replies> {
 			ps.setInt(3, rId);
 
 			int cnt = ps.executeUpdate();
-			System.out.println("member" + mId + " 님이 " + rId + "번 댓글 좋아요함");
-			System.out.println();
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -185,8 +203,7 @@ public class RepliesDao<T extends Replies> extends CRUD<Replies> {
 			ps.setInt(3, rId);
 
 			int cnt = ps.executeUpdate();
-			System.out.println("member" + mId + " 님이 " + rId + "번 댓글 좋아요 취소함");
-			System.out.println();
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

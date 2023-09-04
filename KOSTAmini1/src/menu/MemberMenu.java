@@ -29,7 +29,7 @@ public class MemberMenu extends MENU<Member> {
     	while(flag) {
     		System.out.println("마이페이지");
     		System.out.println("-----------------------------------------------------");
-    		System.out.println("1.내 정보 조회 / 2.내 정보 수정 / 3.내 게시물 조회 / 4.좋아요 표시한 게시물 조회 / 5.내 모집글 조회 / 6.모집글 참가 내역 조회" + (MemberLog.member.getAdmin().equals("1") ? " / 7.관리자 권한부여 / 8.지역 관리 / 9.관심사 관리": "") + " / 0.뒤로");
+    		System.out.println("1.내 정보 조회 / 2.내 정보 수정 / 3.내 게시물 조회 / 4.좋아요 표시한 게시물 조회 / 5.내 모집글 조회 / " + (MemberLog.member.getAdmin().equals("1") ? " / 6.관리자 권한부여 / 7.지역 관리 / 8.관심사 관리": "") + " / 0.뒤로");
     		System.out.println("-----------------------------------------------------");
             System.out.print(": ");
             int num = sc.nextInt();
@@ -44,25 +44,22 @@ public class MemberMenu extends MENU<Member> {
     			((MemberService)service).myArticle(sc);
     			break;
     		case 4:
-    			
+    			((MemberService)service).searchLike(sc);
     			break;
     		case 5:
-    			
-    			break;
-    		case 6:
     			((MemberService)service).checkMeet(sc);
     			break;
-    		case 7:
+    		case 6:
     			if(MemberLog.member.getAdmin().equals("1")) {
     				((MemberService)service).editAdm(sc);
     			}
     			break;
-    		case 8:
+    		case 7:
     			if(MemberLog.member.getAdmin().equals("1")) {
     				((LocationMenu)this.manager.getMenu("LocationMenu")).menu();
     			}
     			break;
-    		case 9:
+    		case 8:
     			if(MemberLog.member.getAdmin().equals("1")) {
     				((FavoriteMenu)this.manager.getMenu("FavoriteMenu")).menu();
     			}

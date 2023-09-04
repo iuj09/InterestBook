@@ -33,8 +33,7 @@ public class ArticleDao<T extends Article> extends CRUD<Article> {
 		ps.setInt(3, a.getWriter());
 		ps.setInt(4, a.getCategory());
 
-		int cnt = ps.executeUpdate();
-		System.out.println(cnt + " 줄 추가 됨.");
+		ps.executeUpdate();
 
 	}
 
@@ -86,8 +85,7 @@ public class ArticleDao<T extends Article> extends CRUD<Article> {
 		ps.setString(2, a.getContent());
 		ps.setInt(3, a.getNum());
 
-		int cnt = ps.executeUpdate();
-		System.out.println(cnt + " 줄 수정 됨.");
+		ps.executeUpdate();
 	}
 
 	// 삭제: DELETE
@@ -98,240 +96,188 @@ public class ArticleDao<T extends Article> extends CRUD<Article> {
 		ps = conn.prepareStatement(sql);
 		ps.setInt(1, num);
 
-		int cnt = ps.executeUpdate();
-		System.out.println(cnt + " 줄 삭제 됨.");
+		ps.executeUpdate();
 	}
 
 	// 번호로 게시물 하나 get
-	public Article getArticle(int num) {
+	public Article getArticle(int num) throws SQLException {
 		Article article = null;
 		conn = db.conn();
 		sql = "SELECT * FROM articles WHERE no = ?";
 
-		try {
-			ps = conn.prepareStatement(sql);
+		ps = conn.prepareStatement(sql);
 
-			ps.setInt(1, num);
-			rs = ps.executeQuery();
+		ps.setInt(1, num);
+		rs = ps.executeQuery();
 
-			if (rs.next()) {
-				article = new Article(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getDate(5),
-						rs.getDate(6), rs.getInt(7), rs.getInt(8));
-			}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if (rs.next()) {
+			article = new Article(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getDate(5), rs.getDate(6),
+					rs.getInt(7), rs.getInt(8));
 		}
 
 		return article;
 	}
 
 	// 이름으로 검색. 서브쿼리 필요
-	public ArrayList<Article> selectByWriter(String writer) {
+	public ArrayList<Article> selectByWriter(String writer) throws SQLException {
 		ArrayList<Article> list = new ArrayList<Article>();
 
 		conn = db.conn();
 
 		String sql = "SELECT * FROM articles WHERE MEMBER_NO IN (SELECT no FROM members WHERE name like ?)"; // 서브쿼리
 
-		try {
-			PreparedStatement pstmt = conn.prepareStatement(sql);
+		PreparedStatement pstmt = conn.prepareStatement(sql);
 
-			pstmt.setString(1, "%" + writer + "%");
+		pstmt.setString(1, "%" + writer + "%");
 
-			ResultSet rs = pstmt.executeQuery();
+		ResultSet rs = pstmt.executeQuery();
 
-			while (rs.next()) {
-				list.add(new Article(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getDate(5), rs.getDate(6),
-						rs.getInt(7), rs.getInt(8)));
-			}
-
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		while (rs.next()) {
+			list.add(new Article(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getDate(5), rs.getDate(6),
+					rs.getInt(7), rs.getInt(8)));
 		}
 
 		return list;
 	}
 
 	// 제목으로 검색
-	public ArrayList<Article> selectByTitle(String title) {
+	public ArrayList<Article> selectByTitle(String title) throws SQLException {
 		ArrayList<Article> list = new ArrayList<Article>();
 
 		conn = db.conn();
 
 		String sql = "SELECT * FROM articles WHERE title like ?";
 
-		try {
-			PreparedStatement pstmt = conn.prepareStatement(sql);
+		PreparedStatement pstmt = conn.prepareStatement(sql);
 
-			pstmt.setString(1, "%" + title + "%");
+		pstmt.setString(1, "%" + title + "%");
 
-			ResultSet rs = pstmt.executeQuery();
+		ResultSet rs = pstmt.executeQuery();
 
-			while (rs.next()) {
-				list.add(new Article(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getDate(5), rs.getDate(6),
-						rs.getInt(7), rs.getInt(8)));
-			}
-
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		while (rs.next()) {
+			list.add(new Article(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getDate(5), rs.getDate(6),
+					rs.getInt(7), rs.getInt(8)));
 		}
 
 		return list;
 	}
 
 	// 내용으로 검색
-	public ArrayList<Article> selectByContent(String content) {
+	public ArrayList<Article> selectByContent(String content) throws SQLException {
 		ArrayList<Article> list = new ArrayList<Article>();
 
 		conn = db.conn();
 
 		String sql = "SELECT * FROM articles WHERE content LIKE ?";
 
-		try {
-			PreparedStatement pstmt = conn.prepareStatement(sql);
+		PreparedStatement pstmt = conn.prepareStatement(sql);
 
-			pstmt.setString(1, "%" + content + "%");
+		pstmt.setString(1, "%" + content + "%");
 
-			ResultSet rs = pstmt.executeQuery();
+		ResultSet rs = pstmt.executeQuery();
 
-			while (rs.next()) {
-				list.add(new Article(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getDate(5), rs.getDate(6),
-						rs.getInt(7), rs.getInt(8)));
-			}
-
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		while (rs.next()) {
+			list.add(new Article(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getDate(5), rs.getDate(6),
+					rs.getInt(7), rs.getInt(8)));
 		}
 
 		return list;
 	}
 
 	// 관심사 게시물 반환
-	public ArrayList<Article> selectByFavorite(int faId) {
+	public ArrayList<Article> selectByFavorite(int faId) throws SQLException {
 		ArrayList<Article> list = new ArrayList<Article>();
 
 		conn = db.conn();
 
 		String sql = "SELECT * FROM articles WHERE FAVORITES_NO = ?";
 
-		try {
-			ps = conn.prepareStatement(sql);
+		ps = conn.prepareStatement(sql);
 
-			ps.setInt(1, faId);
+		ps.setInt(1, faId);
 
-			ResultSet rs = ps.executeQuery();
+		ResultSet rs = ps.executeQuery();
 
-			while (rs.next()) {
-				list.add(new Article(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getDate(5), rs.getDate(6),
-						rs.getInt(7), rs.getInt(8)));
-			}
-
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		while (rs.next()) {
+			list.add(new Article(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getDate(5), rs.getDate(6),
+					rs.getInt(7), rs.getInt(8)));
 		}
 
 		return list;
 	}
 
 	// 이미 좋아요 함?
-	public Boolean isLike(int mId, int aId) {
+	public Boolean isLike(int mId, int aId) throws SQLException {
 //		ArrayList<Article> list = new ArrayList<Article>();
 
 		conn = db.conn();
 
 		sql = "SELECT * FROM articles_like WHERE MEMBERS_NO = ? AND ARTICLES_NO = ?";
 
-		try {
-			ps = conn.prepareStatement(sql);
+		ps = conn.prepareStatement(sql);
 
-			ps.setInt(1, mId);
-			ps.setInt(2, aId);
+		ps.setInt(1, mId);
+		ps.setInt(2, aId);
 
-			ResultSet rs = ps.executeQuery();
+		ResultSet rs = ps.executeQuery();
 
-			if (rs.next()) {
-				return true;
-			} else {
-				return false;
-			}
-
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if (rs.next()) {
+			return true;
+		} else {
+			return false;
 		}
-		return false;
 
 	}
 
 	// 좋아요.
-	public void likeArticle(int mId, int aId) {
+	public void likeArticle(int mId, int aId) throws SQLException {
 		conn = db.conn();
 
 		sql = "INSERT INTO articles_like VALUES (?, ?)";
 
-		try {
-			ps = conn.prepareStatement(sql);
+		ps = conn.prepareStatement(sql);
 
-			ps.setInt(1, mId);
-			ps.setInt(2, aId);
+		ps.setInt(1, mId);
+		ps.setInt(2, aId);
 
-			int cnt = ps.executeUpdate();
-			System.out.println("member" + mId + " 님이 " + aId + " 글을 좋아요함.");
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		int cnt = ps.executeUpdate();
+//		System.out.println("member" + mId + " 님이 " + aId + " 글을 좋아요함.");
 	}
 
 	// 좋아요 취소.
-	public void dislikeArticle(int mId, int aId) {
+	public void dislikeArticle(int mId, int aId) throws SQLException {
 		conn = db.conn();
 
 		sql = "DELETE articles_like WHERE MEMBERS_NO = ? AND ARTICLES_NO = ?";
 
-		try {
-			ps = conn.prepareStatement(sql);
+		ps = conn.prepareStatement(sql);
 
-			ps.setInt(1, mId);
-			ps.setInt(2, aId);
+		ps.setInt(1, mId);
+		ps.setInt(2, aId);
 
-			int cnt = ps.executeUpdate();
-			System.out.println("member" + mId + " 님이 " + aId + " 글을 좋아요 취소함.");
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		int cnt = ps.executeUpdate();
+//		System.out.println("member" + mId + " 님이 " + aId + " 글을 좋아요 취소함.");
 	}
 
 	// 좋아요 개수
-	public int likeCount(int aId) {
+	public int likeCount(int aId) throws SQLException {
 		conn = db.conn();
 
 		sql = "SELECT COUNT(*) FROM articles_like WHERE ARTICLES_NO = ?";
 
 		int cnt = 0;
-		try {
-			ps = conn.prepareStatement(sql);
+		ps = conn.prepareStatement(sql);
 
-			ps.setInt(1, aId);
+		ps.setInt(1, aId);
 
-			ResultSet rs = ps.executeQuery();
-			rs.next();
-			cnt = rs.getInt(1);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		ResultSet rs = ps.executeQuery();
+		rs.next();
+		cnt = rs.getInt(1);
 		return cnt;
 	}
 
 	// object를 arg로 받는 새로운 select1
-	public ArrayList<Article> select1(HashMap<String, Object> args) {
+	public ArrayList<Article> select1(HashMap<String, Object> args) throws SQLException {
 		ArrayList<Article> list = new ArrayList<>();
 		conn = db.conn();
 		sql = "SELECT * FROM articles";
@@ -352,25 +298,20 @@ public class ArticleDao<T extends Article> extends CRUD<Article> {
 			}
 		}
 
-		try {
-			ps = conn.prepareStatement(sql);
+		ps = conn.prepareStatement(sql);
 
-			rs = ps.executeQuery();
+		rs = ps.executeQuery();
 
-			while (rs.next()) {
-				list.add(new Article(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getDate(5), rs.getDate(6),
-						rs.getInt(7), rs.getInt(8)));
-			}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		while (rs.next()) {
+			list.add(new Article(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getDate(5), rs.getDate(6),
+					rs.getInt(7), rs.getInt(8)));
 		}
 
 		return list;
 	}
 
 	// search
-	public ArrayList<Article> search(HashMap<String, Object> args) {
+	public ArrayList<Article> search(HashMap<String, Object> args) throws SQLException {
 		ArrayList<Article> list = new ArrayList<>();
 		conn = db.conn();
 		sql = "SELECT * FROM articles";
@@ -391,68 +332,52 @@ public class ArticleDao<T extends Article> extends CRUD<Article> {
 			}
 		}
 
-		try {
-			ps = conn.prepareStatement(sql);
+		ps = conn.prepareStatement(sql);
 
-			rs = ps.executeQuery();
+		rs = ps.executeQuery();
 
-			while (rs.next()) {
-				list.add(new Article(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getDate(5), rs.getDate(6),
-						rs.getInt(7), rs.getInt(8)));
-			}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		while (rs.next()) {
+			list.add(new Article(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getDate(5), rs.getDate(6),
+					rs.getInt(7), rs.getInt(8)));
 		}
 
 		return list;
 	}
 
 	// 댓글 개수
-	public int repliesCount(int aId) {
+	public int repliesCount(int aId) throws SQLException {
 		conn = db.conn();
 
 		sql = "SELECT COUNT(*) FROM replies WHERE articles_no = ?";
 
 		int cnt = 0;
-		try {
-			ps = conn.prepareStatement(sql);
+		ps = conn.prepareStatement(sql);
 
-			ps.setInt(1, aId);
+		ps.setInt(1, aId);
 
-			ResultSet rs = ps.executeQuery();
-			rs.next();
-			cnt = rs.getInt(1);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		ResultSet rs = ps.executeQuery();
+		rs.next();
+		cnt = rs.getInt(1);
 		return cnt;
 	}
 
 	// 좋아요한 게시물
-	public ArrayList<Article> getLikedArticles(int num) {
+	public ArrayList<Article> getLikedArticles(int num) throws SQLException {
 		ArrayList<Article> list = new ArrayList<Article>();
 
 		conn = db.conn();
 
-		String sql = "SELECT * FROM articles WHERE MEMBER_NO = ?";
+		String sql = "SELECT * FROM articles WHERE MEMBERS_NO = ?";
 
-		try {
-			PreparedStatement pstmt = conn.prepareStatement(sql);
+		PreparedStatement pstmt = conn.prepareStatement(sql);
 
-			pstmt.setInt(1, num);
+		pstmt.setInt(1, num);
 
-			ResultSet rs = pstmt.executeQuery();
+		ResultSet rs = pstmt.executeQuery();
 
-			while (rs.next()) {
-				list.add(new Article(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getDate(5), rs.getDate(6),
-						rs.getInt(7), rs.getInt(8)));
-			}
-
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		while (rs.next()) {
+			list.add(new Article(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getDate(5), rs.getDate(6),
+					rs.getInt(7), rs.getInt(8)));
 		}
 
 		return list;
@@ -460,7 +385,7 @@ public class ArticleDao<T extends Article> extends CRUD<Article> {
 
 	// search1. 회원이면 관심사만, 비회원이면 전부. 관리자 처리는 다른 매서드하기.
 	// fId가 0이면 전부, 1 이상이면 관심사만.
-	public ArrayList<Article> searchJoinMember(HashMap<String, Object> args, int fId) {
+	public ArrayList<Article> searchJoinMember(HashMap<String, Object> args, int fId) throws SQLException {
 		ArrayList<Article> list = new ArrayList<>();
 		HashSet<String> like = new HashSet<>() {
 			{
@@ -492,18 +417,13 @@ public class ArticleDao<T extends Article> extends CRUD<Article> {
 				cnt--;
 			}
 		}
-		try {
-			ps = conn.prepareStatement(sql);
+		ps = conn.prepareStatement(sql);
 
-			rs = ps.executeQuery();
+		rs = ps.executeQuery();
 
-			while (rs.next()) {
-				list.add(new Article(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getDate(5), rs.getDate(6),
-						rs.getInt(7), rs.getInt(8)));
-			}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		while (rs.next()) {
+			list.add(new Article(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getDate(5), rs.getDate(6),
+					rs.getInt(7), rs.getInt(8)));
 		}
 
 		return list;
@@ -515,6 +435,5 @@ public class ArticleDao<T extends Article> extends CRUD<Article> {
 			rs.close();
 		ps.close();
 		conn.close();
-		System.out.println("close() 작동!");
 	}
 }
