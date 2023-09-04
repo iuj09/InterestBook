@@ -14,9 +14,6 @@ public class MeetDao<T extends Meet> extends CRUD<Meet> {
     public MeetDao(Manager manager) {
         super(manager);
         db = DBConnect.getInstance();
-        for(CRUD crud : manager.getAllDaoList()) {
-            System.out.println(crud.toString());
-        }
     }
 
     @Override

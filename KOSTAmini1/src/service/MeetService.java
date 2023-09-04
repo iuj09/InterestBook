@@ -87,9 +87,9 @@ public class MeetService extends SERVICE<Meet> {
      */
     private ArrayList<Meet> list(MeetDao<Meet> dao, int memberNo) throws SQLException {
         HashMap<String, String> args = new HashMap<>();
-        if(memberNo != -1) {
-            args.put("MEMBERS_NO", String.valueOf(memberNo));
-        }        
+        // if(memberNo != -1) {
+        //     args.put("MEMBERS_NO", String.valueOf(memberNo));
+        // }        
         
         ArrayList<Meet> list = new ArrayList<>();
         list = dao.select(args);
@@ -185,17 +185,14 @@ public class MeetService extends SERVICE<Meet> {
 
     private Meet infoMeet(MeetDao<Meet> dao, int memberNo, int no) throws SQLException {
         Meet meet = new Meet();
-        if(memberNo != -1) {
-            HashMap<String, String> map = new HashMap<>();
-            map.put("MEMBERS_NO", String.valueOf(memberNo));
-            map.put("NO", String.valueOf(no));
+        HashMap<String, String> map = new HashMap<>();
+        map.put("NO", String.valueOf(no));
 
-            if(dao.select(map).isEmpty()) {
-                System.out.println("번호를 잘못 입력하셨습니다. 다시 입력하십시오.");
-                return meet;
-            }
+        if(dao.select(map).isEmpty()) {
+            System.out.println("번호를 잘못 입력하셨습니다. 다시 입력하십시오.");
+            return meet;
         }
-        return meet;
+        return dao.select(map).get(0);
     }
 
     private void meetJoin(MeetDao<Meet> meetDao, int memberNo, int no) throws SQLException {
