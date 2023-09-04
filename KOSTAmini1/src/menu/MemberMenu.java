@@ -44,13 +44,13 @@ public class MemberMenu extends MENU<Member> {
     			((MemberService)service).myArticle(sc);
     			break;
     		case 4:
-    			
+    			((MemberService)service).searchLike(sc);
     			break;
     		case 5:
-    			
+    			((MemberService)service).checkMeet(sc);
     			break;
     		case 6:
-    			((MemberService)service).checkMeet(sc);
+    			
     			break;
     		case 7:
     			if(MemberLog.member.getAdmin().equals("1")) {
