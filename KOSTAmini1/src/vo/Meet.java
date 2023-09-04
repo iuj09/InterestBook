@@ -7,6 +7,7 @@ import common.VO;
 public class Meet extends VO {
     private int no;
     private int recurit;
+    private int enter;
     private String title;
     private String content;
     private Date wDate;
@@ -14,13 +15,13 @@ public class Meet extends VO {
     private Date deadLine;
     private int locationNo;
     private int memberNo;
-    private int enter;
 
     public Meet() {}
-    public Meet(int no, int recurit, String title, String content, Date wDate, Date eDate, Date deadLine,
-            int locationNo, int memberNo, int enter) {
+    public Meet(int no, int recurit, int enter, String title, String content, Date wDate, Date eDate, Date deadLine,
+            int locationNo, int memberNo) {
         this.no = no;
         this.recurit = recurit;
+        this.enter = enter;
         this.title = title;
         this.content = content;
         this.wDate = wDate;
@@ -28,7 +29,6 @@ public class Meet extends VO {
         this.deadLine = deadLine;
         this.locationNo = locationNo;
         this.memberNo = memberNo;
-        this.enter = enter;
     }
 
     public int getNo() {

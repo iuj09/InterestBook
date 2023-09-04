@@ -17,7 +17,7 @@ public class BoardMenu extends MENU<Article> {
 	private ArticleService aService;
 	private MemberService mService;
 	private RepliesMenu rMenu;
-	
+
 	public static final String BLACK = "\u001B[30m";
 	public static final String WHITE = "\u001B[37m";
 	public static final String RED = "\u001B[31m";
@@ -49,7 +49,7 @@ public class BoardMenu extends MENU<Article> {
 			ArrayList<Article> articles = (ArrayList<Article>) iContext.get("articles");
 			int totalPage = (Integer) iContext.get("totalPage");
 			iMsg = "";
-			
+
 			System.out.println("1-5.글선택 6.이전페이지 7.다음페이지 8.글쓰기 9.검색 0.뒤로"); // 좋아요순 정렬?
 			System.out.print("> 메뉴: ");
 			iCmd = sc.nextInt();
@@ -71,17 +71,17 @@ public class BoardMenu extends MENU<Article> {
 					Article article = aService.getArticle(articles.get(iCmd - 1).getNum());
 					HashMap<String, Object> dContext = aService.detailArticle(article);
 					aService.printDetail(article, dMsg);
-					
+
 					Boolean islike = (Boolean) (dContext.get("islike"));
 					dMsg = "";
-					
+
 					System.out.println("1.댓글보기 2.좋아요" + (islike ? " 취소" : "") + " 3.수정 4.삭제 0.목록"); // 작성자만
 					System.out.print("> 메뉴: ");
 					int cmd = sc.nextInt();
 					switch (cmd) {
 					case 1:
 						// 댓글보기
-						rMenu.menu1(article);
+						((RepliesMenu) this.manager.getMenu("RepliesMenu")).menu1(article);
 						break;
 					case 2:
 						// 좋아요
@@ -189,10 +189,9 @@ public class BoardMenu extends MENU<Article> {
 				String sMsg = "";
 				while (sFlag) {
 					// articles 추출
-					HashMap<String, Object> sContext = aService.searchArticles(sWords, sCmd,
-							sPageNum);
+					HashMap<String, Object> sContext = aService.searchArticles(sWords, sCmd, sPageNum);
 					aService.printIndex(sContext, sMsg, sPageNum);
-					
+
 					ArrayList<Article> sArticles = (ArrayList<Article>) sContext.get("articles"); // 팔로우 정렬?
 					int sTotalPage = (int) sContext.get("totalPage");
 					sMsg = "";
@@ -217,10 +216,10 @@ public class BoardMenu extends MENU<Article> {
 							Article article = aService.getArticle(sArticles.get(siCmd - 1).getNum());
 							HashMap<String, Object> detailContext = aService.detailArticle(article);
 							aService.printDetail(article, sdMsg);
-							
+
 							Boolean islike = (Boolean) (detailContext.get("islike"));
 							sdMsg = "";
-							
+
 							System.out.println("1.댓글보기 2.좋아요" + (islike ? " 취소" : "") + " 3.수정 4.삭제 0.목록"); // 작성자만
 							System.out.print("> 메뉴: ");
 							int sdCmd = sc.nextInt();
@@ -246,8 +245,7 @@ public class BoardMenu extends MENU<Article> {
 								String stitle = sc.nextLine();
 								System.out.print("> new content: "); // 줄 처리
 								String scontent = sc.nextLine();
-								boolean eResult = aService.editArticle(article.getNum(), stitle,
-										scontent); // user
+								boolean eResult = aService.editArticle(article.getNum(), stitle, scontent); // user
 								if (eResult) {
 									sdMsg = GREEN + "성공적으로 게시글이 수정되었습니다.\n" + RESET;
 								} else {
@@ -304,6 +302,6 @@ public class BoardMenu extends MENU<Article> {
 	@Override
 	public void menu1(Article a) {
 		// TODO Auto-generated method stub
-		
+
 	}
 }
