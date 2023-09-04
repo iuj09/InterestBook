@@ -436,7 +436,7 @@ public class ArticleDao<T extends Article> extends CRUD<Article> {
 
 		conn = db.conn();
 
-		String sql = "SELECT * FROM articles WHERE MEMBER_NO = ?";
+		String sql = "SELECT * FROM articles WHERE MEMBERS_NO = ?";
 
 		try {
 			PreparedStatement pstmt = conn.prepareStatement(sql);
