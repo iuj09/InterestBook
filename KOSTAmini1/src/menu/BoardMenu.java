@@ -32,7 +32,7 @@ public class BoardMenu extends MENU<Article> {
 		super(sc, service, manager);
 		aService = (ArticleService) service;
 		mService = ((MemberService) this.manager.getService("MemberService"));
-		rMenu = ((RepliesMenu)this.manager.getMenu("RepliesMenu"));
+		rMenu = ((RepliesMenu) this.manager.getMenu("RepliesMenu"));
 	}
 
 	@Override
@@ -53,6 +53,7 @@ public class BoardMenu extends MENU<Article> {
 			System.out.println("1-5.글선택 6.이전페이지 7.다음페이지 8.글쓰기 9.검색 0.뒤로"); // 좋아요순 정렬?
 			System.out.print("> 메뉴: ");
 			iCmd = sc.nextInt();
+			sc.nextLine();
 			switch (iCmd) {
 			case 1:
 			case 2:
@@ -77,8 +78,9 @@ public class BoardMenu extends MENU<Article> {
 
 					System.out.println("1.댓글보기 2.좋아요" + (islike ? " 취소" : "") + " 3.수정 4.삭제 0.목록"); // 작성자만
 					System.out.print("> 메뉴: ");
-					int cmd = sc.nextInt();
-					switch (cmd) {
+					int dCmd = sc.nextInt();
+					sc.nextLine();
+					switch (dCmd) {
 					case 1:
 						// 댓글보기
 						((RepliesMenu) this.manager.getMenu("RepliesMenu")).menu1(article);
@@ -90,17 +92,30 @@ public class BoardMenu extends MENU<Article> {
 					case 3:
 						// 수정
 						if (user == null) {
-							dMsg = RED + "로그인 후에 이용해주세요.\n" + RESET; 
+							dMsg = RED + "로그인 후에 이용해주세요.\n" + RESET;
 							break;
 						}
 						System.out.println("=== 글 수정 ===");
 
 						System.out.print("> new title: ");
-						sc.nextLine();
 						String title = sc.nextLine();
-						System.out.print("> new content: "); // 줄 처리
-						String content = sc.nextLine();
-						boolean eResult = aService.editArticle(article.getNum(), title, content); // user
+						System.out.println("> new content(/stop 입력시 완료.): ");
+						String eContent = "";
+
+						while (true) {
+							String str = sc.nextLine();
+							if (str.equals("/stop")) {
+								if (!eContent.equals("")) {
+									break;
+								} else {
+									System.out.println("내용을 입력해주세요.");
+									System.out.println("> new content(/stop 입력시 완료.): ");
+								}
+							} else { 
+								eContent += str + "\n";
+							}
+						}
+						boolean eResult = aService.editArticle(article.getNum(), title, eContent); // user
 						if (eResult) {
 							dMsg = GREEN + "성공적으로 게시글이 수정되었습니다.\n" + RESET;
 						} else {
@@ -110,7 +125,7 @@ public class BoardMenu extends MENU<Article> {
 					case 4:
 						// 삭제
 						if (user == null) {
-							iMsg = RED + "로그인 후에 이용해주세요.\n" + RESET; 
+							iMsg = RED + "로그인 후에 이용해주세요.\n" + RESET;
 							break;
 						}
 						boolean dResult = aService.delArticle(article.getNum()); // user
@@ -146,16 +161,31 @@ public class BoardMenu extends MENU<Article> {
 			case 8:
 				// 글쓰기
 				if (user == null) {
-					iMsg = RED + "로그인 후에 이용해주세요.\n" + RESET; 
+					iMsg = RED + "로그인 후에 이용해주세요.\n" + RESET;
 					break;
 				}
 				System.out.println("=== 글 작성 ===");
 
 				System.out.print("> title: ");
-				String title = sc.next();
-				System.out.print("> content: "); // 줄 처리
-				String content = sc.next();
-				boolean wResult = aService.addArticle(title, content); // user
+				String title = sc.nextLine();
+				System.out.println("> content(/stop 입력시 완료.): ");
+				String iContent = "";
+
+				while (true) {
+					String str = sc.nextLine();
+					if (str.equals("/stop")) {
+						if (!iContent.equals("")) {
+							break;
+						} else {
+							System.out.println("내용을 입력해주세요.");
+							System.out.println("> content(/stop 입력시 완료.): ");
+						}
+					} else { 
+						iContent += str + "\n";
+					}
+				}
+
+				boolean wResult = aService.addArticle(title, iContent); // user
 				if (wResult) {
 					iMsg = GREEN + "성공적으로 게시글이 작성되었습니다.\n" + RESET;
 				} else {
@@ -172,14 +202,12 @@ public class BoardMenu extends MENU<Article> {
 				System.out.print("> 명령: ");
 
 				sCmd = sc.nextInt();
+				sc.nextLine();
 				if (sCmd < 4) {
 					System.out.print("> 검색할 단어(공백으로 여러단어 구분): ");
-					// TODO
 				} else if (sCmd == 4) {
-					// TODO
 					System.out.print("> 검색할 작성자: ");
 				} else if (sCmd == 5) {
-					// TODO
 					System.out.print("> 검색할 로그인id: ");
 				}
 				sc.nextLine();
@@ -199,6 +227,7 @@ public class BoardMenu extends MENU<Article> {
 					System.out.println("1-5.글선택 6.이전페이지 7.다음페이지 0.뒤로"); // 좋아요순 정렬?
 					System.out.print("> 메뉴: ");
 					siCmd = sc.nextInt();
+					sc.nextLine();
 					switch (siCmd) {
 					case 1:
 					case 2:
@@ -223,6 +252,7 @@ public class BoardMenu extends MENU<Article> {
 							System.out.println("1.댓글보기 2.좋아요" + (islike ? " 취소" : "") + " 3.수정 4.삭제 0.목록"); // 작성자만
 							System.out.print("> 메뉴: ");
 							int sdCmd = sc.nextInt();
+							sc.nextLine();
 							switch (sdCmd) {
 							case 1:
 								// 검색 글 댓글 보기
@@ -235,17 +265,30 @@ public class BoardMenu extends MENU<Article> {
 							case 3:
 								// 검색 글 수정
 								if (user == null) {
-									sdMsg = RED + "로그인 후에 이용해주세요.\n" + RESET; 
+									sdMsg = RED + "로그인 후에 이용해주세요.\n" + RESET;
 									break;
 								}
 								System.out.println("=== 글 수정 ===");
 
 								System.out.print("> new title: ");
-								sc.nextLine();
 								String stitle = sc.nextLine();
-								System.out.print("> new content: "); // 줄 처리
-								String scontent = sc.nextLine();
-								boolean eResult = aService.editArticle(article.getNum(), stitle, scontent); // user
+								System.out.println("> new content(/stop 입력시 완료.): ");
+								String seContent = "";
+
+								while (true) {
+									String str = sc.nextLine();
+									if (str.equals("/stop")) {
+										if (!seContent.equals("")) {
+											break;
+										} else {
+											System.out.println("내용을 입력해주세요.");
+											System.out.println("> new content(/stop 입력시 완료.): ");
+										}
+									} else { 
+										seContent += str + "\n";
+									}
+								}
+								boolean eResult = aService.editArticle(article.getNum(), stitle, seContent); // user
 								if (eResult) {
 									sdMsg = GREEN + "성공적으로 게시글이 수정되었습니다.\n" + RESET;
 								} else {

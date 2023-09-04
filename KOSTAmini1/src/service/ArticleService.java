@@ -12,20 +12,15 @@ import dao.ArticleDao;
 import dao.FavoriteDao;
 import dao.MemberDao;
 import vo.Article;
+import vo.Favorite;
 import vo.Member;
 
 public class ArticleService extends SERVICE<Article> {
-	private ArticleDao<?> aDao;
-	private FavoriteDao<?> fDao;
-	private MemberDao<?> mDao;
 	private MemberService mService;
 	private final int perPage = 5;
 
 	public ArticleService(Scanner sc, CRUD<Article> dao, Manager manager) {
 		super(sc, dao, manager);
-		aDao = (ArticleDao<?>) this.dao;
-		fDao = ((FavoriteDao<?>) this.manager.getDao("FavoriteDao"));
-		mDao = ((MemberDao<?>) this.manager.getDao("MemberDao"));
 		mService = ((MemberService) this.manager.getService("MemberService"));
 	}
 
@@ -36,7 +31,7 @@ public class ArticleService extends SERVICE<Article> {
 			System.out.println("로그인 후 이용해주세요.");
 			return false;
 		}
-		try {
+		try (ArticleDao<Article> aDao = (ArticleDao<Article>) this.dao;) {
 			aDao.insert(new Article(0, title, content, 0, null, null, user.getNo(), user.getFavoriteNo()));
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -51,7 +46,7 @@ public class ArticleService extends SERVICE<Article> {
 	public void selectArticle() {
 		ArrayList<Article> articles;
 
-		try {
+		try (ArticleDao<Article> aDao = (ArticleDao<Article>) this.dao;) {
 			articles = aDao.select(null);
 			printAll(articles);
 		} catch (SQLException e) {
@@ -74,18 +69,17 @@ public class ArticleService extends SERVICE<Article> {
 			System.out.println("로그인 후 이용해주세요.");
 			return false;
 		}
-
-		if (aDao.getArticle(num).getWriter() == user.getNo() || user.getAdmin().equals("1")) {
-			try {
-				aDao.update(new Article(num, title, content, 0, null, null, 0, 0));
-			} catch (SQLException e) {
-				e.printStackTrace();
-				return false;
+		try (ArticleDao<Article> aDao = (ArticleDao<Article>) this.dao;) {
+			if (aDao.getArticle(num).getWriter() == user.getNo() || user.getAdmin().equals("1")) {
+					aDao.update(new Article(num, title, content, 0, null, null, 0, 0));
+			} else {
+				System.out.println("자신의 글만 수정할 수 있습니다.");
 			}
-		} else {
-			System.out.println("자신의 글만 수정할 수 있습니다.");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
 		}
-
 		return true;
 	}
 
@@ -96,18 +90,17 @@ public class ArticleService extends SERVICE<Article> {
 			System.out.println("로그인 후 이용해주세요.");
 			return false;
 		}
-
-		if (aDao.getArticle(num).getWriter() == user.getNo() || user.getAdmin().equals("1")) {
-			try {
-				aDao.delete(num);
-			} catch (SQLException e) {
-				e.printStackTrace();
-				return false;
+		try (ArticleDao<Article> aDao = (ArticleDao<Article>) this.dao;) {
+			if (aDao.getArticle(num).getWriter() == user.getNo() || user.getAdmin().equals("1")) {
+					aDao.delete(num);
+			} else {
+				System.out.println("자신의 글만 삭제할 수 있습니다.");
 			}
-		} else {
-			System.out.println("자신의 글만 삭제할 수 있습니다.");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
 		}
-
 		return true;
 	}
 
@@ -120,16 +113,20 @@ public class ArticleService extends SERVICE<Article> {
 			args = new HashMap<>();
 			args.put("FAVORITES_NO", user.getFavoriteNo());
 		}
+		try (ArticleDao<Article> aDao = (ArticleDao<Article>) this.dao;) {
+			ArrayList<Article> articles = aDao.select1(args);
+			ArrayList<Article> sortedArticles = reverseList(articles);
+			ArrayList<Article> pageArticles = pagedList(sortedArticles, pageNum);
+			int totalArticleCount = articles.size();
+			int totalPageCount = (int) Math.ceil((double) sortedArticles.size() / 5);
 
-		ArrayList<Article> articles = aDao.select1(args);
-		ArrayList<Article> sortedArticles = reverseList(articles);
-		ArrayList<Article> pageArticles = pagedList(sortedArticles, pageNum);
-		int totalArticleCount = articles.size();
-		int totalPageCount = (int) Math.ceil((double) sortedArticles.size() / 5);
-
-		context.put("articles", pageArticles);
-		context.put("totalPage", totalPageCount);
-		context.put("totalArticleCount", totalArticleCount);
+			context.put("articles", pageArticles);
+			context.put("totalPage", totalPageCount);
+			context.put("totalArticleCount", totalArticleCount);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return context;
 	}
 
@@ -141,52 +138,70 @@ public class ArticleService extends SERVICE<Article> {
 		System.out.println("=========================== 게시판 ===========================");
 		System.out.println("번호                  제목                  작성자       작성일    좋아요");
 		System.out.println("-----------------------------------------------------------");
-		if (context.get("articles") == null) {
-			System.out.println("게시물이 없습니다.");
-		} else {
-			for (Article a : articles) {
-				String t = "[%s] %s [%d]".formatted(fDao.getName(a.getCategory()), a.getTitle(), aDao.repliesCount(a.getNum()));
-				System.out.printf(" %-3d | %-30s | %3s | %-1s | %3d\n", articles.indexOf(a) + 1, t,
-						mDao.getMember(a.getWriter()).getName(), a.getwDate(), aDao.likeCount(a.getNum()));
-			} // 날짜 출력 형식
+		try (ArticleDao<Article> aDao = (ArticleDao<Article>) this.dao;
+				FavoriteDao<Favorite> fDao = ((FavoriteDao<Favorite>) this.manager.getDao("FavoriteDao"));
+				MemberDao<Member> mDao = ((MemberDao<Member>) this.manager.getDao("MemberDao"));) {
+			if (context.get("articles") == null) {
+				System.out.println("게시물이 없습니다.");
+			} else {
+				for (Article a : articles) {
+					String t = "[%s] %s [%d]".formatted(fDao.getName(a.getCategory()), a.getTitle(),
+							aDao.repliesCount(a.getNum()));
+					System.out.printf(" %-3d | %-30s | %3s | %-1s | %3d\n", articles.indexOf(a) + 1, t,
+							mDao.getMember(a.getWriter()).getName(), a.getwDate(), aDao.likeCount(a.getNum()));
+				} // 날짜 출력 형식
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-
 		System.out.println("-----------------------------------------------------------");
 		System.out.println(pageNum + " / " + totalPage + " (" + totalArticleCount + ")");
 		System.out.printf(msg);
+
 	}
 
 	// detail. article 객체를 받음
 	public HashMap<String, Object> detailArticle(Article a) {
 		HashMap<String, Object> context = new HashMap<>();
 		Member user = mService.nowMember();
+		try (ArticleDao<Article> aDao = (ArticleDao<Article>) this.dao;) {
+			int likeCount = aDao.likeCount(a.getNum());
+			int repliesCount = aDao.repliesCount(a.getNum());
+			boolean islike = false;
+			if (user != null) {
+				islike = aDao.isLike(user.getNo(), a.getNum());
+			}
 
-		int likeCount = aDao.likeCount(a.getNum());
-		int repliesCount = aDao.repliesCount(a.getNum());
-		boolean islike = false;
-		if (user != null) {
-			islike = aDao.isLike(user.getNo(), a.getNum());
+			context.put("likeCount", likeCount);
+			context.put("repliesCount", repliesCount);
+			context.put("islike", islike);
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-
-		context.put("likeCount", likeCount);
-		context.put("repliesCount", repliesCount);
-		context.put("islike", islike);
-
 		return context;
 	}
 
 	// printDetail
 	public void printDetail(Article a, String msg) {
-		System.out.println("글번호 : " + a.getNum());
-		System.out.println("제목  : " + a.getTitle());
-		System.out.println("작성일 : " + a.getwDate());
-		System.out.println("작성자 : " + mDao.getMember(a.getWriter()).getName());
-		System.out.println("좋아요 수: " + aDao.likeCount(a.getNum())); // context
-		System.out.println("댓글 수: " + aDao.repliesCount(a.getNum())); // context
-		System.out.println("-------------------------------------------");
-		System.out.println(a.getContent());
-		System.out.println("-------------------------------------------");
-		System.out.printf(msg);
+		try (ArticleDao<Article> aDao = (ArticleDao<Article>) this.dao;
+				MemberDao<Member> mDao = ((MemberDao<Member>) this.manager.getDao("MemberDao"));) {
+			System.out.println("글번호 : " + a.getNum());
+			System.out.println("제목  : " + a.getTitle());
+			System.out.println("작성일 : " + a.getwDate());
+			System.out.println("작성자 : " + mDao.getMember(a.getWriter()).getName());
+			System.out.println("좋아요 수: " + aDao.likeCount(a.getNum())); // context
+			System.out.println("댓글 수: " + aDao.repliesCount(a.getNum())); // context
+			System.out.println("-------------------------------------------");
+			System.out.println(a.getContent());
+			System.out.println("-------------------------------------------");
+			System.out.printf(msg);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	// search 결과 articles추출. context 반환.
@@ -219,28 +234,38 @@ public class ArticleService extends SERVICE<Article> {
 		} else if (cmd == 5) { // id로 검색
 			args.put("id", s);
 		}
-		articles = aDao.searchJoinMember(args, fId);
+		try (ArticleDao<Article> aDao = (ArticleDao<Article>) this.dao;) {
+			articles = aDao.searchJoinMember(args, fId);
 
-		ArrayList<Article> sortedArticles = reverseList(articles);
-		ArrayList<Article> pageArticles = pagedList(sortedArticles, pageNum);
-		int totalPageCount = (int) Math.ceil((double) sortedArticles.size() / 5);
-		int totalArticleCount = articles.size();
+			ArrayList<Article> sortedArticles = reverseList(articles);
+			ArrayList<Article> pageArticles = pagedList(sortedArticles, pageNum);
+			int totalPageCount = (int) Math.ceil((double) sortedArticles.size() / 5);
+			int totalArticleCount = articles.size();
 
-		context.put("articles", pageArticles);
-		context.put("totalPage", totalPageCount);
-		context.put("totalArticleCount", totalArticleCount);
+			context.put("articles", pageArticles);
+			context.put("totalPage", totalPageCount);
+			context.put("totalArticleCount", totalArticleCount);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return context;
 	}
 
 	// searchByMId
 	public ArrayList<Article> searchByMemberNo(int num) {
-		ArrayList<Article> articles;
+		ArrayList<Article> articles = new ArrayList<>();
 		HashMap<String, Object> args = new HashMap<>() {
 			{
 				put("MEMBERS_NO", num);
 			}
 		};
-		articles = aDao.select1(args);
+		try (ArticleDao<Article> aDao = (ArticleDao<Article>) this.dao;) {
+			articles = aDao.select1(args);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		return articles;
 	}
@@ -248,17 +273,22 @@ public class ArticleService extends SERVICE<Article> {
 	// 좋아요 토글
 	public String likeArticle(Article a) {
 		Member user = mService.nowMember();
-		String msg;
-		if (user == null) {
-			msg = "로그인 후 이용해주세요.\n";
-		} else {
-			if (aDao.isLike(user.getNo(), a.getNum())) {
-				aDao.dislikeArticle(user.getNo(), a.getNum());
-				msg = a.getNum() + " 번 게시글을 좋아요 취소했습니다.\n";
+		String msg = "";
+		try (ArticleDao<Article> aDao = (ArticleDao<Article>) this.dao;) {
+			if (user == null) {
+				msg = "로그인 후 이용해주세요.\n";
 			} else {
-				aDao.likeArticle(user.getNo(), a.getNum());
-				msg = a.getNum() + " 번 게시글을 좋아요 했습니다.\n";
+				if (aDao.isLike(user.getNo(), a.getNum())) {
+					aDao.dislikeArticle(user.getNo(), a.getNum());
+					msg = a.getNum() + " 번 게시글을 좋아요 취소했습니다.\n";
+				} else {
+					aDao.likeArticle(user.getNo(), a.getNum());
+					msg = a.getNum() + " 번 게시글을 좋아요 했습니다.\n";
+				}
 			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		return msg;
 	}
@@ -266,9 +296,12 @@ public class ArticleService extends SERVICE<Article> {
 	// 좋아요한 게시물 반환
 	public ArrayList<Article> likedArticles(int num) {
 		ArrayList<Article> list = new ArrayList<>();
-
-		list = aDao.getLikedArticles(num);
-
+		try (ArticleDao<Article> aDao = (ArticleDao<Article>) this.dao;) {
+			list = aDao.getLikedArticles(num);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return list;
 	}
 
@@ -299,7 +332,15 @@ public class ArticleService extends SERVICE<Article> {
 	}
 
 	public Article getArticle(int num) {
-		Article article = aDao.getArticle(num);
+		Article article = new Article();
+		try (ArticleDao<Article> aDao = (ArticleDao<Article>) this.dao;) {
+			article = aDao.getArticle(num);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 		return article;
+
 	}
 }
