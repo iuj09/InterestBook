@@ -1,3 +1,2 @@
 # InterestBook
 
-## JAVA Console App
